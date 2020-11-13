@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+//using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -25,9 +25,14 @@ public class Player : MonoBehaviour
   private bool _isTripleShotActive=false;
   private bool _isSpeedBoostActive=false;
   private bool _isLeftShiftKeySpeedBoostActive=false;
-  private bool _isShieldsActive=false;
+
   [SerializeField]
   private GameObject _shieldVisualizer;
+  private SpriteRenderer _shieldSpriteRenderer;
+  private float _shieldAlpha=1f;
+  private bool _isShieldsActive=false;
+  private float _shieldStrengthDefault=3f;
+  private float _shieldStrength;
 
   [SerializeField]
   private GameObject _leftEngine;
@@ -44,31 +49,36 @@ public class Player : MonoBehaviour
   private AudioSource _audioSource;
 
   void Start()
-
   {
+    _shieldStrength=_shieldStrengthDefault;
+    _shieldSpriteRenderer = _shieldVisualizer.GetComponent<SpriteRenderer>();
     _shieldVisualizer.SetActive(false);
 
     _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 
-    transform.position = new Vector3(0, -3.4f, 0);   //move the ship down on the screen a little bit at start
     _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
     _audioSource = GetComponent<AudioSource>();
-    //_audioSource.SetActive(true);
 
     if (_spawnManager == null)
     {
-      Debug.LogError("The Spawn manager is NULL.");
+      Debug.LogError("The Spawn manager is null.");
     }
 
     if (_uiManager == null)
     {
-      Debug.LogError("UI Manager is NULL.");
+      Debug.LogError("UI Manager is null.");
     }
 
     if (_audioSource==null)
     {
-      Debug.Log("The AudioSource component in Player.cs = NULL");
+      Debug.Log("The AudioSource component in Player.cs = null");
     }
+
+    if (_shieldSpriteRenderer==null)
+    {
+      Debug.Log("The Shield Sprite Renderer component in Player.cs = null");
+    }
+
   }
 
   void Update()
@@ -77,19 +87,26 @@ public class Player : MonoBehaviour
     {
       _isLeftShiftKeySpeedBoostActive=true;
     }
-
     else if (Input.GetKeyUp(KeyCode.LeftShift))
     {
       _isLeftShiftKeySpeedBoostActive=false;
     }
 
-        CalculateMovement();
+    CalculateMovement();
 
     if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
     {
-      // Debug.Log("Space Key Pressed");
       FireLaser();
     }
+  }
+
+  IEnumerator showShieldStrengthVisually()
+  {
+    _shieldAlpha = 0.4f + ((_shieldStrength/_shieldStrengthDefault)*0.6f);
+    Debug.Log("_shieldAlpha:" + _shieldAlpha);
+    _shieldSpriteRenderer.color = new Color(_shieldAlpha,1f,1f,_shieldAlpha);
+
+    yield return new WaitForSeconds(4f);
   }
 
   void FireLaser()
@@ -140,9 +157,18 @@ public class Player : MonoBehaviour
     if (_isShieldsActive == true)
     {
       Debug.Log("Shields Protected me!");
-      _isShieldsActive=false;
-      _shieldVisualizer.SetActive(false);
-      return;
+
+      _shieldStrength=_shieldStrength-1;
+      if (_shieldStrength<0)
+      {
+        _isShieldsActive=false;
+        _shieldVisualizer.SetActive(false);
+        return;
+      }
+      else
+      {
+        StartCoroutine(showShieldStrengthVisually());
+      }
     }
     else
     _lives--;
@@ -202,7 +228,9 @@ public class Player : MonoBehaviour
   public void ShieldsActive()
   {
     _isShieldsActive=true;
+    _shieldStrength=_shieldStrengthDefault;
     _shieldVisualizer.SetActive(true);
+    StartCoroutine(showShieldStrengthVisually());
   }
 
   public void AddToScore(int points)

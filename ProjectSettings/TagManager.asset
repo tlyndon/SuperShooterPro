@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Laser
+  - Shields
   layers:
   - Default
   - TransparentFX
