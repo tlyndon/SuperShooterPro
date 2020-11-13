@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     {
       SceneManager.LoadScene(0);  //0 = "Game"
     }
-    if(Input.GetKeyDown(KeyCode.Escape))
+    if (Input.GetKeyDown(KeyCode.Escape))
     {
       Debug.Log("ESCAPE KEY PRESSED");
         Application.Quit();

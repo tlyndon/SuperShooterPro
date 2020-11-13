@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class Player : MonoBehaviour
 
   [SerializeField]
   private float _speed = 3.5f;
-  private float _speedMultiplier = 2;
+  private float _speedMultiplier = 2.0f;
+  private float _leftShiftKeySpeedMultiplier = 1.5f;
   [SerializeField]
   private GameObject _laserPrefab;
   [SerializeField]
@@ -22,6 +24,7 @@ public class Player : MonoBehaviour
   private SpawnManager _spawnManager;
   private bool _isTripleShotActive=false;
   private bool _isSpeedBoostActive=false;
+  private bool _isLeftShiftKeySpeedBoostActive=false;
   private bool _isShieldsActive=false;
   [SerializeField]
   private GameObject _shieldVisualizer;
@@ -70,7 +73,17 @@ public class Player : MonoBehaviour
 
   void Update()
   {
-    CalculateMovement();
+    if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftShift))
+    {
+      _isLeftShiftKeySpeedBoostActive=true;
+    }
+
+    else if (Input.GetKeyUp(KeyCode.LeftShift))
+    {
+      _isLeftShiftKeySpeedBoostActive=false;
+    }
+
+        CalculateMovement();
 
     if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
     {
@@ -161,13 +174,17 @@ public class Player : MonoBehaviour
 
     Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
 
-    if (_isSpeedBoostActive == false)
+    if (_isSpeedBoostActive == true)
     {
-      transform.Translate(direction * _speed * Time.deltaTime);
+      transform.Translate(direction * (_speed * _speedMultiplier) * Time.deltaTime);
+    }
+    else if (_isLeftShiftKeySpeedBoostActive == true)
+    {
+      transform.Translate(direction * (_speed * _leftShiftKeySpeedMultiplier) * Time.deltaTime);
     }
     else
     {
-      transform.Translate(direction * (_speed * _speedMultiplier) * Time.deltaTime);
+      transform.Translate(direction * _speed * Time.deltaTime);
     }
 
     transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y,-3.8f,0),0);
