@@ -1370,7 +1370,9 @@ MonoBehaviour:
   _uiManager: {fileID: 1600274451}
   _ammoPrefab: {fileID: 1005272603595453038, guid: e33bbc71615f64a14b2d0f2b941570ba, type: 3}
   ammoCount: 15
-  laser_shot: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _audioSource: {fileID: 0}
+  _lasershot: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _buzz: {fileID: 8300000, guid: 2c91afafe81e441dfa73b904e2bd3714, type: 3}
 --- !u!212 &1651803211
 SpriteRenderer:
   m_ObjectHideFlags: 0

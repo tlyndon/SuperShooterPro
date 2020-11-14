@@ -45,9 +45,11 @@ public class Player : MonoBehaviour
   public int ammoCount;
 
   [SerializeField]
-  private AudioClip laser_shot;
-  //public AudioClip buzz;
   private AudioSource _audioSource;
+  [SerializeField]
+  private AudioClip _lasershot;
+  [SerializeField]
+  private AudioClip _buzz;
 
   void Start()
   {
@@ -71,7 +73,7 @@ public class Player : MonoBehaviour
     _audioSource = GetComponent<AudioSource>();
     if (_audioSource==null)
     {
-      Debug.Log("The AudioSource component in Player.cs = null");
+      Debug.Log("The _audioSource component in Player.cs = null");
     }
   }
 
@@ -97,7 +99,8 @@ public class Player : MonoBehaviour
       }
       else
       {
-        //play a buzz sound because we are out of ammo
+        Debug.Log("Play Buzz Sound");
+        _audioSource.PlayOneShot(_buzz, 0.7F);
       }
     }
   }
@@ -122,8 +125,8 @@ public class Player : MonoBehaviour
       Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
     }
 
-    //_audioSource.Play();
-    _audioSource.PlayOneShot(laser_shot, 0.7F);
+    Debug.Log("Play Laser Sound");
+    _audioSource.PlayOneShot(_lasershot, 0.7F);
   }
 
   public void TripleShotActive()
