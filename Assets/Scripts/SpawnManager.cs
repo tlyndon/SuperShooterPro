@@ -12,25 +12,16 @@ public class SpawnManager : MonoBehaviour
   private GameObject _enemyContainer;
   [SerializeField]
   private GameObject[] _powerups;
-
   private bool _stopSpawning = false;
-
-  void Start()
-  {
-
-  }
+  [SerializeField]
+  private Player _player;
 
   public void startSpawning()
   {
     StartCoroutine(SpawnEnemyRoutine());
     StartCoroutine(SpawnPowerupRoutine());
   }
-
-  void Update()
-  {
-
-  }
-
+  
   IEnumerator SpawnEnemyRoutine()
   {
     yield return new WaitForSeconds(3.0f);
@@ -49,8 +40,15 @@ public class SpawnManager : MonoBehaviour
     while (_stopSpawning == false)
     {
       Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-      int randomPowerUp = Random.Range(0,3);
-      Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+      int powerUp = Random.Range(0,3);
+
+      int ammoCount = _player.ammoCount;
+      if (ammoCount==0)
+      {
+        powerUp=3;  //ammo powerup
+      }
+
+      Instantiate(_powerups[powerUp], posToSpawn, Quaternion.identity);
       yield return new WaitForSeconds(Random.Range(3,8));
     }
   }

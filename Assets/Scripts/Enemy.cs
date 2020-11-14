@@ -22,22 +22,20 @@ public class Enemy : MonoBehaviour
   void Start()
   {
     _player = GameObject.Find("Player").GetComponent<Player>();
-    _anim = GetComponent<Animator>();
-    _audioSource = GetComponent<AudioSource>();
-
     if (_player == null)
     {
       Debug.LogError("Player Component is NULL");
     }
+    _anim = GetComponent<Animator>();
     if (_anim == null)
     {
       Debug.LogError("Animator Component is NULL");
     }
+    _audioSource = GetComponent<AudioSource>();
     if (_audioSource==null)
     {
       Debug.Log("The AudioSource component in Player.cs = NULL");
     }
-
   }
 
   void Update()
@@ -85,7 +83,6 @@ public class Enemy : MonoBehaviour
       _speed=0;
       _audioSource.Play();
       Destroy(this.gameObject,2.8f);
-
     }
     else if (other.tag == "Laser")
     {
@@ -102,8 +99,6 @@ public class Enemy : MonoBehaviour
       _audioSource.Play();
       Destroy(GetComponent<Collider2D>());
       Destroy(this.gameObject,2.8f);
-
     }
   }
-
 }

@@ -1,31 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-  //public or private reference
-  //data types (int, float, bool, string)
-
-  [SerializeField]
+  private bool _isSpeedBoostActive=false;
   private float _speed = 3.5f;
   private float _speedMultiplier = 2.0f;
   private float _leftShiftKeySpeedMultiplier = 1.5f;
-  [SerializeField]
-  private GameObject _laserPrefab;
-  [SerializeField]
-  private GameObject _tripleShotPrefab;
-  [SerializeField]
-  private float _fireRate = 0.15f;
-  private float _canFire = -1f;
-  [SerializeField]
-  private int _lives = 3;
-  private SpawnManager _spawnManager;
-  private bool _isTripleShotActive=false;
-  private bool _isSpeedBoostActive=false;
   private bool _isLeftShiftKeySpeedBoostActive=false;
 
+  [SerializeField]
+  private GameObject _laserPrefab;
+
+  [SerializeField]
+  private GameObject _tripleShotPrefab;
+  private bool _isTripleShotActive=false;
+
+  [SerializeField]
+  private SpawnManager _spawnManager;
   [SerializeField]
   private GameObject _shieldVisualizer;
   private SpriteRenderer _shieldSpriteRenderer;
@@ -40,45 +33,46 @@ public class Player : MonoBehaviour
   private GameObject _rightEngine;
 
   [SerializeField]
-  private int _score;
-
-  [SerializeField]
   private UIManager _uiManager;
+  private int _score;
+  private int _lives = 3;
 
   [SerializeField]
+  private GameObject _ammoPrefab;
+  private float _fireRate = 0.15f;
+  private float _canFire = -1f;
+  private int ammoCountDefault=15;
+  public int ammoCount;
+
+  [SerializeField]
+  private AudioClip laser_shot;
+  //public AudioClip buzz;
   private AudioSource _audioSource;
 
   void Start()
   {
-    _shieldStrength=_shieldStrengthDefault;
-    _shieldSpriteRenderer = _shieldVisualizer.GetComponent<SpriteRenderer>();
-    _shieldVisualizer.SetActive(false);
-
     _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+    if (_uiManager == null)
+    { Debug.LogError("UI Manager is null."); }
+
+    ammoCount=ammoCountDefault;
+    _uiManager.UpdateAmmo(ammoCount);
 
     _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-    _audioSource = GetComponent<AudioSource>();
-
     if (_spawnManager == null)
-    {
-      Debug.LogError("The Spawn manager is null.");
-    }
+    { Debug.LogError("The Spawn manager is null."); }
 
-    if (_uiManager == null)
-    {
-      Debug.LogError("UI Manager is null.");
-    }
+    _shieldSpriteRenderer = _shieldVisualizer.GetComponent<SpriteRenderer>();
+    if (_shieldSpriteRenderer==null)
+    { Debug.Log("The Shield Sprite Renderer component in Player.cs = null"); }
+    _shieldStrength=_shieldStrengthDefault;
+    _shieldVisualizer.SetActive(false);
 
+    _audioSource = GetComponent<AudioSource>();
     if (_audioSource==null)
     {
       Debug.Log("The AudioSource component in Player.cs = null");
     }
-
-    if (_shieldSpriteRenderer==null)
-    {
-      Debug.Log("The Shield Sprite Renderer component in Player.cs = null");
-    }
-
   }
 
   void Update()
@@ -96,7 +90,15 @@ public class Player : MonoBehaviour
 
     if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
     {
-      FireLaser();
+      if (ammoCount>0)
+      {
+        FireLaser(); ammoCount=ammoCount-1;
+        _uiManager.UpdateAmmo(ammoCount);
+      }
+      else
+      {
+        //play a buzz sound because we are out of ammo
+      }
     }
   }
 
@@ -104,15 +106,13 @@ public class Player : MonoBehaviour
   {
     _shieldAlpha = 0.4f + ((_shieldStrength/_shieldStrengthDefault)*0.6f);
     Debug.Log("_shieldAlpha:" + _shieldAlpha);
-    _shieldSpriteRenderer.color = new Color(_shieldAlpha,1f,1f,_shieldAlpha);
-
+    _shieldSpriteRenderer.color = new Color(1f,1f,1f,_shieldAlpha);
     yield return new WaitForSeconds(4f);
   }
 
   void FireLaser()
   {
     _canFire = Time.time + _fireRate;
-
     if (_isTripleShotActive == true)
     {
       Instantiate(_tripleShotPrefab, transform.position + new Vector3(4.7f,0,0), Quaternion.identity);
@@ -122,8 +122,8 @@ public class Player : MonoBehaviour
       Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
     }
 
-    _audioSource.Play();
-
+    //_audioSource.Play();
+    _audioSource.PlayOneShot(laser_shot, 0.7F);
   }
 
   public void TripleShotActive()
@@ -140,16 +140,14 @@ public class Player : MonoBehaviour
 
   public void SpeedBoostActive()
   {
-    _isSpeedBoostActive=true;
-    _speed *= _speedMultiplier;
+    _isSpeedBoostActive=true; _speed *= _speedMultiplier;
     StartCoroutine(SpeedBoostPowerDownRoutine());
   }
 
   IEnumerator SpeedBoostPowerDownRoutine()
   {
     yield return new WaitForSeconds(5.0f);
-    _isSpeedBoostActive=false;
-    _speed /= _speedMultiplier;
+    _isSpeedBoostActive=false; _speed /= _speedMultiplier;
   }
 
   public void Damage()
@@ -157,8 +155,8 @@ public class Player : MonoBehaviour
     if (_isShieldsActive == true)
     {
       Debug.Log("Shields Protected me!");
-
       _shieldStrength=_shieldStrength-1;
+
       if (_shieldStrength<0)
       {
         _isShieldsActive=false;
@@ -170,6 +168,7 @@ public class Player : MonoBehaviour
         StartCoroutine(showShieldStrengthVisually());
       }
     }
+
     else
     _lives--;
 
@@ -177,7 +176,7 @@ public class Player : MonoBehaviour
     {
       _leftEngine.SetActive(true);
     }
-    if (_lives==1)
+    else if (_lives==1)
     {
       _rightEngine.SetActive(true);
     }
@@ -186,8 +185,7 @@ public class Player : MonoBehaviour
 
     if (_lives < 1)
     {
-      _spawnManager.OnPlayerDeath();  //find the gameObject then get component
-
+      _spawnManager.OnPlayerDeath();
       Destroy(this.gameObject);
       Debug.Log("Game Over");
     }
@@ -197,9 +195,7 @@ public class Player : MonoBehaviour
   {
     float horizontalInput = Input.GetAxis("Horizontal");
     float verticalInput = Input.GetAxis("Vertical");
-
     Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
-
     if (_isSpeedBoostActive == true)
     {
       transform.Translate(direction * (_speed * _speedMultiplier) * Time.deltaTime);
@@ -212,7 +208,6 @@ public class Player : MonoBehaviour
     {
       transform.Translate(direction * _speed * Time.deltaTime);
     }
-
     transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y,-3.8f,0),0);
 
     if (transform.position.x > 11f)
@@ -237,5 +232,12 @@ public class Player : MonoBehaviour
   {
     _score = _score + points;
     _uiManager.UpdateScore(_score);
+  }
+
+  public void SetAmmoToDefaultValue()
+  {
+    Debug.Log("Reset ammoCount to default");
+    ammoCount=ammoCountDefault;
+    _uiManager.UpdateAmmo(ammoCount);
   }
 }
