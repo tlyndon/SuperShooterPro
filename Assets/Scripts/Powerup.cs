@@ -57,6 +57,10 @@ public class Powerup : MonoBehaviour
           Debug.Log("Got Ammo!");
           player.SetAmmoToDefaultValue();
           break;
+          case 4:
+          Debug.Log("Got Health!");
+          player.RestoreHealth();
+          break;
         }
       }
     }

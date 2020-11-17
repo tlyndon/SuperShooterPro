@@ -21,7 +21,7 @@ public class SpawnManager : MonoBehaviour
     StartCoroutine(SpawnEnemyRoutine());
     StartCoroutine(SpawnPowerupRoutine());
   }
-  
+
   IEnumerator SpawnEnemyRoutine()
   {
     yield return new WaitForSeconds(3.0f);
@@ -42,8 +42,14 @@ public class SpawnManager : MonoBehaviour
       Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
       int powerUp = Random.Range(0,3);
 
+      int lives = _player.lives;
+      if (lives < 3)
+      {
+        powerUp=4;  //show health powerup
+      }
+      
       int ammoCount = _player.ammoCount;
-      if (ammoCount==0)
+      if (powerUp!=4 && ammoCount==0 && Random.Range(0,1f)==0)
       {
         powerUp=3;  //ammo powerup
       }

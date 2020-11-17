@@ -760,7 +760,7 @@ MonoBehaviour:
   sharedProfile: {fileID: 11400000, guid: 0a81b4ca50f6047b89c29363c272195f, type: 2}
   isGlobal: 1
   blendDistance: 0
-  weight: 1
+  weight: 0.322
   priority: 0
 --- !u!4 &1178169478
 Transform:
@@ -994,6 +994,7 @@ MonoBehaviour:
   - {fileID: 6678619111160871251, guid: a7b66bf5fdc4941d08f52990f83c00c6, type: 3}
   - {fileID: 1763034920545533781, guid: d6d75c1217b3146eea3deff02e4ef75b, type: 3}
   - {fileID: 1005272603595453038, guid: e33bbc71615f64a14b2d0f2b941570ba, type: 3}
+  - {fileID: 466977961127130806, guid: 3aaf64de4e0b7457db693892e388db7d, type: 3}
   _player: {fileID: 1651803210}
 --- !u!4 &1389233778
 Transform:
@@ -1152,8 +1153,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1542105148}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.004, y: 1.016, z: 0}
-  m_LocalScale: {x: 1.0704389, y: 1.0692031, z: 1}
+  m_LocalPosition: {x: 0, y: 0.986, z: 0}
+  m_LocalScale: {x: 1.0692027, y: 1.0676694, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -1270,16 +1271,16 @@ Canvas:
   m_GameObject: {fileID: 1600274446}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_RenderMode: 1
+  m_Camera: {fileID: 963194227}
+  m_PlaneDistance: 10
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 598764847
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &1600274450
@@ -1368,6 +1369,7 @@ MonoBehaviour:
   _leftEngine: {fileID: 2080312663}
   _rightEngine: {fileID: 1814109938}
   _uiManager: {fileID: 1600274451}
+  lives: 3
   _ammoPrefab: {fileID: 1005272603595453038, guid: e33bbc71615f64a14b2d0f2b941570ba, type: 3}
   ammoCount: 15
   _audioSource: {fileID: 0}

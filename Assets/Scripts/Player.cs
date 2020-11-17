@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
   [SerializeField]
   private UIManager _uiManager;
   private int _score;
-  private int _lives = 3;
+  public int lives = 3;
 
   [SerializeField]
   private GameObject _ammoPrefab;
@@ -173,20 +173,20 @@ public class Player : MonoBehaviour
     }
 
     else
-    _lives--;
+    lives = lives-1;  //lives--
 
-    if (_lives==2)
+    if (lives==2)
     {
       _leftEngine.SetActive(true);
     }
-    else if (_lives==1)
+    else if (lives==1)
     {
       _rightEngine.SetActive(true);
     }
 
-    _uiManager.UpdateLives(_lives);
+    _uiManager.UpdateLives(lives);
 
-    if (_lives < 1)
+    if (lives < 1)
     {
       _spawnManager.OnPlayerDeath();
       Destroy(this.gameObject);
@@ -242,5 +242,13 @@ public class Player : MonoBehaviour
     Debug.Log("Reset ammoCount to default");
     ammoCount=ammoCountDefault;
     _uiManager.UpdateAmmo(ammoCount);
+  }
+
+  public void RestoreHealth()
+  {
+    _leftEngine.SetActive(false);
+    _rightEngine.SetActive(false);
+    lives=3;
+    _uiManager.UpdateLives(lives);
   }
 }
