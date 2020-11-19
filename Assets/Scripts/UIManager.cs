@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+//------------------------------
 public class UIManager : MonoBehaviour
 {
   [SerializeField]
@@ -11,14 +11,14 @@ public class UIManager : MonoBehaviour
   private Text _scoreText;
   [SerializeField]
   private Text _ammoText;
-  [SerializeField]
-  private Text _gameOverText;
+  public Text flashingText;
   [SerializeField]
   private Text _restartText;
   [SerializeField]
   private Image _LivesImg;
   [SerializeField]
   private Sprite[] _liveSprites;
+  //------------------------------
   void Start()
   {
     _gameManager=GameObject.Find("Game_Manager").GetComponent<GameManager>();
@@ -28,45 +28,60 @@ public class UIManager : MonoBehaviour
     }
     _scoreText.text= "Score: " + 0;
     _ammoText.text="Ammo: " + 0;
-    _gameOverText.gameObject.SetActive(false);
+    flashingText.gameObject.SetActive(false);
     _restartText.gameObject.SetActive(false);
   }
-
+//------------------------------
   public void UpdateScore(int playerScore)
   {
     _scoreText.text = "Score: " + playerScore;
   }
-
+//------------------------------
   public void UpdateAmmo(int playerAmmo)
   {
     _ammoText.text = "Ammo: " + playerAmmo;
   }
-
-  public void UpdateLives(int currentLives)
+//------------------------------
+  public void UpdateLives(int showRemainingLives)
   {
-    _LivesImg.sprite=_liveSprites[currentLives];
-    if (currentLives==0)
-    {
-      GameOverSequence();
-    }
+        _LivesImg.sprite=_liveSprites[showRemainingLives];
   }
-
-  void GameOverSequence()
+//------------------------------
+public void GetReady()
+{
+  StartCoroutine(showFlashingTextRoutine("GET READY!",2,2));
+  // StartCoroutine(waitForXseconds(2));
+}
+//------------------------------
+// IEnumerator waitForXseconds(float secs)
+// {
+//   Debug.Log("Wait for " + secs + " seconds");
+//   yield return new WaitForSeconds(secs);
+// }
+//------------------------------
+  public void GameOverSequence()
   {
-    _gameOverText.gameObject.SetActive(true);
     _restartText.gameObject.SetActive(true);
-    StartCoroutine(GameOverFlickerRoutine());
+    StartCoroutine(showFlashingTextRoutine("GAME OVER",-1,0));
     _gameManager.GameOver();
   }
-
-  IEnumerator GameOverFlickerRoutine()
+//------------------------------
+  IEnumerator showFlashingTextRoutine(string txt, int howMany, int delayFirst)
   {
-    while(true)
+    flashingText.gameObject.SetActive(true);
+    flashingText.text="";
+    yield return new WaitForSeconds(delayFirst);
+
+    while(howMany!=0)
     {
-      _gameOverText.text = "GAME OVER";
+      flashingText.text = txt;
       yield return new WaitForSeconds(0.5f);
-      _gameOverText.text="";
+      flashingText.text="";
       yield return new WaitForSeconds(0.5f);
+      if (howMany>0)
+      {
+        howMany=howMany-1;
+      }
     }
   }
 }

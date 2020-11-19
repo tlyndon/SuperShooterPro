@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//------------------------------
 public class Player : MonoBehaviour
 {
   private bool _isSpeedBoostActive=false;
@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
 
   [SerializeField]
   private GameObject _laserPrefab;
+
+  [SerializeField]
+  private GameObject _explosionPrefab;
 
   [SerializeField]
   private GameObject _tripleShotPrefab;
@@ -35,13 +38,14 @@ public class Player : MonoBehaviour
   [SerializeField]
   private UIManager _uiManager;
   private int _score;
-  public int lives = 3;
+  public int lives = 4;
+  public int health = 3;
 
   [SerializeField]
   private GameObject _ammoPrefab;
   private float _fireRate = 0.15f;
   private float _canFire = -1f;
-  private int ammoCountDefault=15;
+  public int ammoCountDefault=15;
   public int ammoCount;
 
   [SerializeField]
@@ -51,8 +55,23 @@ public class Player : MonoBehaviour
   [SerializeField]
   private AudioClip _buzz;
 
+  private int level=1;
+
+  [SerializeField]
+  private GameObject healthGreen;
+  [SerializeField]
+  private GameObject healthYellow;
+  [SerializeField]
+  private GameObject healthRed;
+
+  private float _lowestYpos=-3.8f;
+  private float _playerStartingYposBelowScreen=-20f;
+//------------------------------
   void Start()
   {
+    health=3;
+    transform.position = new Vector3(0, _playerStartingYposBelowScreen, 0);
+
     _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
     if (_uiManager == null)
     { Debug.LogError("UI Manager is null."); }
@@ -75,8 +94,10 @@ public class Player : MonoBehaviour
     {
       Debug.Log("The _audioSource component in Player.cs = null");
     }
-  }
 
+    _uiManager.GetReady();
+  }
+//------------------------------
   void Update()
   {
     if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftShift))
@@ -103,16 +124,37 @@ public class Player : MonoBehaviour
         _audioSource.PlayOneShot(_buzz, 0.7F);
       }
     }
+    //move player up if he's below the screen at the start of a new life
+    movePlayerUpFromOffscreenAtStartOfNewLife();
   }
-
+//------------------------------
+void movePlayerUpFromOffscreenAtStartOfNewLife()
+{
+  int comeUpToPositionY=-3;
+  if (transform.position.x==0 && transform.position.y<comeUpToPositionY)
+  {
+    float deltaY=comeUpToPositionY-transform.position.y;
+    if (deltaY<.01)
+    {
+      transform.position = new Vector3(0,comeUpToPositionY,0);
+    }
+    else
+    {
+      if (deltaY<0.20f) {deltaY=0.20f;}
+      Vector3 direction = new Vector3(0,deltaY,0);
+      transform.Translate(direction * Time.deltaTime);
+    }
+  }
+}
+//------------------------------
   IEnumerator showShieldStrengthVisually()
   {
     _shieldAlpha = 0.4f + ((_shieldStrength/_shieldStrengthDefault)*0.6f);
     Debug.Log("_shieldAlpha:" + _shieldAlpha);
     _shieldSpriteRenderer.color = new Color(1f,1f,1f,_shieldAlpha);
-    yield return new WaitForSeconds(4f);
+    yield return new WaitForSeconds(5.0f);
   }
-
+//------------------------------
   void FireLaser()
   {
     _canFire = Time.time + _fireRate;
@@ -128,31 +170,31 @@ public class Player : MonoBehaviour
     Debug.Log("Play Laser Sound");
     _audioSource.PlayOneShot(_lasershot, 0.7F);
   }
-
+//------------------------------
   public void TripleShotActive()
   {
     _isTripleShotActive=true;
     StartCoroutine(TripleShotPowerDownRoutine());
   }
-
+//------------------------------
   IEnumerator TripleShotPowerDownRoutine()
   {
     yield return new WaitForSeconds(5.0f);
     _isTripleShotActive=false;
   }
-
+//------------------------------
   public void SpeedBoostActive()
   {
     _isSpeedBoostActive=true; _speed *= _speedMultiplier;
     StartCoroutine(SpeedBoostPowerDownRoutine());
   }
-
+//------------------------------
   IEnumerator SpeedBoostPowerDownRoutine()
   {
     yield return new WaitForSeconds(5.0f);
     _isSpeedBoostActive=false; _speed /= _speedMultiplier;
   }
-
+//------------------------------
   public void Damage()
   {
     if (_isShieldsActive == true)
@@ -173,28 +215,56 @@ public class Player : MonoBehaviour
     }
 
     else
-    lives = lives-1;  //lives--
+    Debug.Log("healthGreen about to be changed");
+    health = health-1;
 
-    if (lives==2)
+    if (health==2)
     {
-      _leftEngine.SetActive(true);
+      Debug.Log("healthGreen about to be changed");
+      healthGreen.gameObject.SetActive(false);
+      healthYellow.gameObject.SetActive(true);
+      _leftEngine.gameObject.SetActive(true);
     }
-    else if (lives==1)
+    else if (health==1)
     {
+      Debug.Log("healthYellow about to be changed");
+      healthYellow.SetActive(false);
+      healthRed.gameObject.SetActive(true);
       _rightEngine.SetActive(true);
     }
 
-    _uiManager.UpdateLives(lives);
-
-    if (lives < 1)
+    if (health < 1)
     {
-      _spawnManager.OnPlayerDeath();
-      Destroy(this.gameObject);
-      Debug.Log("Game Over");
+      healthRed.SetActive(false);
+      Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+
+      //are we out of more lives?
+      if (lives == 0)
+      {
+        //yes, we are out of more lives, so it's time to die
+        _spawnManager.OnPlayerLossOfHealth();
+        Destroy(this.gameObject);
+        Debug.Log("Game Over");
+        _uiManager.GameOverSequence();
+      }
+      else
+      {
+        lives = lives-1;
+        _uiManager.UpdateLives(lives);
+        //still have another life, so...
+        RestoreHealth();
+        SetAmmoToDefaultValue();
+        //put player below the screen, so he'll come back
+        transform.position = new Vector3(0, _playerStartingYposBelowScreen, 0);
+        _uiManager.GetReady();
+      }
+
     }
   }
-
-  void CalculateMovement()
+//------------------------------
+void CalculateMovement()
+{
+  if (transform.position.x!=0 || transform.position.y >= _lowestYpos)
   {
     float horizontalInput = Input.GetAxis("Horizontal");
     float verticalInput = Input.GetAxis("Vertical");
@@ -211,7 +281,12 @@ public class Player : MonoBehaviour
     {
       transform.Translate(direction * _speed * Time.deltaTime);
     }
-    transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y,-3.8f,0),0);
+
+    // only clamp the minimum y position after the player has moved the x position
+    // if (transform.position.x!=0)
+    // {
+      transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y,_lowestYpos,7),0);
+    // }
 
     if (transform.position.x > 11f)
     {
@@ -222,7 +297,8 @@ public class Player : MonoBehaviour
       transform.position = new Vector3(11f, transform.position.y, 0);
     }
   }
-
+}
+//------------------------------
   public void ShieldsActive()
   {
     _isShieldsActive=true;
@@ -230,25 +306,27 @@ public class Player : MonoBehaviour
     _shieldVisualizer.SetActive(true);
     StartCoroutine(showShieldStrengthVisually());
   }
-
+//------------------------------
   public void AddToScore(int points)
   {
     _score = _score + points;
     _uiManager.UpdateScore(_score);
   }
-
+//------------------------------
   public void SetAmmoToDefaultValue()
   {
     Debug.Log("Reset ammoCount to default");
     ammoCount=ammoCountDefault;
     _uiManager.UpdateAmmo(ammoCount);
   }
-
+//------------------------------
   public void RestoreHealth()
   {
     _leftEngine.SetActive(false);
     _rightEngine.SetActive(false);
-    lives=3;
-    _uiManager.UpdateLives(lives);
+    health=3;
+    healthGreen.gameObject.SetActive(true);
+    healthYellow.gameObject.SetActive(false);
+    healthRed.gameObject.SetActive(false);
   }
 }
