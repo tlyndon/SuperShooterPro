@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
 
   private float timeLastMissileShot=0;
   private float _lowestYpos=-3.8f;
-  private float _playerStartingYposBelowScreen=-20f;
+  private float _playerStartingYposBelowScreen=-10f;
   //------------------------------
   void Start()
   {
@@ -115,35 +115,35 @@ public class Player : MonoBehaviour
     }
 
     CalculateMovement();
-
+    managePlayerFiring();
+    movePlayerUpFromOffscreenAtStartOfNewLife();
+  }
+  //------------------------------
+  void managePlayerFiring()
+  {
     if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
     {
       if (ammoCount>0)
       {
-        FireLaser(); ammoCount=ammoCount-1;
-        _uiManager.UpdateAmmo(ammoCount);
+        if (Time.time>timeLastMissileShot+5)
+        {
+          timeLastMissileShot=Time.time;
+          FireMissiles();
+          ammoCount=ammoCount-1;
+          _uiManager.UpdateAmmo(ammoCount);
+        }
+        else
+        {
+          FireLaser();
+          ammoCount=ammoCount-1;
+          _uiManager.UpdateAmmo(ammoCount);
+        }
       }
       else
       {
         if (myAudioManager.SoundStatus()==true) { audioSource.PlayOneShot(_buzz, 0.7F); }
       }
     }
-
-    if (Input.GetKeyDown(KeyCode.M) && Time.time > _canFireMissiles)
-    {
-      // Debug.Log("Pressed M Key");
-      if (Time.time>timeLastMissileShot+5)
-      {
-        timeLastMissileShot=Time.time;
-        FireMissiles();
-      }
-      else
-      {
-        if (myAudioManager.SoundStatus()==true) { audioSource.PlayOneShot(_buzz, 0.7F); }
-      }
-    }
-    //move player up if he's below the screen at the start of a new life
-    movePlayerUpFromOffscreenAtStartOfNewLife();
   }
   //------------------------------
   void movePlayerUpFromOffscreenAtStartOfNewLife()
