@@ -15,23 +15,49 @@ public class SpawnManager : MonoBehaviour
   private bool _stopSpawning = false;
   [SerializeField]
   private Player _player;
+  private int updateCounter=0;
 //------------------------------
   void Start()
   {
     StartCoroutine(SpawnEnemyRoutine());
     StartCoroutine(SpawnPowerupRoutine());
   }
+  void Update()
+  {
+    SpawnEnemyIfNoneRemaining();
+  }
+//------------------------------
+void SpawnEnemyIfNoneRemaining()
+{
+  updateCounter=updateCounter+1;
+  if (updateCounter>60)  //once per second (curious, how to change to be time-based)
+  {
+    //Debug.Log("Update in Spawn Manager");
+    updateCounter=0;
+    GameObject[] gameObjects;
+    gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
+    if (gameObjects.Length == 0)
+    {
+      Debug.Log("No game objects are tagged with 'Enemy', so we will spawn a new one");
+      smallNewEnemy();
+    }
+  }
+}
 //------------------------------
   IEnumerator SpawnEnemyRoutine()
   {
     yield return new WaitForSeconds(3.0f);
     while (_stopSpawning == false)
     {
-      Vector3 posToSpawn = new Vector3(Random.Range(1, 18)-8, 7, 0);
-      GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
-      newEnemy.transform.parent = _enemyContainer.transform;
+      smallNewEnemy();
       yield return new WaitForSeconds(5.0f);
     }
+  }
+  void smallNewEnemy()
+  {
+    Vector3 posToSpawn = new Vector3(Random.Range(1, 18)-8, 7, 0);
+    GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
+    newEnemy.transform.parent = _enemyContainer.transform;
   }
 //------------------------------
   IEnumerator SpawnPowerupRoutine()

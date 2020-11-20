@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 170629747}
+  - component: {fileID: 170629748}
   m_Layer: 0
   m_Name: Audio_Manager
   m_TagString: Untagged
@@ -154,6 +155,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &170629748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170629746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f190cacf3b6046d1b94f8d1b5c35391, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1150,7 +1163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5392df340132c45b2a80062a84c98e4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefab: {fileID: 1303193639507791807, guid: f44289cf4418d43e0b8805a7f62d18bf, type: 3}
+  _enemyPrefab: {fileID: 5469152454992341159, guid: f44289cf4418d43e0b8805a7f62d18bf, type: 3}
   _tripleShotPowerupPrefab: {fileID: 7508082344847118576, guid: 8bbd961cd34ca4ff8b3e0e6625f25084, type: 3}
   _enemyContainer: {fileID: 943287614}
   _powerups:
@@ -1529,9 +1542,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 803a22e0463024271a22882817436f40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myAudioManager: {fileID: 170629748}
+  audioSource: {fileID: 1651803214}
+  _lasershot: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _buzz: {fileID: 8300000, guid: 2c91afafe81e441dfa73b904e2bd3714, type: 3}
   _laserPrefab: {fileID: 3288506835993823482, guid: 30f48bddb2ae040378e8eecb78a74fcc, type: 3}
-  _explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422, type: 3}
   _tripleShotPrefab: {fileID: 1240037728567323397, guid: bb7947d9bca4542b99f208905c6dab3a, type: 3}
+  _missilesPrefab: {fileID: 3337225305887181998, guid: cb18d0f7340f04600a6ef37edabbd42a, type: 3}
+  _explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422, type: 3}
   _spawnManager: {fileID: 1389233777}
   _shieldVisualizer: {fileID: 714478275}
   _leftEngine: {fileID: 2080312663}
@@ -1540,10 +1558,8 @@ MonoBehaviour:
   lives: 3
   health: 3
   _ammoPrefab: {fileID: 1005272603595453038, guid: e33bbc71615f64a14b2d0f2b941570ba, type: 3}
+  ammoCountDefault: 15
   ammoCount: 15
-  _audioSource: {fileID: 0}
-  _lasershot: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
-  _buzz: {fileID: 8300000, guid: 2c91afafe81e441dfa73b904e2bd3714, type: 3}
   healthGreen: {fileID: 2014180433}
   healthYellow: {fileID: 1081919889}
   healthRed: {fileID: 1150451886}

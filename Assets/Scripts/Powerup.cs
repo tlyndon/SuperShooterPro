@@ -6,7 +6,7 @@ public class Powerup : MonoBehaviour
 {
   [SerializeField]
   private float _speed = 3.0f;
-  //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo
+  //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health
   [SerializeField]
   private int powerupID;
   [SerializeField]
@@ -31,8 +31,6 @@ public class Powerup : MonoBehaviour
   {
     if (other.tag == "Player")
     {
-      //AudioSource.PlayClipAtPoint(_clip, transform.position);
-
       Debug.Log("Picked Up Powerup'" + other.tag);
       Destroy(this.gameObject);
 
