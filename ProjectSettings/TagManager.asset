@@ -4,9 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Shields
   - Enemy
   - Laser
-  - Shields
+  - PowerUp
   - Asteroid
   layers:
   - Default
@@ -46,8 +47,8 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: Background
-    uniqueID: 2690903215
+    uniqueID: 552578011
     locked: 0
   - name: Foreground
-    uniqueID: 598764847
+    uniqueID: 1199337851
     locked: 0

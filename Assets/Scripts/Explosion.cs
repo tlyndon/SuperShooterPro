@@ -1,21 +1,15 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Explosion : MonoBehaviour
 {
     [SerializeField]
-    private AudioSource _explosionSound;
-
+    private AudioClip explosionSound;
+    //--------------------------------------------------------------
     void Start()
     {
-        
+        if (AudioManager.soundOn == true) { GetComponent<AudioSource>().PlayOneShot(explosionSound, 0.7F); }
         Destroy(this.gameObject, 3f);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

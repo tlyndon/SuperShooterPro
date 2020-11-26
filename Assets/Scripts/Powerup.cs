@@ -4,63 +4,83 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-  [SerializeField]
-  private float _speed = 3.0f;
-  //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health
-  [SerializeField]
-  private int powerupID;
-  [SerializeField]
-  private AudioClip _clip;
+    private AudioSource audioSource;
 
-  void Start()
-  {
+    [SerializeField]
+    private int powerupID;    //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health
 
-  }
+    [SerializeField]
+    private AudioClip powerUpClip;
 
-  void Update()
-  {
-    transform.Translate(Vector3.down * _speed * Time.deltaTime);
+    private SpriteRenderer powerUpRenderer;
 
-    if (transform.position.y < -4.5f)
+    private float speed = 3.0f;
+    private bool isAlive = true;
+    //--------------------------------------------------------------
+    void Start()
     {
-      Destroy(this.gameObject);
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) { Debug.LogError("The audioSource component in Powerup.cs = null"); }
+
+        powerUpRenderer = this.GetComponent<SpriteRenderer>();
+        if (powerUpRenderer == null) { Debug.Log("The powerUpRenderer component in Powerup.cs = null"); }
     }
-  }
-
-  private void OnTriggerEnter2D(Collider2D other)
-  {
-    if (other.tag == "Player")
+    //--------------------------------------------------------------
+    void Update()
     {
-      Debug.Log("Picked Up Powerup'" + other.tag);
-      Destroy(this.gameObject);
-
-      Player player = other.transform.GetComponent<Player>();
-      if (player != null)
-      {
-        switch(powerupID)
+        if (isAlive)
         {
-          case 0:
-          Debug.Log("Got Triple Shot!");
-          player.TripleShotActive();
-          break;
-          case 1:
-          Debug.Log("Got Speed!");
-          player.SpeedBoostActive();
-          break;
-          case 2:
-          Debug.Log("Got Sheilds!");
-          player.ShieldsActive();
-          break;
-          case 3:
-          Debug.Log("Got Ammo!");
-          player.SetAmmoToDefaultValue();
-          break;
-          case 4:
-          Debug.Log("Got Health!");
-          player.RestoreHealth();
-          break;
+            transform.Translate(Vector3.down * speed * Time.deltaTime);
+            if (transform.position.y < -4.5f) { Destroy(this.gameObject, 2f); }
         }
-      }
     }
-  }
+    //--------------------------------------------------------------
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isAlive)
+        {
+            if (other.tag == "Player")
+            {
+                Debug.Log("Picked Up Powerup " + other.tag);
+                Destroy(this.gameObject, 2f);
+                powerUpRenderer.color = Color.clear;
+
+                Debug.Log("powerupID:" + powerupID);
+                Player player = other.transform.GetComponent<Player>();
+                if (player == null)
+                {
+                    Debug.LogError("player = null in Powerup.cs");
+                }
+                else           
+                {
+                    if (AudioManager.soundOn == true) { audioSource.PlayOneShot(powerUpClip, 0.7F); }
+                    isAlive = false;
+
+                    switch (powerupID)
+                    {
+                        case 0:
+                            Debug.Log("Got Triple Shot PowerUp!");
+                            player.TripleShotActive();
+                            break;
+                        case 1:
+                            Debug.Log("Got Speed PowerUp!");
+                            player.SpeedBoostActive();
+                            break;
+                        case 2:
+                            Debug.Log("Got Sheilds PowerUp!");
+                            player.ShieldsActive();
+                            break;
+                        case 3:
+                            Debug.Log("Got Ammo PowerUp!");
+                            player.SetAmmoToDefaultValue();
+                            break;
+                        case 4:
+                            Debug.Log("Got Health PowerUp!");
+                            player.RestoreHealth();
+                            break;
+                    }
+                }
+            }
+        }
+    }
 }

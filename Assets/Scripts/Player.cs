@@ -1,362 +1,378 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//------------------------------
+
 public class Player : MonoBehaviour
 {
-  [SerializeField]
-  private AudioManager myAudioManager;
-  [SerializeField]
-  private AudioSource audioSource;
-  [SerializeField]
-  private AudioClip _lasershot;
-  [SerializeField]
-  private AudioClip _buzz;
+    private AudioSource audioSource;
 
-  private bool _isSpeedBoostActive=false;
-  private float _speed = 3.5f;
-  private float _speedMultiplier = 2.0f;
-  private float _leftShiftKeySpeedMultiplier = 1.5f;
-  private bool _isLeftShiftKeySpeedBoostActive=false;
+    [SerializeField]
+    private AudioClip snd_lasershot;                      //snd_xxxx throughout code should indicate sound
+    [SerializeField]
+    private AudioClip snd_buzz;
 
-  [SerializeField]
-  private GameObject _laserPrefab;
-  private float _fireRate = 0.15f;
-  private float _canFire = -1f;
+    private bool isSpeedBoostActive = false;
+    private float speed = 3.5f;
+    private float speedMultiplier = 2.0f;
+    private float leftShiftKeySpeedMultiplier = 1.5f;
+    private bool isLeftShiftKeySpeedBoostActive = false;
 
-  [SerializeField]
-  private GameObject _tripleShotPrefab;
-  private bool _isTripleShotActive=false;
+    [SerializeField]
+    private GameObject laserPrefab;
+    private float fireRate = 0.15f;
+    private float canFire = -1f;
 
-  [SerializeField]
-  private GameObject _missilesPrefab;
-  private bool _areMissilesActive = true;
-  private float _canFireMissiles = 1f;
-  private float _fireRateOfMissiles = 0.15f;
+    [SerializeField]
+    private GameObject tripleShotPrefab;
+    private bool isTripleShotActive = false;
 
-  [SerializeField]
-  private GameObject _explosionPrefab;
+    [SerializeField]
+    private GameObject missilesPrefab;
+    private bool areMissilesActive = true;
+    private float canFireMissiles = 1f;
+    private float fireRateOfMissiles = 0.15f;
 
-  [SerializeField]
-  private SpawnManager _spawnManager;
-  [SerializeField]
-  private GameObject _shieldVisualizer;
-  private SpriteRenderer _shieldSpriteRenderer;
-  private float _shieldAlpha=1f;
-  private bool _isShieldsActive=false;
-  private float _shieldStrengthDefault=3f;
-  private float _shieldStrength;
+    [SerializeField]
+    private GameObject explosionPrefab;
 
-  [SerializeField]
-  private GameObject _leftEngine;
-  [SerializeField]
-  private GameObject _rightEngine;
+    [SerializeField]
+    private SpawnManager spawnManager;
+    [SerializeField]
+    public GameObject shieldVisualizer;
+    public SpriteRenderer shieldSpriteRenderer;
+    public float shieldAlpha = 1f;
+    public bool isShieldsActive = false;
+    public float shieldStrengthDefault = 3f;
+    public float shieldStrength;
 
-  [SerializeField]
-  private UIManager _uiManager;
-  private int _score;
-  public int lives = 4;
-  public int health = 3;
+    [SerializeField]
+    private GameObject leftEngine;
+    [SerializeField]
+    private GameObject rightEngine;
 
-  [SerializeField]
-  private GameObject _ammoPrefab;
-  public int ammoCountDefault=15;
-  public int ammoCount;
+    [SerializeField]
+    private UIManager uiManager;
 
-  private int level=1;
+    public int score;
+    public int lives = 4;
+    public int health = 3;
 
-  [SerializeField]
-  private GameObject healthGreen;
-  [SerializeField]
-  private GameObject healthYellow;
-  [SerializeField]
-  private GameObject healthRed;
+    [SerializeField]
+    private GameObject ammoPrefab;
+    public int ammoCountDefault = 15;
+    public int ammoCount;
 
-  private float timeLastMissileShot=0;
-  private float _lowestYpos=-3.8f;
-  private float _playerStartingYposBelowScreen=-10f;
-  //------------------------------
-  void Start()
-  {
-    if (myAudioManager == null) { Debug.LogError("myAudioManager is null."); }
-    // audioSource = GetComponent<AudioSource>();
-    if (audioSource==null) { Debug.Log("The audioSource component in Player.cs = null"); }
+    [SerializeField]
+    private GameObject healthGreen;
+    [SerializeField]
+    private GameObject healthYellow;
+    [SerializeField]
+    private GameObject healthRed;
 
-    health=3;
-    transform.position = new Vector3(0, _playerStartingYposBelowScreen, 0);
+    private float timeLastMissileShot = 0;
+    private float lowestYpos = -3.8f;
+    private float playerStartingYposBelowScreen = -10f;
+    //--------------------------------------------------------------
+    void Start()
+    {      
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) { Debug.LogError("audioSource in AudioManager.cs = null."); }
 
-    _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-    if (_uiManager == null) { Debug.LogError("UI Manager is null."); }
+        health = 3;
+        transform.position = new Vector3(0, playerStartingYposBelowScreen, 0);
 
-    ammoCount=ammoCountDefault;
-    _uiManager.UpdateAmmo(ammoCount);
+        uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (uiManager == null) { Debug.LogError("UI Manager is null."); }
 
-    _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-    if (_spawnManager == null) { Debug.LogError("The Spawn manager is null."); }
+        ammoCount = ammoCountDefault;
+        uiManager.UpdateAmmo(ammoCount);
 
-    _shieldSpriteRenderer = _shieldVisualizer.GetComponent<SpriteRenderer>();
-    if (_shieldSpriteRenderer==null) { Debug.Log("The Shield Sprite Renderer component in Player.cs = null"); }
+        spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        if (spawnManager == null) { Debug.LogError("The Spawn manager is null."); }
 
-    _shieldStrength=_shieldStrengthDefault;
-    _shieldVisualizer.SetActive(false);
+        shieldSpriteRenderer = shieldVisualizer.GetComponent<SpriteRenderer>();
+        if (shieldSpriteRenderer == null) { Debug.Log("The Shield Sprite Renderer component in Player.cs = null"); }
 
-    _uiManager.GetReady();
-  }
-  //------------------------------
-  void Update()
-  {
-    if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftShift))
-    {
-      _isLeftShiftKeySpeedBoostActive=true;
+        shieldStrength = shieldStrengthDefault;
+        shieldVisualizer.SetActive(false);
+
+        uiManager.GetReady();
     }
-    else if (Input.GetKeyUp(KeyCode.LeftShift))
+    //--------------------------------------------------------------
+    void Update()
     {
-      _isLeftShiftKeySpeedBoostActive=false;
-    }
-
-    CalculateMovement();
-    managePlayerFiring();
-    movePlayerUpFromOffscreenAtStartOfNewLife();
-  }
-  //------------------------------
-  void managePlayerFiring()
-  {
-    if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
-    {
-      if (ammoCount>0)
-      {
-        if (Time.time>timeLastMissileShot+5)
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftShift))
         {
-          timeLastMissileShot=Time.time;
-          FireMissiles();
-          ammoCount=ammoCount-1;
-          _uiManager.UpdateAmmo(ammoCount);
+            isLeftShiftKeySpeedBoostActive = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isLeftShiftKeySpeedBoostActive = false;
+        }
+
+        movePlayerUpFromOffscreenAtStartOfNewLife();
+        CalculateMovement();
+        managePlayerFiring();
+    }
+    //--------------------------------------------------------------
+    void managePlayerFiring()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > canFire)
+        {
+            if (ammoCount > 0)
+            {
+                if (Time.time > timeLastMissileShot + 5)
+                {
+                    timeLastMissileShot = Time.time;
+                    FireMissiles();
+                    ammoCount = ammoCount - 1;
+                    uiManager.UpdateAmmo(ammoCount);
+                }
+                else
+                {
+                    FireLaser();
+                    ammoCount = ammoCount - 1;
+                    uiManager.UpdateAmmo(ammoCount);
+                }
+            }
+            else
+            {
+                if (AudioManager.soundOn == true) { audioSource.PlayOneShot(snd_buzz, 0.7F); }
+            }
+        }
+    }
+    //--------------------------------------------------------------
+    void movePlayerUpFromOffscreenAtStartOfNewLife()
+    {
+        int comeUpToPositionY = -3;
+        if (transform.position.y < comeUpToPositionY)
+        {
+            float deltaY = comeUpToPositionY - transform.position.y;
+            if (deltaY < .01) { transform.position = new Vector3(0, comeUpToPositionY, 0); }
+            else
+            {
+                if (deltaY < 0.20f) { deltaY = 0.20f; }
+
+                Vector3 direction = new Vector3(0, deltaY, 0);
+                transform.Translate(direction * Time.deltaTime);
+            }
+        }
+    }
+    //--------------------------------------------------------------
+    IEnumerator showShieldStrengthVisually()
+    {
+        shieldAlpha = 0.4f + ((shieldStrength / shieldStrengthDefault) * 0.6f);
+        shieldSpriteRenderer.color = new Color(1f, 1f, 1f, shieldAlpha);
+        yield return new WaitForSeconds(5.0f);
+    }
+    //--------------------------------------------------------------
+    void FireLaser()
+    {
+        canFire = Time.time + fireRate;
+        if (isTripleShotActive == true)
+        {
+            Instantiate(tripleShotPrefab, transform.position + new Vector3(4.7f, 0, 0), Quaternion.identity);
         }
         else
         {
-          FireLaser();
-          ammoCount=ammoCount-1;
-          _uiManager.UpdateAmmo(ammoCount);
+            Instantiate(laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
-      }
-      else
-      {
-        if (myAudioManager.SoundStatus()==true) { audioSource.PlayOneShot(_buzz, 0.7F); }
-      }
-    }
-  }
-  //------------------------------
-  void movePlayerUpFromOffscreenAtStartOfNewLife()
-  {
-    int comeUpToPositionY=-3;
-    if (transform.position.x==0 && transform.position.y<comeUpToPositionY)
-    {
-      float deltaY=comeUpToPositionY-transform.position.y;
-      if (deltaY<.01)
-      {
-        transform.position = new Vector3(0,comeUpToPositionY,0);
-      }
-      else
-      {
-        if (deltaY<0.20f) {deltaY=0.20f;}
-        Vector3 direction = new Vector3(0,deltaY,0);
-        transform.Translate(direction * Time.deltaTime);
-      }
-    }
-  }
-  //------------------------------
-  IEnumerator showShieldStrengthVisually()
-  {
-    _shieldAlpha = 0.4f + ((_shieldStrength/_shieldStrengthDefault)*0.6f);
-    Debug.Log("_shieldAlpha:" + _shieldAlpha);
-    _shieldSpriteRenderer.color = new Color(1f,1f,1f,_shieldAlpha);
-    yield return new WaitForSeconds(5.0f);
-  }
-  //------------------------------
-  void FireLaser()
-  {
-    _canFire = Time.time + _fireRate;
-    if (_isTripleShotActive == true)
-    {
-      Instantiate(_tripleShotPrefab, transform.position + new Vector3(4.7f,0,0), Quaternion.identity);
-    }
-    else
-    {
-      Instantiate(_laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
-    }
 
-    if (myAudioManager.SoundStatus()==true) { audioSource.PlayOneShot(_lasershot, 0.7F); }
-  }
-  //------------------------------
-  void FireMissiles()
-  {
-    _canFireMissiles = Time.time + _fireRateOfMissiles;
-    if (_areMissilesActive == true)
-    {
-      Instantiate(_missilesPrefab, transform.position + new Vector3(0,2f,0), Quaternion.identity);
+        if (AudioManager.soundOn == true) { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
     }
-
-    if (myAudioManager.SoundStatus()==true) { audioSource.PlayOneShot(_lasershot, 0.7F); }
-
-  }
-  //------------------------------
-  public void TripleShotActive()
-  {
-    _isTripleShotActive=true;
-    StartCoroutine(TripleShotPowerDownRoutine());
-  }
-  //------------------------------
-  IEnumerator TripleShotPowerDownRoutine()
-  {
-    yield return new WaitForSeconds(5.0f);
-    _isTripleShotActive=false;
-  }
-  //------------------------------
-  public void SpeedBoostActive()
-  {
-    _isSpeedBoostActive=true; _speed *= _speedMultiplier;
-    StartCoroutine(SpeedBoostPowerDownRoutine());
-  }
-  //------------------------------
-  IEnumerator SpeedBoostPowerDownRoutine()
-  {
-    yield return new WaitForSeconds(5.0f);
-    _isSpeedBoostActive=false; _speed /= _speedMultiplier;
-  }
-  //------------------------------
-  public void Damage()
-  {
-    if (_isShieldsActive == true)
+    //--------------------------------------------------------------
+    void FireMissiles()
     {
-      Debug.Log("Shields Protected me!");
-      _shieldStrength=_shieldStrength-1;
+        canFireMissiles = Time.time + fireRateOfMissiles;
+        if (areMissilesActive == true)
+        {
+            Instantiate(missilesPrefab, transform.position + new Vector3(0, 2f, 0), Quaternion.identity);
+        }
 
-      if (_shieldStrength<0)
-      {
-        _isShieldsActive=false;
-        _shieldVisualizer.SetActive(false);
-        return;
-      }
-      else
-      {
+        if (AudioManager.soundOn == true) { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
+
+    }
+    //--------------------------------------------------------------
+    public void TripleShotActive()
+    {
+        isTripleShotActive = true;
+        StartCoroutine(TripleShotPowerDownRoutine());
+    }
+    //--------------------------------------------------------------
+    IEnumerator TripleShotPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        isTripleShotActive = false;
+    }
+    //--------------------------------------------------------------
+    public void SpeedBoostActive()
+    {
+        isSpeedBoostActive = true; speed *= speedMultiplier;
+        StartCoroutine(SpeedBoostPowerDownRoutine());
+    }
+    //--------------------------------------------------------------
+    IEnumerator SpeedBoostPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        isSpeedBoostActive = false; speed /= speedMultiplier;
+    }
+    //--------------------------------------------------------------
+    public void Damage()
+    {
+        if (isShieldsActive == true)
+        {
+            Debug.Log("Shields Protected me!");
+            shieldStrength = shieldStrength - 1;
+
+            if (shieldStrength < 0)
+            {
+                isShieldsActive = false;
+                shieldVisualizer.SetActive(false);
+                return;
+            }
+            else
+            {
+                StartCoroutine(showShieldStrengthVisually());
+            }
+        }
+
+        else
+            health = health - 1;
+
+        if (health == 2)
+        {
+            //Debug.Log("healthGreen about to be changed to Yellow");
+            healthGreen.gameObject.SetActive(false);
+            healthYellow.gameObject.SetActive(true);
+            leftEngine.gameObject.SetActive(true);
+        }
+        else if (health == 1)
+        {
+            //Debug.Log("healthYellow about to be changed to Red");
+            healthYellow.SetActive(false);
+            healthRed.gameObject.SetActive(true);
+            rightEngine.SetActive(true);
+        }
+
+        if (health < 1)
+        {
+            healthRed.gameObject.SetActive(false);
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+
+            if (lives == 0)
+            {
+                //yes, we are out of more lives, so it's time to die
+                spawnManager.OnPlayerLossOfHealth();
+                Destroy(this.gameObject);
+                Debug.Log("Game Over");
+                uiManager.GameOverSequence();
+
+            }
+            else
+            {
+                lives = lives - 1;
+                uiManager.UpdateLives(lives);
+                
+                //put player below the screen, so he'll come back
+                transform.position = new Vector3(0, playerStartingYposBelowScreen, 0);
+                uiManager.GetReady();
+
+                //still have another life, so...
+                RestoreHealth();
+                SetAmmoToDefaultValue();
+            }
+
+        }
+    }
+    //--------------------------------------------------------------
+    void CalculateMovement()
+    {
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+
+        if (verticalInput != 0 || horizontalInput != 0)
+        {
+            uiManager.UseThrusters();
+            {
+
+                    Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
+                    if (isSpeedBoostActive == true) { transform.Translate(direction * (speed * speedMultiplier) * Time.deltaTime); }
+                    else if (isLeftShiftKeySpeedBoostActive == true) { transform.Translate(direction * (speed * leftShiftKeySpeedMultiplier) * Time.deltaTime); }
+                    else { transform.Translate(direction * speed * Time.deltaTime); }
+
+                    if (verticalInput > 0 && transform.position.y > 7)
+                    {
+                    transform.position = new Vector3(transform.position.x, 7, 0);
+                    }
+                    else if (transform.position.x != 0 && verticalInput < 0 && transform.position.y < lowestYpos)
+                    {
+                        transform.position = new Vector3(transform.position.x, lowestYpos, 0);
+                    }
+
+                    if (transform.position.x > 11f) { transform.position = new Vector3(-11f, transform.position.y, 0); }
+                    else if (transform.position.x < -11f) { transform.position = new Vector3(11f, transform.position.y, 0); }
+            }
+        }
+    }
+    //--------------------------------------------------------------
+    public void ShieldsActive()
+    {
+        isShieldsActive = true;
+        shieldStrength = shieldStrengthDefault;
+        shieldVisualizer.SetActive(true);
         StartCoroutine(showShieldStrengthVisually());
-      }
     }
-
-    else
-    Debug.Log("healthGreen about to be changed");
-    health = health-1;
-
-    if (health==2)
+    //--------------------------------------------------------------
+    public void AddToScore(int points)
     {
-      Debug.Log("healthGreen about to be changed");
-      healthGreen.gameObject.SetActive(false);
-      healthYellow.gameObject.SetActive(true);
-      _leftEngine.gameObject.SetActive(true);
+        score = score + points;
+        uiManager.UpdateScore(score);
     }
-    else if (health==1)
+    //--------------------------------------------------------------
+    public void SetAmmoToDefaultValue()
     {
-      Debug.Log("healthYellow about to be changed");
-      healthYellow.SetActive(false);
-      healthRed.gameObject.SetActive(true);
-      _rightEngine.SetActive(true);
+        Debug.Log("Reset ammoCount to default");
+        ammoCount = ammoCountDefault;
+        uiManager.UpdateAmmo(ammoCount);
     }
-
-    if (health < 1)
+    //--------------------------------------------------------------
+    public void RestoreHealth()
     {
-      healthRed.SetActive(false);
-      Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
-
-      //are we out of more lives?
-      if (lives == 0)
-      {
-        //yes, we are out of more lives, so it's time to die
-        _spawnManager.OnPlayerLossOfHealth();
-        Destroy(this.gameObject);
-        Debug.Log("Game Over");
-        _uiManager.GameOverSequence();
-
-      }
-      else
-      {
-        lives = lives-1;
-        _uiManager.UpdateLives(lives);
-        //still have another life, so...
-        RestoreHealth();
-        SetAmmoToDefaultValue();
-        //put player below the screen, so he'll come back
-        transform.position = new Vector3(0, _playerStartingYposBelowScreen, 0);
-        _uiManager.GetReady();
-      }
-
+        leftEngine.gameObject.SetActive(false);
+        rightEngine.gameObject.SetActive(false);
+        uiManager.thrustersPct = 1.0f;
+        uiManager.updateThrustersMeter();
+        health = 3;
+        healthGreen.gameObject.SetActive(true);
+        healthYellow.gameObject.SetActive(false);
+        healthRed.gameObject.SetActive(false);
     }
-  }
-  //------------------------------
-  void CalculateMovement()
-  {
-    if (transform.position.x!=0 || transform.position.y >= _lowestYpos)
-    {
-      float horizontalInput = Input.GetAxis("Horizontal");
-      float verticalInput = Input.GetAxis("Vertical");
-      Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
-      if (_isSpeedBoostActive == true)
-      {
-        transform.Translate(direction * (_speed * _speedMultiplier) * Time.deltaTime);
-      }
-      else if (_isLeftShiftKeySpeedBoostActive == true)
-      {
-        transform.Translate(direction * (_speed * _leftShiftKeySpeedMultiplier) * Time.deltaTime);
-      }
-      else
-      {
-        transform.Translate(direction * _speed * Time.deltaTime);
-      }
-
-      // only clamp the minimum y position after the player has moved the x position
-      // if (transform.position.x!=0)
-      // {
-      transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y,_lowestYpos,7),0);
-      // }
-
-      if (transform.position.x > 11f)
-      {
-        transform.position = new Vector3(-11f, transform.position.y, 0);
-      }
-      else if (transform.position.x < -11f)
-      {
-        transform.position = new Vector3(11f, transform.position.y, 0);
-      }
-    }
-  }
-  //------------------------------
-  public void ShieldsActive()
-  {
-    _isShieldsActive=true;
-    _shieldStrength=_shieldStrengthDefault;
-    _shieldVisualizer.SetActive(true);
-    StartCoroutine(showShieldStrengthVisually());
-  }
-  //------------------------------
-  public void AddToScore(int points)
-  {
-    _score = _score + points;
-    _uiManager.UpdateScore(_score);
-  }
-  //------------------------------
-  public void SetAmmoToDefaultValue()
-  {
-    Debug.Log("Reset ammoCount to default");
-    ammoCount=ammoCountDefault;
-    _uiManager.UpdateAmmo(ammoCount);
-  }
-  //------------------------------
-  public void RestoreHealth()
-  {
-    _leftEngine.SetActive(false);
-    _rightEngine.SetActive(false);
-    health=3;
-    healthGreen.gameObject.SetActive(true);
-    healthYellow.gameObject.SetActive(false);
-    healthRed.gameObject.SetActive(false);
-  }
+    //--------------------------------------------------------------
+    // IEnumerator NewCameraShake2()
+    //     {
+    //         _isCameraShaking = true;
+    //         // get orig camera position
+    //         GameObject myCamera = GameObject.Find("Main Camera");
+    //         Debug.Log("myCamera=" + myCamera);
+    //         if (myCamera == null)
+    //         {
+    //             Debug.LogError("Player: myCamera = Null");
+    //         }
+    //     //    Vector3 origCameraPosition = myCamera.transform.position;
+    //         Vector3 origCameraPosition = new Vector3(0f, 0f, -10f);
+    //         while (true)
+    //         {
+    //             Debug.Log("In New Camera Shake loop");
+    //             // generate new camera position
+    //             Vector3 newCamPosition = new Vector3(1f, 1f, -10f);
+    //             // Set new camera position
+    //             Debug.Log("Set New Cam position");
+    //             myCamera.transform.position = newCamPosition;
+    //             // wait for .5 sec
+    //             yield return new WaitForSeconds(0.5f);
+    //             // Back to original position
+    //             Debug.Log("Back to orig position");
+    //             myCamera.transform.position = origCameraPosition;
+    //         }
+    //     }
 }

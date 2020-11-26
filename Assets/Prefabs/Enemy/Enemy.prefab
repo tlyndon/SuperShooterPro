@@ -48,11 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54b9c9c452e2b4621ab362242f67b607, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myAudioManager: {fileID: 0}
-  audioSource: {fileID: 6952237822700310391}
-  _speed: 2
-  _laserPrefab: {fileID: 2979544023188821017, guid: 40163c3a9f24f4df18ceda6898cac2fc, type: 3}
-  _fireRate: 3
+  speed: 4
+  fireRate: 3
+  laserPrefab: {fileID: 2979544023188821017, guid: 40163c3a9f24f4df18ceda6898cac2fc,
+    type: 3}
   isAlive: 1
 --- !u!212 &8563286735546643861
 SpriteRenderer:
@@ -69,7 +68,6 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -91,7 +89,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 598764847
+  m_SortingLayerID: 1199337851
   m_SortingLayer: 2
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 3154912113cbb4a498df6f571c74e18c, type: 3}
