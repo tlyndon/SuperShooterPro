@@ -72,9 +72,10 @@ public class Player : MonoBehaviour
     private float timeLastMissileShot = 0;
     private float lowestYpos = -3.8f;
     private float playerStartingYposBelowScreen = -10f;
+    public bool cameraShake = false;
     //--------------------------------------------------------------
     void Start()
-    {      
+    {
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null) { Debug.LogError("audioSource in AudioManager.cs = null."); }
 
@@ -219,6 +220,7 @@ public class Player : MonoBehaviour
     //--------------------------------------------------------------
     public void Damage()
     {
+        NewCameraShake1();
         if (isShieldsActive == true)
         {
             Debug.Log("Shields Protected me!");
@@ -241,14 +243,12 @@ public class Player : MonoBehaviour
 
         if (health == 2)
         {
-            //Debug.Log("healthGreen about to be changed to Yellow");
             healthGreen.gameObject.SetActive(false);
             healthYellow.gameObject.SetActive(true);
             leftEngine.gameObject.SetActive(true);
         }
         else if (health == 1)
         {
-            //Debug.Log("healthYellow about to be changed to Red");
             healthYellow.SetActive(false);
             healthRed.gameObject.SetActive(true);
             rightEngine.SetActive(true);
@@ -272,7 +272,7 @@ public class Player : MonoBehaviour
             {
                 lives = lives - 1;
                 uiManager.UpdateLives(lives);
-                
+
                 //put player below the screen, so he'll come back
                 transform.position = new Vector3(0, playerStartingYposBelowScreen, 0);
                 uiManager.GetReady();
@@ -295,22 +295,22 @@ public class Player : MonoBehaviour
             uiManager.UseThrusters();
             {
 
-                    Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
-                    if (isSpeedBoostActive == true) { transform.Translate(direction * (speed * speedMultiplier) * Time.deltaTime); }
-                    else if (isLeftShiftKeySpeedBoostActive == true) { transform.Translate(direction * (speed * leftShiftKeySpeedMultiplier) * Time.deltaTime); }
-                    else { transform.Translate(direction * speed * Time.deltaTime); }
+                Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
+                if (isSpeedBoostActive == true) { transform.Translate(direction * (speed * speedMultiplier) * Time.deltaTime); }
+                else if (isLeftShiftKeySpeedBoostActive == true) { transform.Translate(direction * (speed * leftShiftKeySpeedMultiplier) * Time.deltaTime); }
+                else { transform.Translate(direction * speed * Time.deltaTime); }
 
-                    if (verticalInput > 0 && transform.position.y > 7)
-                    {
+                if (verticalInput > 0 && transform.position.y > 7)
+                {
                     transform.position = new Vector3(transform.position.x, 7, 0);
-                    }
-                    else if (transform.position.x != 0 && verticalInput < 0 && transform.position.y < lowestYpos)
-                    {
-                        transform.position = new Vector3(transform.position.x, lowestYpos, 0);
-                    }
+                }
+                else if (transform.position.x != 0 && verticalInput < 0 && transform.position.y < lowestYpos)
+                {
+                    transform.position = new Vector3(transform.position.x, lowestYpos, 0);
+                }
 
-                    if (transform.position.x > 11f) { transform.position = new Vector3(-11f, transform.position.y, 0); }
-                    else if (transform.position.x < -11f) { transform.position = new Vector3(11f, transform.position.y, 0); }
+                if (transform.position.x > 11f) { transform.position = new Vector3(-11f, transform.position.y, 0); }
+                else if (transform.position.x < -11f) { transform.position = new Vector3(11f, transform.position.y, 0); }
             }
         }
     }
@@ -348,31 +348,76 @@ public class Player : MonoBehaviour
         healthRed.gameObject.SetActive(false);
     }
     //--------------------------------------------------------------
-    // IEnumerator NewCameraShake2()
-    //     {
-    //         _isCameraShaking = true;
-    //         // get orig camera position
-    //         GameObject myCamera = GameObject.Find("Main Camera");
-    //         Debug.Log("myCamera=" + myCamera);
-    //         if (myCamera == null)
-    //         {
-    //             Debug.LogError("Player: myCamera = Null");
-    //         }
-    //     //    Vector3 origCameraPosition = myCamera.transform.position;
-    //         Vector3 origCameraPosition = new Vector3(0f, 0f, -10f);
-    //         while (true)
-    //         {
-    //             Debug.Log("In New Camera Shake loop");
-    //             // generate new camera position
-    //             Vector3 newCamPosition = new Vector3(1f, 1f, -10f);
-    //             // Set new camera position
-    //             Debug.Log("Set New Cam position");
-    //             myCamera.transform.position = newCamPosition;
-    //             // wait for .5 sec
-    //             yield return new WaitForSeconds(0.5f);
-    //             // Back to original position
-    //             Debug.Log("Back to orig position");
-    //             myCamera.transform.position = origCameraPosition;
-    //         }
-    //     }
+    //public IEnumerator NewCameraShake2()
+    //{
+    //    //_isCameraShaking = true;
+    //    // get orig camera position
+    //    GameObject myCamera = GameObject.Find("Main Camera");
+    //    Debug.Log("myCamera=" + myCamera);
+    //    if (myCamera == null)
+    //    {
+    //        Debug.LogError("Player: myCamera = Null");
+    //    }
+    //    Vector3 origCameraPosition = myCamera.transform.position;
+    //    //Vector3 origCameraPosition = new Vector3(0f, 1f, -10f);
+    //    while (true)
+    //    {
+    //        Debug.Log("In New Camera Shake loop");
+    //        // generate new camera position
+    //        Vector3 newCamPosition = new Vector3(1f, 1f, -10f);
+    //        // Set new camera position
+    //        Debug.Log("Set New Cam position");
+    //        myCamera.transform.position = newCamPosition;
+    //        // wait for .5 sec
+    //        yield return new WaitForSeconds(0.5f);
+    //        // Back to original position
+    //        Debug.Log("Back to orig position");
+    //        myCamera.transform.position = origCameraPosition;
+    //    }
+    //}
+    //--------------------------------------------------------------
+    public void NewCameraShake1()
+    {
+        cameraShake = true;
+        StartCoroutine(NewCameraShake2());
+    }
+    //--------------------------------------------------------------
+    public IEnumerator NewCameraShake2()
+    {
+        GameObject myCamera = GameObject.Find("Main Camera");
+        //Debug.Log("myCamera=" + myCamera);
+        Debug.Log("myCamera=" + Time.deltaTime);
+        if (myCamera == null)
+        {
+            Debug.LogError("Player: myCamera = Null");
+            yield return new WaitForSeconds(0.1f);
+        }
+        else
+        {
+            //Vector3 origCameraPosition = myCamera.transform.position;
+            Debug.Log("About to Shake Camera:");
+
+            float rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
+            float rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * 0.2f);
+            Vector3 newCamPosition = new Vector3(rdmX, rdmY, -10f);
+            myCamera.transform.position = newCamPosition;
+            yield return new WaitForSeconds(0.15f);
+
+            rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
+            rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * 0.2f);
+            newCamPosition = new Vector3(rdmX, rdmY, -10f);
+            myCamera.transform.position = newCamPosition;
+            yield return new WaitForSeconds(0.15f);
+
+            rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
+            rdmY = Random.Range(-1f, 1f); rdmY = 1+(rdmY * 0.2f);
+            newCamPosition = new Vector3(rdmX, rdmY, -10f);
+            myCamera.transform.position = newCamPosition;
+            yield return new WaitForSeconds(0.15f);
+
+            Debug.Log("Restore Camera");
+            myCamera.transform.position = new Vector3(0, 1, -10);  // origCameraPosition;
+            yield return new WaitForSeconds(0.15f);
+        }
+    }
 }
