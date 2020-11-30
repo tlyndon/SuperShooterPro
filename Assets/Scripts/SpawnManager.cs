@@ -30,7 +30,6 @@ public class SpawnManager : MonoBehaviour
         updateCounter = updateCounter + 1;
         if (updateCounter > 60)  //once per second (curious, how to change to be time-based)
         {
-            //Debug.Log("Update in Spawn Manager");
             updateCounter = 0;
             GameObject[] gameObjects;
             gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
@@ -72,9 +71,11 @@ public class SpawnManager : MonoBehaviour
             if (player.health < 3)
             {
                 powerUp = 4;        //show health powerup
+
                 if (player.ammoCount == 0 && Random.Range(0, 2) == 1)
                 { powerUp = 3; }    //show ammo powerup
             }
+
             else if (player.ammoCount == 0)
             { powerUp = 3; }        //ammo powerup
 

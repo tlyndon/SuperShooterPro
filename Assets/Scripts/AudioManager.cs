@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public static bool musicOn = true;
-    public static bool soundOn = true;
+    public static bool musicOn = false;
+    public static bool soundOn = false;
 
     [SerializeField]
     private AudioClip backgroundMusic;

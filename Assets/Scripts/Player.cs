@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
     private bool isSpeedBoostActive = false;
     private float speed = 3.5f;
-    private float speedMultiplier = 2.0f;
+    private float speedMultiplier = 1.75f;
     private float leftShiftKeySpeedMultiplier = 1.5f;
     private bool isLeftShiftKeySpeedBoostActive = false;
 
@@ -77,22 +77,26 @@ public class Player : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null) { Debug.LogError("audioSource in AudioManager.cs = null."); }
+        if (audioSource == null)
+        { Debug.LogError("audioSource in Player.cs = null."); }
 
         health = 3;
         transform.position = new Vector3(0, playerStartingYposBelowScreen, 0);
 
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        if (uiManager == null) { Debug.LogError("UI Manager is null."); }
+        if (uiManager == null)
+        { Debug.LogError("UI Manager is null."); }
 
         ammoCount = ammoCountDefault;
-        uiManager.UpdateAmmo(ammoCount);
+        uiManager.UpdateAmmo(ammoCount,ammoCountDefault);
 
         spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-        if (spawnManager == null) { Debug.LogError("The Spawn manager is null."); }
+        if (spawnManager == null)
+        { Debug.LogError("The Spawn manager is null."); }
 
         shieldSpriteRenderer = shieldVisualizer.GetComponent<SpriteRenderer>();
-        if (shieldSpriteRenderer == null) { Debug.Log("The Shield Sprite Renderer component in Player.cs = null"); }
+        if (shieldSpriteRenderer == null)
+        { Debug.Log("The Shield Sprite Renderer component in Player.cs = null"); }
 
         shieldStrength = shieldStrengthDefault;
         shieldVisualizer.SetActive(false);
@@ -127,18 +131,19 @@ public class Player : MonoBehaviour
                     timeLastMissileShot = Time.time;
                     FireMissiles();
                     ammoCount = ammoCount - 1;
-                    uiManager.UpdateAmmo(ammoCount);
+                    uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
                 }
                 else
                 {
                     FireLaser();
                     ammoCount = ammoCount - 1;
-                    uiManager.UpdateAmmo(ammoCount);
+                    uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
                 }
             }
             else
             {
-                if (AudioManager.soundOn == true) { audioSource.PlayOneShot(snd_buzz, 0.7F); }
+                if (AudioManager.soundOn == true)
+                { audioSource.PlayOneShot(snd_buzz, 0.7F); }
             }
         }
     }
@@ -149,7 +154,8 @@ public class Player : MonoBehaviour
         if (transform.position.y < comeUpToPositionY)
         {
             float deltaY = comeUpToPositionY - transform.position.y;
-            if (deltaY < .01) { transform.position = new Vector3(0, comeUpToPositionY, 0); }
+            if (deltaY < .01)
+            { transform.position = new Vector3(0, comeUpToPositionY, 0); }
             else
             {
                 if (deltaY < 0.20f) { deltaY = 0.20f; }
@@ -179,7 +185,8 @@ public class Player : MonoBehaviour
             Instantiate(laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
 
-        if (AudioManager.soundOn == true) { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
+        if (AudioManager.soundOn == true)
+        { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
     }
     //--------------------------------------------------------------
     void FireMissiles()
@@ -190,7 +197,8 @@ public class Player : MonoBehaviour
             Instantiate(missilesPrefab, transform.position + new Vector3(0, 2f, 0), Quaternion.identity);
         }
 
-        if (AudioManager.soundOn == true) { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
+        if (AudioManager.soundOn == true)
+        { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
 
     }
     //--------------------------------------------------------------
@@ -292,25 +300,35 @@ public class Player : MonoBehaviour
 
         if (verticalInput != 0 || horizontalInput != 0)
         {
-            uiManager.UseThrusters();
-            {
 
+            if (uiManager.thrustersPct > 0.02f)
+            {
+                uiManager.UseThrusters();
                 Vector3 direction = new Vector3(horizontalInput, verticalInput, 0);
-                if (isSpeedBoostActive == true) { transform.Translate(direction * (speed * speedMultiplier) * Time.deltaTime); }
-                else if (isLeftShiftKeySpeedBoostActive == true) { transform.Translate(direction * (speed * leftShiftKeySpeedMultiplier) * Time.deltaTime); }
-                else { transform.Translate(direction * speed * Time.deltaTime); }
+                if (isSpeedBoostActive == true)
+                { transform.Translate(direction * (speed * speedMultiplier) * Time.deltaTime); }
+
+                else if (isLeftShiftKeySpeedBoostActive == true)
+                { transform.Translate(direction * (speed * leftShiftKeySpeedMultiplier) * Time.deltaTime); }
+
+                else
+                { transform.Translate(direction * speed * Time.deltaTime); }
 
                 if (verticalInput > 0 && transform.position.y > 7)
                 {
                     transform.position = new Vector3(transform.position.x, 7, 0);
                 }
+
                 else if (transform.position.x != 0 && verticalInput < 0 && transform.position.y < lowestYpos)
                 {
                     transform.position = new Vector3(transform.position.x, lowestYpos, 0);
                 }
 
-                if (transform.position.x > 11f) { transform.position = new Vector3(-11f, transform.position.y, 0); }
-                else if (transform.position.x < -11f) { transform.position = new Vector3(11f, transform.position.y, 0); }
+                if (transform.position.x > 11f)
+                { transform.position = new Vector3(-11f, transform.position.y, 0); }
+
+                else if (transform.position.x < -11f)
+                { transform.position = new Vector3(11f, transform.position.y, 0); }
             }
         }
     }
@@ -333,7 +351,7 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Reset ammoCount to default");
         ammoCount = ammoCountDefault;
-        uiManager.UpdateAmmo(ammoCount);
+        uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
     }
     //--------------------------------------------------------------
     public void RestoreHealth()
@@ -348,34 +366,6 @@ public class Player : MonoBehaviour
         healthRed.gameObject.SetActive(false);
     }
     //--------------------------------------------------------------
-    //public IEnumerator NewCameraShake2()
-    //{
-    //    //_isCameraShaking = true;
-    //    // get orig camera position
-    //    GameObject myCamera = GameObject.Find("Main Camera");
-    //    Debug.Log("myCamera=" + myCamera);
-    //    if (myCamera == null)
-    //    {
-    //        Debug.LogError("Player: myCamera = Null");
-    //    }
-    //    Vector3 origCameraPosition = myCamera.transform.position;
-    //    //Vector3 origCameraPosition = new Vector3(0f, 1f, -10f);
-    //    while (true)
-    //    {
-    //        Debug.Log("In New Camera Shake loop");
-    //        // generate new camera position
-    //        Vector3 newCamPosition = new Vector3(1f, 1f, -10f);
-    //        // Set new camera position
-    //        Debug.Log("Set New Cam position");
-    //        myCamera.transform.position = newCamPosition;
-    //        // wait for .5 sec
-    //        yield return new WaitForSeconds(0.5f);
-    //        // Back to original position
-    //        Debug.Log("Back to orig position");
-    //        myCamera.transform.position = origCameraPosition;
-    //    }
-    //}
-    //--------------------------------------------------------------
     public void NewCameraShake1()
     {
         cameraShake = true;
@@ -385,8 +375,7 @@ public class Player : MonoBehaviour
     public IEnumerator NewCameraShake2()
     {
         GameObject myCamera = GameObject.Find("Main Camera");
-        //Debug.Log("myCamera=" + myCamera);
-        Debug.Log("myCamera=" + Time.deltaTime);
+        //Debug.Log("myCamera=" + Time.deltaTime);
         if (myCamera == null)
         {
             Debug.LogError("Player: myCamera = Null");

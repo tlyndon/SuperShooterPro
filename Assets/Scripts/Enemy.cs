@@ -7,24 +7,45 @@ public class Enemy : MonoBehaviour
     private Animator anim;
 
     [SerializeField]
-    private float speed = 4.0f;
-    [SerializeField]
     private float fireRate = 3.0f;
     [SerializeField]
     private GameObject laserPrefab;
+
+    private string enemyType;
+    private string enemyDir;
+    private float enemyXgoal;
+    private float speedX;
+    private float speedY;
+    private float enemyMovementRangeX = 12.0f;
+    private Vector3 lastEnemyXDirection;
+    private Vector3 lastEnemyYDirection;
 
     private float canFire = -1;
     public bool isAlive = true;
     //--------------------------------------------------------------
     void Start()
     {
+        int rnd=Random.Range(0, 2);
+        if (rnd==0)
+        {
+            enemyType = "down";
+            speedY = 4.0f;
+        }
+        else
+        {
+            enemyType = "leftandright";
+            enemyDir = "left";
+            enemyXgoal = transform.position.x - (enemyMovementRangeX*0.25f);
+            speedY = 1f;
+            speedX = 2f;
+        }
         anim = GetComponent<Animator>();
         if (anim == null) { Debug.LogError("Animator Component is NULL"); }
     }
     //--------------------------------------------------------------
     void Update()
     {
-        CalculateMovement();
+        CalculateEnemyMovement();
 
         if (isAlive == true && Time.time > canFire)
         {
@@ -38,12 +59,56 @@ public class Enemy : MonoBehaviour
         }
     }
     //--------------------------------------------------------------
-    void CalculateMovement()
+    void CalculateEnemyMovement()
     {
-        transform.Translate(Vector3.down * speed * Time.deltaTime);
+        if (isAlive == false)
+        {
+            transform.Translate(lastEnemyXDirection);
+            transform.Translate(lastEnemyYDirection);
+        }
+        else if (enemyType == "down")
+        {
+            lastEnemyYDirection = Vector3.down * speedY * Time.deltaTime;
+            transform.Translate(lastEnemyYDirection);
+        }
+        else  //leftandright
+        {
+            float deltaX = Mathf.Abs(transform.position.x - enemyXgoal);
+            if (deltaX < 0.5f)
+                if (enemyDir == "left")
+                {
+                    enemyDir = "right";
+                    enemyXgoal = transform.position.x + enemyMovementRangeX;
+                }
+                else
+                {
+                    enemyDir = "left";
+                    enemyXgoal = transform.position.x - enemyMovementRangeX;
+                }
+
+            if (enemyDir == "left")
+            {
+                lastEnemyXDirection = Vector3.left * speedX * deltaX * Time.deltaTime;
+            }
+            else
+            {
+                lastEnemyXDirection = Vector3.right * speedX * deltaX * Time.deltaTime;
+            
+            }
+            transform.Translate(lastEnemyXDirection);
+
+            lastEnemyYDirection = Vector3.down * speedY * Time.deltaTime;
+            transform.Translate(lastEnemyYDirection);
+        }
+
+        // check if reached bottom of screen and bring back to the top
         if (transform.position.y < -5f)
         {
             float randomX = Random.Range(-8f, 8f);
+            if (enemyDir == "leftandright")
+            {
+                randomX = 7f;
+            }
             transform.position = new Vector3(randomX, 7, 0);
         }
     }

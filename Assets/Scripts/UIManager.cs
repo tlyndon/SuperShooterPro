@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
         updateThrustersMeter();
 
         UpdateScore(0);
-        UpdateAmmo(0);
+        UpdateAmmo(0,0);
         flashingText.gameObject.SetActive(false);
         restartText.gameObject.SetActive(false);
     }
@@ -52,9 +52,9 @@ public class UIManager : MonoBehaviour
         scoreText.text = "Score: " + playerScore;
     }
     //--------------------------------------------------------------
-    public void UpdateAmmo(int playerAmmo)
+    public void UpdateAmmo(int playerAmmo, int ammoCountDefault)
     {
-        ammoText.text = "Ammo: " + playerAmmo;
+        ammoText.text = "Ammo: " + playerAmmo + "/" + ammoCountDefault;
     }
     //--------------------------------------------------------------
     public void UpdateLives(int showRemainingLives)
@@ -98,6 +98,7 @@ public class UIManager : MonoBehaviour
         newScaleX(thrusters, thrustersMaxWidth * thrustersPct);
         float xx = thrustersOriginalX + (thrustersMaxWidth * (1 - thrustersPct) * .5f);
         thrusters.transform.position = new Vector3(xx, thrusters.transform.position.y, 0);
+
         if (thrustersPct >= 1f)
         {
             //make meter green (would only work if sprite image was white)
@@ -114,6 +115,7 @@ public class UIManager : MonoBehaviour
         {
             float originalValue = thrustersPct;
             thrustersPct = thrustersPct - 0.001f;
+
             if (originalValue < 0.5f && thrustersPct >= 0.5f)
             {
                 //make meter red (would only work if sprite image was white
@@ -123,6 +125,7 @@ public class UIManager : MonoBehaviour
             }
             updateThrustersMeter();
         }
+
         if (thrustersPct <= 0)
         {
             thrustersPct = 0f;
@@ -137,6 +140,7 @@ public class UIManager : MonoBehaviour
         {
             float originalValue = thrustersPct;
             thrustersPct = thrustersPct + 0.0004f;
+
             if (originalValue < 0.5f && thrustersPct >= 0.5f)
             {
                 //make meter green (would only work if sprite image was white)

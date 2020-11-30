@@ -20,10 +20,12 @@ public class Powerup : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null) { Debug.LogError("The audioSource component in Powerup.cs = null"); }
+        if (audioSource == null)
+        { Debug.LogError("The audioSource component in Powerup.cs = null"); }
 
         powerUpRenderer = this.GetComponent<SpriteRenderer>();
-        if (powerUpRenderer == null) { Debug.Log("The powerUpRenderer component in Powerup.cs = null"); }
+        if (powerUpRenderer == null)
+        { Debug.Log("The powerUpRenderer component in Powerup.cs = null"); }
     }
     //--------------------------------------------------------------
     void Update()
@@ -31,7 +33,8 @@ public class Powerup : MonoBehaviour
         if (isAlive)
         {
             transform.Translate(Vector3.down * speed * Time.deltaTime);
-            if (transform.position.y < -4.5f) { Destroy(this.gameObject, 2f); }
+            if (transform.position.y < -4.5f)
+            { Destroy(this.gameObject, 2f); }
         }
     }
     //--------------------------------------------------------------
@@ -48,12 +51,13 @@ public class Powerup : MonoBehaviour
                 Debug.Log("powerupID:" + powerupID);
                 Player player = other.transform.GetComponent<Player>();
                 if (player == null)
-                {
-                    Debug.LogError("player = null in Powerup.cs");
-                }
+                { Debug.LogError("player = null in Powerup.cs"); }
+
                 else           
-                {
-                    if (AudioManager.soundOn == true) { audioSource.PlayOneShot(powerUpClip, 0.7F); }
+                {   
+                    if (AudioManager.soundOn == true)
+                    { audioSource.PlayOneShot(powerUpClip, 0.7F); }
+
                     isAlive = false;
 
                     switch (powerupID)
