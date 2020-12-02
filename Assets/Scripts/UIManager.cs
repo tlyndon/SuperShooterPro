@@ -118,7 +118,7 @@ public class UIManager : MonoBehaviour
                 V.enemiesToSpawn = (int) calc;
                 Debug.Log("After Display: enemiesToSpawn:" + V.enemiesToSpawn);
             }
-            else if (V.modeCounter == 180)
+            else if (V.modeCounter == 120)
             {
                 waveText.text = "";
                 V.setMode(20);

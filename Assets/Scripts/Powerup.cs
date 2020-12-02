@@ -12,6 +12,9 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     private AudioClip powerUpClip;
 
+    [SerializeField]
+    private GameObject explosionPrefab;
+
     private SpriteRenderer powerUpRenderer;
 
     private float speed = 3.0f;
@@ -45,9 +48,13 @@ public class Powerup : MonoBehaviour
             if (other.tag == "Player")
             {
                 Debug.Log("Picked Up Powerup " + other.tag);
+                if (powerupID == 5)
+                {
+                    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                }
+                
                 Destroy(this.gameObject, 2f);
                 powerUpRenderer.color = Color.clear;
-
                 Debug.Log("powerupID:" + powerupID);
                 Player player = other.transform.GetComponent<Player>();
                 if (player == null)
@@ -81,6 +88,10 @@ public class Powerup : MonoBehaviour
                         case 4:
                             Debug.Log("Got Health PowerUp!");
                             player.RestoreHealth();
+                            break;
+                        case 5:
+                            Debug.Log("Got Butterflybones PowerUp!");
+                            player.Damage();
                             break;
                     }
                 }

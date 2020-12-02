@@ -106,6 +106,11 @@ public class SpawnManager : MonoBehaviour
                 nextTimePowerUpCanSpawn = V.modeCounter + 240;
             }
 
+            if (powerUp<3 && Random.Range(0, 10) < 5)
+            {
+                powerUp = 5;  //butterflybones
+            }
+
             Instantiate(powerupObjects[powerUp], posToSpawn, Quaternion.identity);
             lastPowerUp = powerUp;
         }
