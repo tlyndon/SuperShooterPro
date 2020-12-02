@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject laserPrefab;
 
-    private string enemyType;
+    public int enemyType;
     private string enemyDir;
     private float enemyXgoal;
     private float speedX;
@@ -25,15 +25,13 @@ public class Enemy : MonoBehaviour
     //--------------------------------------------------------------
     void Start()
     {
-        int rnd=Random.Range(0, 2);
-        if (rnd==0)
+        if (enemyType==0)
         {
-            enemyType = "down";
+            enemyDir = "down";
             speedY = 4.0f;
         }
-        else
+        else if (enemyType==1)
         {
-            enemyType = "leftandright";
             enemyDir = "left";
             enemyXgoal = transform.position.x - (enemyMovementRangeX*0.25f);
             speedY = 1f;
@@ -66,12 +64,12 @@ public class Enemy : MonoBehaviour
             transform.Translate(lastEnemyXDirection);
             transform.Translate(lastEnemyYDirection);
         }
-        else if (enemyType == "down")
+        else if (enemyType == 0)  //down
         {
             lastEnemyYDirection = Vector3.down * speedY * Time.deltaTime;
             transform.Translate(lastEnemyYDirection);
         }
-        else  //leftandright
+        else if (enemyType == 1)  //leftandright
         {
             float deltaX = Mathf.Abs(transform.position.x - enemyXgoal);
             if (deltaX < 0.5f)
@@ -105,7 +103,7 @@ public class Enemy : MonoBehaviour
         if (transform.position.y < -5f)
         {
             float randomX = Random.Range(-8f, 8f);
-            if (enemyDir == "leftandright")
+            if (enemyType == 1)
             {
                 randomX = 7f;
             }

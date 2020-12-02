@@ -9,7 +9,10 @@ public class Explosion : MonoBehaviour
     //--------------------------------------------------------------
     void Start()
     {
-        if (AudioManager.soundOn == true) { GetComponent<AudioSource>().PlayOneShot(explosionSound, 0.7F); }
+        if (V.soundOn == true)
+        {
+            GetComponent<AudioSource>().PlayOneShot(explosionSound, 0.7F);
+        }
         Destroy(this.gameObject, 3f);
     }
 }

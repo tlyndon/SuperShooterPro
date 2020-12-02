@@ -23,8 +23,14 @@ public class HomingMissile : MonoBehaviour
         if (target != null)
         {
             Enemy enemy = target.GetComponent<Enemy>();
-            if (enemy.isAlive == false) { target = null; }
+            if (enemy.isAlive == false)
+            { target = null; }
         }
+        //else
+        //{
+        //    Vector3 direction = new Vector3(7, 10, 0);
+        //    transform.Translate(direction * Time.deltaTime);
+        //}
     }
     //--------------------------------------------------------------
     void FixedUpdate()
@@ -38,6 +44,11 @@ public class HomingMissile : MonoBehaviour
                 {
                     Enemy enemy = target.GetComponent<Enemy>();
                     if (enemy.isAlive == false) { target = null; }
+                }
+                else
+                {
+                    Vector3 direction = new Vector3(7, 10, 0);
+                    transform.Translate(direction * Time.deltaTime);
                 }
             }
             else

@@ -126,7 +126,7 @@ public class Player : MonoBehaviour
         {
             if (ammoCount > 0)
             {
-                if (Time.time > timeLastMissileShot + 5)
+                if (Time.time > timeLastMissileShot + 5 && V.mode==20)
                 {
                     timeLastMissileShot = Time.time;
                     FireMissiles();
@@ -142,7 +142,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                if (AudioManager.soundOn == true)
+                if (V.soundOn == true)
                 { audioSource.PlayOneShot(snd_buzz, 0.7F); }
             }
         }
@@ -185,7 +185,7 @@ public class Player : MonoBehaviour
             Instantiate(laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
 
-        if (AudioManager.soundOn == true)
+        if (V.soundOn == true)
         { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
     }
     //--------------------------------------------------------------
@@ -197,7 +197,7 @@ public class Player : MonoBehaviour
             Instantiate(missilesPrefab, transform.position + new Vector3(0, 2f, 0), Quaternion.identity);
         }
 
-        if (AudioManager.soundOn == true)
+        if (V.soundOn == true)
         { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
 
     }
@@ -270,7 +270,6 @@ public class Player : MonoBehaviour
             if (lives == 0)
             {
                 //yes, we are out of more lives, so it's time to die
-                spawnManager.OnPlayerLossOfHealth();
                 Destroy(this.gameObject);
                 Debug.Log("Game Over");
                 uiManager.GameOverSequence();
@@ -384,7 +383,7 @@ public class Player : MonoBehaviour
         else
         {
             //Vector3 origCameraPosition = myCamera.transform.position;
-            Debug.Log("About to Shake Camera:");
+            //Debug.Log("About to Shake Camera:");
 
             float rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
             float rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * 0.2f);
@@ -404,7 +403,7 @@ public class Player : MonoBehaviour
             myCamera.transform.position = newCamPosition;
             yield return new WaitForSeconds(0.15f);
 
-            Debug.Log("Restore Camera");
+            //Debug.Log("Restore Camera");
             myCamera.transform.position = new Vector3(0, 1, -10);  // origCameraPosition;
             yield return new WaitForSeconds(0.15f);
         }

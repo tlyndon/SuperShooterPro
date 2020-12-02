@@ -55,7 +55,7 @@ public class Powerup : MonoBehaviour
 
                 else           
                 {   
-                    if (AudioManager.soundOn == true)
+                    if (V.soundOn == true)
                     { audioSource.PlayOneShot(powerUpClip, 0.7F); }
 
                     isAlive = false;

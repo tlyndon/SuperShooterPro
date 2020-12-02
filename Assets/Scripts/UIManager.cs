@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     public float thrustersOriginalX;
     public float thrustersPct = 1.0f;
     public Text flashingText;
+    public Text waveText;
     public Text restartText;
     //--------------------------------------------------------------
     void Start()
@@ -29,7 +30,7 @@ public class UIManager : MonoBehaviour
         updateThrustersMeter();
 
         UpdateScore(0);
-        UpdateAmmo(0,0);
+        UpdateAmmo(0, 0);
         flashingText.gameObject.SetActive(false);
         restartText.gameObject.SetActive(false);
     }
@@ -37,6 +38,9 @@ public class UIManager : MonoBehaviour
     void Update()
     {
         SlowlyRegenerateThrusters();
+        updateFlashingText();
+        updateWaveText();
+        NextWaveWhenEnemiesGone();
     }
     //--------------------------------------------------------------
     public void newScaleX(GameObject theGameObject, float newSize)
@@ -62,34 +66,91 @@ public class UIManager : MonoBehaviour
         imageLives.sprite = spriteLives[showRemainingLives];
     }
     //--------------------------------------------------------------
+    public void NextWaveWhenEnemiesGone()
+    {
+        if (V.mode == 21)
+        {
+            V.modeCounter = V.modeCounter + 1;  //mode 21
+
+            GameObject[] gameObjects;
+            gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
+            if (gameObjects.Length == 0)
+            {
+                Debug.Log("Initialize Next Wave");
+                V.wave = V.wave + 1;
+                StartWave();
+            }
+        }
+    }
+    //--------------------------------------------------------------
+    public void StartWave()
+    {
+        V.enemiesToSpawn = 0;
+        V.setMode(10);
+    }
+    //--------------------------------------------------------------
     public void GetReady()
     {
-        StartCoroutine(showFlashingTextRoutine("GET READY!", 2, 2));
+        Debug.Log("Initialize Get Ready!");
+        V.flashingText = "Get Ready!";
+        V.setMode(0);
     }
     //--------------------------------------------------------------
     public void GameOverSequence()
     {
+        Debug.Log("Initialize Game Over Sequence");
         restartText.gameObject.SetActive(true);
-        StartCoroutine(showFlashingTextRoutine("GAME OVER", -1, 0));
-        GameManager.isGameOver = true;
+        V.flashingText = "Game Over!";
+        V.setMode(100);
+        V.isGameOver = true;
     }
     //--------------------------------------------------------------
-    IEnumerator showFlashingTextRoutine(string txt, int howMany, int delayFirst)
+    public void updateWaveText()
     {
-        flashingText.gameObject.SetActive(true);
-        flashingText.text = "";
-        yield return new WaitForSeconds(delayFirst);
-
-        while (howMany != 0)
+        if (V.mode == 10)
         {
-            flashingText.text = txt;
-            yield return new WaitForSeconds(0.5f);
-            flashingText.text = "";
-            yield return new WaitForSeconds(0.5f);
-            if (howMany > 0)
+            if (V.modeCounter == 0)
             {
-                howMany = howMany - 1;
+                Debug.Log("Initialize Wave Text");
+                waveText.gameObject.SetActive(true);
+                waveText.text = "WAVE " + V.wave;
+                V.enemiesToSpawn = V.wave + 7;
+                Debug.Log("After Display: enemiesToSpawn:" + V.enemiesToSpawn);
             }
+            else if (V.modeCounter == 180)
+            {
+                waveText.text = "";
+                V.setMode(20);
+            }
+            V.modeCounter = V.modeCounter + 1;  //mode 10
+        }
+    }
+    //--------------------------------------------------------------
+    public void updateFlashingText()
+    {
+        if (V.mode == 0 || V.mode == 100)
+        {
+            if (V.modeCounter == 0)
+            {
+                Debug.Log("Initialize Flashing Text:" + V.flashingText);
+                flashingText.gameObject.SetActive(true);
+            }
+            if (V.modeCounter == 0 || V.modeCounter == 60 || V.modeCounter == 120)
+            {
+                flashingText.text = V.flashingText;
+            }
+            else if (V.modeCounter == 30 || V.modeCounter == 90 || V.modeCounter == 150)
+            {
+                flashingText.text = "";
+            }
+            V.modeCounter = V.modeCounter + 1;  //mode 0 or 100
+
+            if (V.modeCounter == 151 && V.isGameOver == false)
+            {
+                //text finished flashing & not game over, so next wave
+                StartWave();
+            }
+
         }
     }
     //--------------------------------------------------------------

@@ -10,82 +10,99 @@ public class SpawnManager : MonoBehaviour
     private GameObject enemyContainer;
     [SerializeField]
     private GameObject[] powerupObjects;
-    private bool stopSpawning = false;
     [SerializeField]
     private int updateCounter = 0;
+    private UIManager uiManager;
+    private GameManager gameManager;
+    private float nextTimePowerUpCanSpawn = 0.0f;
+    private float nextEnemySpawnY = 8.0f;
+    private int nextEnemyType = 0;
     //--------------------------------------------------------------
     void Start()
     {
-        StartCoroutine(SpawnEnemyRoutine());
-        StartCoroutine(SpawnPowerupRoutine());
+
     }
     //--------------------------------------------------------------
     void Update()
     {
-        SpawnEnemyIfNoneRemaining();
+        ConsiderSpawningEnemy();
+        ConsiderSpawningPowerUp();
     }
+
     //--------------------------------------------------------------
-    void SpawnEnemyIfNoneRemaining()
+    void ConsiderSpawningEnemy()
     {
-        updateCounter = updateCounter + 1;
-        if (updateCounter > 60)  //once per second (curious, how to change to be time-based)
+        if (V.mode == 20)
         {
-            updateCounter = 0;
-            GameObject[] gameObjects;
-            gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
-            if (gameObjects.Length == 0)
+            // if no enemy objects, then spawn an enemy immediately without waiting
+            //GameObject[] gameObjects;
+            //gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
+            //if (gameObjects.Length == 0)
+
+            nextEnemySpawnY = 8.0f;
+            nextEnemyType = 0;
+            while (V.enemiesToSpawn>0)
             {
-                Debug.Log("No game objects are tagged with 'Enemy', so we will spawn a new one");
-                smallNewEnemy();
+                SpawnOneEnemy(nextEnemyType);
+                V.enemiesToSpawn = V.enemiesToSpawn - 1;
+                nextEnemyType = nextEnemyType + 1;
+                if (nextEnemyType>1)
+                {
+                    nextEnemyType = 0;
+                }
             }
+                V.setMode(21);
         }
     }
     //--------------------------------------------------------------
-    IEnumerator SpawnEnemyRoutine()
+    void SpawnOneEnemy(int typ)
     {
-        yield return new WaitForSeconds(3.0f);
-        while (stopSpawning == false)
-        {
-            smallNewEnemy();
-            yield return new WaitForSeconds(5.0f);
-        }
-    }
-    void smallNewEnemy()
-    {
-        Vector3 posToSpawn = new Vector3(Random.Range(1, 18) - 8, 7, 0);
+        V.enemiesToSpawn = V.enemiesToSpawn - 1;
+        Debug.Log("enemies Left:" + V.enemiesToSpawn);
+
+        Vector3 posToSpawn = new Vector3(Random.Range(1, 18)-8-nextEnemySpawnY, 7, 0);
         GameObject newEnemy = Instantiate(enemyPrefab, posToSpawn, Quaternion.identity);
         newEnemy.transform.parent = enemyContainer.transform;
+
+        Enemy enemy = newEnemy.GetComponent<Enemy>();
+        enemy.enemyType = typ;
     }
     //--------------------------------------------------------------
-    IEnumerator SpawnPowerupRoutine()
+    void ConsiderSpawningPowerUp()
     {
-        yield return new WaitForSeconds(3.0f);
-        while (stopSpawning == false)
+        if (V.mode == 20 || V.mode == 21) 
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-
-            int powerUp = Random.Range(0, 3);  //0, 1 or 2 speed, tripeShot or sheild
+            int powerUp = Random.Range(0, 3);  //0, 1 or 2 speed, tripleShot or sheild
 
             GameObject obj = GameObject.FindGameObjectWithTag("Player");
             Player player = obj.transform.GetComponent<Player>();
             if (player.health < 3)
             {
-                powerUp = 4;        //show health powerup
+                powerUp = 4;            //show health powerup
 
                 if (player.ammoCount == 0 && Random.Range(0, 2) == 1)
-                { powerUp = 3; }    //show ammo powerup
+                {
+                    powerUp = 3;        //show ammo powerup
+                }
+            }
+            else if (player.ammoCount < player.ammoCountDefault*0.50)
+            {
+                powerUp = 3;            //ammo powerup
             }
 
-            else if (player.ammoCount == 0)
-            { powerUp = 3; }        //ammo powerup
+            if (V.lastPowerUpSpawned != powerUp && (powerUp == 3 || powerUp == 4))
+            {
+                nextTimePowerUpCanSpawn = 0;
+            }
 
-            Instantiate(powerupObjects[powerUp], posToSpawn, Quaternion.identity);
-            yield return new WaitForSeconds(Random.Range(2, 7));
+            if (V.modeCounter > nextTimePowerUpCanSpawn)
+            {
+                V.lastPowerUpSpawned = powerUp;
+                nextTimePowerUpCanSpawn = V.modeCounter + 240;
+                Instantiate(powerupObjects[powerUp], posToSpawn, Quaternion.identity);
+            }
         }
     }
     //--------------------------------------------------------------
-    public void OnPlayerLossOfHealth()
-    {
-        stopSpawning = true;
-    }
 }
