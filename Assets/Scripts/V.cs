@@ -13,7 +13,6 @@ public static class V
     public static int enemiesToSpawn = 0;
     public static string flashingText = "";
     public static int lastPowerUpSpawned;
-
     public static int modeCounter = 0;
     public static int mode = 999;
     //Mode 0: Get Ready(3 seconds)

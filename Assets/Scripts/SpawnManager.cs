@@ -15,8 +15,7 @@ public class SpawnManager : MonoBehaviour
     private UIManager uiManager;
     private GameManager gameManager;
     private float nextTimePowerUpCanSpawn = 0.0f;
-    private float nextEnemySpawnY = 8.0f;
-    private int nextEnemyType = 0;
+    private int lastPowerUp = 99;
     //--------------------------------------------------------------
     void Start()
     {
@@ -34,33 +33,40 @@ public class SpawnManager : MonoBehaviour
     {
         if (V.mode == 20)
         {
+            nextTimePowerUpCanSpawn = 0;
             // if no enemy objects, then spawn an enemy immediately without waiting
             //GameObject[] gameObjects;
             //gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
             //if (gameObjects.Length == 0)
 
-            nextEnemySpawnY = 8.0f;
-            nextEnemyType = 0;
-            while (V.enemiesToSpawn>0)
+            int nextEnemyType = 0;
+            int ctr = 0;
+            while (ctr<V.enemiesToSpawn)
             {
-                SpawnOneEnemy(nextEnemyType);
+                SpawnOneEnemy(nextEnemyType,ctr);
+                ctr = ctr + 1;
                 V.enemiesToSpawn = V.enemiesToSpawn - 1;
+
                 nextEnemyType = nextEnemyType + 1;
-                if (nextEnemyType>1)
-                {
-                    nextEnemyType = 0;
-                }
+                if (nextEnemyType > 1)
+                { nextEnemyType = 0; }
             }
-                V.setMode(21);
+            V.setMode(21);
+        }
+        if (V.mode == 21)
+        {
+            V.modeCounter = V.modeCounter + 1;  //21
         }
     }
     //--------------------------------------------------------------
-    void SpawnOneEnemy(int typ)
+    void SpawnOneEnemy(int typ, int ctr)
     {
-        V.enemiesToSpawn = V.enemiesToSpawn - 1;
-        Debug.Log("enemies Left:" + V.enemiesToSpawn);
-
-        Vector3 posToSpawn = new Vector3(Random.Range(1, 18)-8-nextEnemySpawnY, 7, 0);
+        Vector3 posToSpawn = new Vector3(-4+Random.Range(0, 8), 7 + (ctr * 2), 0);  //typ=0
+        //Vector3 posToSpawn = new Vector3(-4 + (ctr * 2), 10 + ctr, 0);  //typ=0
+        if (typ == 1)
+        {
+            posToSpawn = new Vector3(-4, 8 + (ctr * 2), 0);
+        }
         GameObject newEnemy = Instantiate(enemyPrefab, posToSpawn, Quaternion.identity);
         newEnemy.transform.parent = enemyContainer.transform;
 
@@ -70,7 +76,7 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void ConsiderSpawningPowerUp()
     {
-        if (V.mode == 20 || V.mode == 21) 
+        if (V.mode == 21 && V.modeCounter > nextTimePowerUpCanSpawn)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
             int powerUp = Random.Range(0, 3);  //0, 1 or 2 speed, tripleShot or sheild
@@ -86,22 +92,22 @@ public class SpawnManager : MonoBehaviour
                     powerUp = 3;        //show ammo powerup
                 }
             }
-            else if (player.ammoCount < player.ammoCountDefault*0.50)
+            else if (player.ammoCount < player.ammoCountDefault * 0.50)
             {
                 powerUp = 3;            //ammo powerup
             }
 
-            if (V.lastPowerUpSpawned != powerUp && (powerUp == 3 || powerUp == 4))
+            if ((powerUp == 3 || powerUp == 4) && powerUp != lastPowerUp)
             {
-                nextTimePowerUpCanSpawn = 0;
+                nextTimePowerUpCanSpawn = V.modeCounter + 60;
+            }
+            else
+            {
+                nextTimePowerUpCanSpawn = V.modeCounter + 240;
             }
 
-            if (V.modeCounter > nextTimePowerUpCanSpawn)
-            {
-                V.lastPowerUpSpawned = powerUp;
-                nextTimePowerUpCanSpawn = V.modeCounter + 240;
-                Instantiate(powerupObjects[powerUp], posToSpawn, Quaternion.identity);
-            }
+            Instantiate(powerupObjects[powerUp], posToSpawn, Quaternion.identity);
+            lastPowerUp = powerUp;
         }
     }
     //--------------------------------------------------------------
