@@ -7,6 +7,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject enemyPrefab;
     [SerializeField]
+    private GameObject enemyPrefab2;
+    [SerializeField]
     private GameObject enemyContainer;
     [SerializeField]
     private GameObject[] powerupObjects;
@@ -41,14 +43,15 @@ public class SpawnManager : MonoBehaviour
 
             int nextEnemyType = 0;
             int ctr = 0;
-            while (ctr<V.enemiesToSpawn)
+            int howMany = V.enemiesToSpawn;
+            while (ctr < howMany)
             {
-                SpawnOneEnemy(nextEnemyType,ctr);
+                SpawnOneEnemy(nextEnemyType, ctr);
                 ctr = ctr + 1;
                 V.enemiesToSpawn = V.enemiesToSpawn - 1;
 
                 nextEnemyType = nextEnemyType + 1;
-                if (nextEnemyType > 1)
+                if (nextEnemyType > 2)
                 { nextEnemyType = 0; }
             }
             V.setMode(21);
@@ -61,13 +64,21 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void SpawnOneEnemy(int typ, int ctr)
     {
-        Vector3 posToSpawn = new Vector3(-4+Random.Range(0, 8), 7 + (ctr * 2), 0);  //typ=0
-        //Vector3 posToSpawn = new Vector3(-4 + (ctr * 2), 10 + ctr, 0);  //typ=0
+        Vector3 posToSpawn = new Vector3(Random.Range(0, 8) - 4, 7 + (ctr * 3), 0);  //typ=0 & 2
         if (typ == 1)
         {
-            posToSpawn = new Vector3(-4, 8 + (ctr * 2), 0);
+            posToSpawn = new Vector3(-4, 8 + (ctr * 2), 0);  //typ=1
         }
-        GameObject newEnemy = Instantiate(enemyPrefab, posToSpawn, Quaternion.identity);
+        GameObject obj;
+        if (typ != 2)
+        {
+            obj = enemyPrefab;
+        }
+        else
+        {
+            obj = enemyPrefab2;
+        }
+        GameObject newEnemy = Instantiate(obj, posToSpawn, Quaternion.identity);
         newEnemy.transform.parent = enemyContainer.transform;
 
         Enemy enemy = newEnemy.GetComponent<Enemy>();
@@ -106,7 +117,7 @@ public class SpawnManager : MonoBehaviour
                 nextTimePowerUpCanSpawn = V.modeCounter + 240;
             }
 
-            if (powerUp<3 && Random.Range(0, 10) < 5)
+            if (powerUp < 3 && Random.Range(0, 10) < 2)
             {
                 powerUp = 5;  //butterflybones
             }

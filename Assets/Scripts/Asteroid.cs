@@ -38,7 +38,7 @@ public class Asteroid : MonoBehaviour
     {
         if (isAlive)
         {
-            if (other.tag == "Laser")
+            if (other.tag == "Laser" || other.tag == "Missile")
             {
                 changeAsteroidToInvisibleObjectOnFire();
                 Destroy(other.gameObject);

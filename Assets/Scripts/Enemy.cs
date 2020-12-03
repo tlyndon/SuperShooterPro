@@ -10,8 +10,12 @@ public class Enemy : MonoBehaviour
     private float fireRate = 3.0f;
     [SerializeField]
     private GameObject laserPrefab;
+    [SerializeField]
+    private GameObject laserPrefab2;
+    [SerializeField]
+    private GameObject explosionPrefab;
 
-    public int enemyType;
+    public int enemyType = 999;
     private int fireWhenCounterEquals;
     private string enemyDir;
     private float enemyXgoal;
@@ -21,53 +25,79 @@ public class Enemy : MonoBehaviour
     private float enemyMovementRangeX = 12.0f;
     private Vector3 lastEnemyXDirection;
     private Vector3 lastEnemyYDirection;
-    
+
     private float canFire = -1;
     public bool isAlive = true;
     //--------------------------------------------------------------
     void Start()
     {
-        
+
     }
     //--------------------------------------------------------------
     void Update()
     {
         // ready to initialize enemy?
-        if (enemyType != null && enemyDir == null)
+        if (enemyType < 999)
         {
-            if (enemyType == 0)
+            if (enemyDir == null)
             {
-                enemyDir = "down";
-                speedY = 4.0f;
-            }
-            else if (enemyType == 1)
-            {
-                enemyDir = "left";
-                enemyXgoal = transform.position.x - (enemyMovementRangeX * 0.25f);
-                speedY = 1f;
-                speedX = 2f;
-            }
-            anim = GetComponent<Animator>();
-            if (anim == null) { Debug.LogError("Animator Component is NULL"); }
+                if (enemyType == 0 || enemyType == 2)
+                {
+                    enemyDir = "down";
+                    speedY = 4.0f;
+                    if (enemyType == 2)
+                    {
+                        speedY = 2.0f;
+                    }
+                }
+                else if (enemyType == 1)
+                {
+                    enemyDir = "left";
+                    enemyXgoal = transform.position.x - (enemyMovementRangeX * 0.25f);
+                    speedY = 1f;
+                    speedX = 2f;
+                }
+                if (enemyType != 2)
+                {
+                    anim = GetComponent<Animator>();
+                    if (anim == null) { Debug.LogError("Animator Component is NULL"); }
+                }
 
-            fireWhenCounterEquals = Random.Range(300,660);
+                fireWhenCounterEquals = Random.Range(300, 450);
+            }
+            else
+            {
+                CalculateEnemyMovement();
+                SpawnEnemyFire();
+            }
         }
-        else
+    }
+    //--------------------------------------------------------------
+    void SpawnEnemyFire()
+    {
+        //generate enemy fire
+        if (isAlive == true && enemyType != 2 && Time.time > canFire && V.modeCounter > fireWhenCounterEquals)
         {
-            CalculateEnemyMovement();
+            fireWhenCounterEquals = V.modeCounter + Random.Range(300, 660);
 
-            if (isAlive == true && Time.time > canFire && V.modeCounter > fireWhenCounterEquals)
-            {
-                fireWhenCounterEquals = fireWhenCounterEquals + Random.Range(300, 660);
+            fireRate = Random.Range(3f, 7f);
+            canFire = Time.time + fireRate;
+            GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
+            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
 
-                fireRate = Random.Range(3f, 7f);
-                canFire = Time.time + fireRate;
-                GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
-                Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+            for (int i = 0; i < lasers.Length; i++)
+            { lasers[i].AssignEnemyLaser(); }
+        }
+        else if (isAlive == true && enemyType == 2 && V.modeCounter > fireWhenCounterEquals)
+        {
+            fireWhenCounterEquals = V.modeCounter + 180;
+            Vector3 newPos = new Vector3(transform.position.x, transform.position.y - 6, 0);
+            GameObject enemyLaser = Instantiate(laserPrefab2, newPos, Quaternion.identity);
+            Laser[] lasers2 = enemyLaser.GetComponentsInChildren<Laser>();
 
-                for (int i = 0; i < lasers.Length; i++)
-                { lasers[i].AssignEnemyLaser(); }
-            }
+            for (int i = 0; i < lasers2.Length; i++)
+            { lasers2[i].AssignEnemy2Laser(); }
+            Debug.Log("---------------------------------------- Enemy2 Laser --------------------");
         }
     }
     //--------------------------------------------------------------
@@ -91,7 +121,7 @@ public class Enemy : MonoBehaviour
             }
             transform.Translate(lastEnemyXDirection);
         }
-        else if (enemyType == 0)  //down
+        else if (enemyType == 0 || enemyType == 2)  //down
         {
             lastEnemyYDirection = Vector3.down * speedY * Time.deltaTime;
             transform.Translate(lastEnemyYDirection);
@@ -130,11 +160,6 @@ public class Enemy : MonoBehaviour
         if (transform.position.y < -5f)
         {
             float newX = transform.position.x;
-            //float newX = Random.Range(-8f, 8f);
-            //if (enemyType == 1)
-            //{
-            //    newX = 7f;
-            //}
             transform.position = new Vector3(newX, 7, 0);
         }
     }
@@ -142,9 +167,18 @@ public class Enemy : MonoBehaviour
     private void ThisEnemyDiesFromCollisionWith(string collider)
     {
         isAlive = false;
-        anim.SetTrigger("OnEnemyDeath");
-        Destroy(this.gameObject, 2.8f);
-        Debug.Log("Player Collided with " + collider + "!");
+        if (enemyType != 2)
+        {
+            anim.SetTrigger("OnEnemyDeath");
+            Destroy(this.gameObject, 2.8f);
+        }
+        else
+        {
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            Destroy(this.gameObject, 0.5f);
+        }
+
+        Debug.Log("Enemy Collided with " + collider + "!");
     }
     //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
@@ -161,9 +195,9 @@ public class Enemy : MonoBehaviour
                     player.Damage();
                 }
             }
-            else if (other.tag == "Laser")
+            else if (other.tag == "Laser" || other.tag == "Missile")
             {
-                ThisEnemyDiesFromCollisionWith("Laser");
+                ThisEnemyDiesFromCollisionWith(other.tag);
                 Destroy(other.gameObject);
                 Destroy(GetComponent<Collider2D>());
                 player.AddToScore(10);

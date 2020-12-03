@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
         { Debug.LogError("UI Manager is null."); }
 
         ammoCount = ammoCountDefault;
-        uiManager.UpdateAmmo(ammoCount,ammoCountDefault);
+        uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
 
         spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         if (spawnManager == null)
@@ -126,9 +126,9 @@ public class Player : MonoBehaviour
         {
             if (ammoCount > 0)
             {
-                if (Time.time > timeLastMissileShot + 5 && V.mode==20)
+                if (V.seconds > timeLastMissileShot + 3)
                 {
-                    timeLastMissileShot = Time.time;
+                    timeLastMissileShot = V.seconds;
                     FireMissiles();
                     ammoCount = ammoCount - 1;
                     uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
@@ -398,7 +398,7 @@ public class Player : MonoBehaviour
             yield return new WaitForSeconds(0.15f);
 
             rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
-            rdmY = Random.Range(-1f, 1f); rdmY = 1+(rdmY * 0.2f);
+            rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * 0.2f);
             newCamPosition = new Vector3(rdmX, rdmY, -10f);
             myCamera.transform.position = newCamPosition;
             yield return new WaitForSeconds(0.15f);

@@ -146,6 +146,10 @@ public class UIManager : MonoBehaviour
             }
             V.modeCounter = V.modeCounter + 1;  //mode 0 or 100
 
+            if (V.isGameOver == true && V.modeCounter==120)
+            {
+                V.modeCounter = 0;
+            }
             if (V.modeCounter == 151 && V.isGameOver == false)
             {
                 //text finished flashing & not game over, so next wave

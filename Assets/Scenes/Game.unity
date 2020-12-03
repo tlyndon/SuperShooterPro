@@ -1442,6 +1442,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 5469152454992341159, guid: f44289cf4418d43e0b8805a7f62d18bf,
     type: 3}
+  enemyPrefab2: {fileID: 8386065143163457466, guid: a12f8a7f0f343435f822626a16f633a9,
+    type: 3}
   enemyContainer: {fileID: 943287614}
   powerupObjects:
   - {fileID: 6678619111160871251, guid: a7b66bf5fdc4941d08f52990f83c00c6, type: 3}
@@ -1449,6 +1451,7 @@ MonoBehaviour:
   - {fileID: 1763034920545533781, guid: d6d75c1217b3146eea3deff02e4ef75b, type: 3}
   - {fileID: 1005272603595453038, guid: e33bbc71615f64a14b2d0f2b941570ba, type: 3}
   - {fileID: 466977961127130806, guid: 3aaf64de4e0b7457db693892e388db7d, type: 3}
+  - {fileID: 1150463697661481989, guid: 9085b0c187dd54fedbe8bd7830b12baf, type: 3}
   updateCounter: 0
 --- !u!4 &1389233778
 Transform:

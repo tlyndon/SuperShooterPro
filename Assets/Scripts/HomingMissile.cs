@@ -20,17 +20,6 @@ public class HomingMissile : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody2D>();
         target = GameObject.FindGameObjectWithTag("Enemy");
-        if (target != null)
-        {
-            Enemy enemy = target.GetComponent<Enemy>();
-            if (enemy.isAlive == false)
-            { target = null; }
-        }
-        //else
-        //{
-        //    Vector3 direction = new Vector3(7, 10, 0);
-        //    transform.Translate(direction * Time.deltaTime);
-        //}
     }
     //--------------------------------------------------------------
     void FixedUpdate()
@@ -39,19 +28,11 @@ public class HomingMissile : MonoBehaviour
         {
             if (target == null)
             {
+                transform.Translate(Vector3.up * 5 * Time.deltaTime);
                 target = GameObject.FindGameObjectWithTag("Enemy");
-                if (target != null)
-                {
-                    Enemy enemy = target.GetComponent<Enemy>();
-                    if (enemy.isAlive == false) { target = null; }
-                }
-                else
-                {
-                    Vector3 direction = new Vector3(7, 10, 0);
-                    transform.Translate(direction * Time.deltaTime);
-                }
             }
-            else
+
+            if (target != null)
             {
                 // move missile toward target
                 Vector2 point2Target = (Vector2)transform.position - (Vector2)target.transform.position;
@@ -67,7 +48,7 @@ public class HomingMissile : MonoBehaviour
     {
         if (isAlive)
         {
-            if (other.tag == "Enemy")
+            if (other.tag == "Enemy" || other.tag == "Enemy2")
             {
                 Instantiate(explosionPrefab, other.transform.position, Quaternion.identity);
                 Enemy enemy = other.GetComponent<Enemy>();

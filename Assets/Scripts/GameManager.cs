@@ -31,7 +31,6 @@ public class GameManager : MonoBehaviour
             V.wave = 1;
             V.isGameOver = false;
             V.frameCounter = 0;
-            V.seconds = 0;
             V.setMode(0);
         }
 
