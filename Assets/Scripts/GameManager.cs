@@ -27,11 +27,12 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(1);  //0 = "Main Menu", 1="Game"
 
-            // are these necessary if the scene is reloaded?
-            //V.wave = 1;
-            //V.isGameOver = false;
-            //V.frameCounter = 0;
-            //V.seconds = 0;
+            //are these necessary if the scene is reloaded ?
+            V.wave = 1;
+            V.isGameOver = false;
+            V.frameCounter = 0;
+            V.seconds = 0;
+            V.setMode(0);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))

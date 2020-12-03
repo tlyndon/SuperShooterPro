@@ -45,7 +45,14 @@ public class Powerup : MonoBehaviour
     {
         if (isAlive)
         {
-            if (other.tag == "Player")
+            if (other.tag == "Laser" && powerupID == 5)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                Destroy(this.gameObject, 0.2f);
+                powerUpRenderer.color = Color.clear;
+                Destroy(other.gameObject, 0.1f);
+            }
+            else if (other.tag == "Player")
             {
                 Debug.Log("Picked Up Powerup " + other.tag);
                 if (powerupID == 5)
