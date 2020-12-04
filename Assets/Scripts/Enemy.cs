@@ -14,6 +14,9 @@ public class Enemy : MonoBehaviour
     private GameObject laserPrefab2;
     [SerializeField]
     private GameObject explosionPrefab;
+    public GameObject newShield;
+    [SerializeField]
+    private GameObject shieldPrefab;
 
     public int enemyType = 999;
     private int fireWhenCounterEquals;
@@ -28,6 +31,7 @@ public class Enemy : MonoBehaviour
 
     private float canFire = -1;
     public bool isAlive = true;
+    public bool hasShield = false;
     //--------------------------------------------------------------
     void Start()
     {
@@ -63,13 +67,27 @@ public class Enemy : MonoBehaviour
                     if (anim == null) { Debug.LogError("Animator Component is NULL"); }
                 }
 
+                if (hasShield == true)
+                {
+                    newShield = Instantiate(shieldPrefab, transform.position, Quaternion.identity);
+                }
+
                 fireWhenCounterEquals = Random.Range(300, 450);
             }
             else
             {
                 CalculateEnemyMovement();
                 SpawnEnemyFire();
+                MoveShieldWithEnemy();
             }
+        }
+    }
+    //--------------------------------------------------------------
+    void MoveShieldWithEnemy()
+    {
+        if (hasShield == true)
+        {
+            newShield.transform.position = this.transform.position;
         }
     }
     //--------------------------------------------------------------
@@ -91,7 +109,7 @@ public class Enemy : MonoBehaviour
         else if (isAlive == true && enemyType == 2 && V.modeCounter > fireWhenCounterEquals)
         {
             fireWhenCounterEquals = V.modeCounter + 180;
-            Vector3 newPos = new Vector3(transform.position.x, transform.position.y - 6, 0);
+            Vector3 newPos = new Vector3(transform.position.x, transform.position.y - 5, 0);
             GameObject enemyLaser = Instantiate(laserPrefab2, newPos, Quaternion.identity);
             Laser[] lasers2 = enemyLaser.GetComponentsInChildren<Laser>();
 
@@ -157,10 +175,16 @@ public class Enemy : MonoBehaviour
         }
 
         // check if reached bottom of screen and bring back to the top
-        if (transform.position.y < -5f)
+        if (transform.position.y < -7f)
         {
-            float newX = transform.position.x;
-            transform.position = new Vector3(newX, 7, 0);
+            //float newX = transform.position.x;
+            //transform.position = new Vector3(newX, 7, 0);
+            if (hasShield == true)
+            {
+                hasShield = false;
+                Destroy(newShield.gameObject, 0f);
+            }
+            Destroy(this.gameObject);
         }
     }
     //--------------------------------------------------------------
@@ -170,24 +194,30 @@ public class Enemy : MonoBehaviour
         if (enemyType != 2)
         {
             anim.SetTrigger("OnEnemyDeath");
-            Destroy(this.gameObject, 2.8f);
+            Destroy(GetComponent<Collider2D>());
+            Destroy(this.gameObject, 2.8f);  //destroy projectile
         }
         else
         {
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            Destroy(this.gameObject, 0.5f);
+            Destroy(GetComponent<Collider2D>());  //remove enemy collider
+            Destroy(this.gameObject, 0.5f);  //destroy projectile
         }
-
+        if (hasShield == true)
+        {
+            hasShield = false;
+            Destroy(newShield.gameObject, 0f);
+        }
         Debug.Log("Enemy Collided with " + collider + "!");
     }
     //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
         GameObject obj = GameObject.FindGameObjectWithTag("Player");
-        if (obj != null)
+        if (obj != null && isAlive == true)
         {
             Player player = obj.transform.GetComponent<Player>();
-            if (other.tag == "Player" && isAlive == true)
+            if (other.tag == "Player")
             {
                 ThisEnemyDiesFromCollisionWith("Player");
                 if (V.mode == 21)
@@ -197,10 +227,18 @@ public class Enemy : MonoBehaviour
             }
             else if (other.tag == "Laser" || other.tag == "Missile")
             {
-                ThisEnemyDiesFromCollisionWith(other.tag);
-                Destroy(other.gameObject);
-                Destroy(GetComponent<Collider2D>());
-                player.AddToScore(10);
+                if (hasShield == true)
+                {
+                    hasShield = false;
+                    Destroy(newShield.gameObject, 0f);
+                    Destroy(other.gameObject, 0f);
+                }
+                else
+                {
+                    ThisEnemyDiesFromCollisionWith(other.tag);
+                    Destroy(other.gameObject);
+                    player.AddToScore(10);
+                }
             }
         }
     }

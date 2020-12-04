@@ -51,7 +51,14 @@ public class HomingMissile : MonoBehaviour
             if (other.tag == "Enemy" || other.tag == "Enemy2")
             {
                 Instantiate(explosionPrefab, other.transform.position, Quaternion.identity);
+
                 Enemy enemy = other.GetComponent<Enemy>();
+                GameObject shield = enemy.newShield;
+                if (shield != null)
+                {
+                    Destroy(shield.gameObject, 0.02f);
+                }
+
                 enemy.isAlive = false;
                 Destroy(other.gameObject, 0.02f);                                       //modify so that we can add the direction of missile to the explosion
                 Instantiate(explosionPrefab, transform.position, Quaternion.identity);

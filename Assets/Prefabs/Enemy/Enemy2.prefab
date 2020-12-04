@@ -71,8 +71,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1199337851
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 6be9c2d93920b4901b75d36586c5b90a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -247,5 +247,10 @@ MonoBehaviour:
     type: 3}
   explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422,
     type: 3}
+  newShield: {fileID: 5031015416757562896, guid: 643f69f5e645c47fdb0c05a89b00c6fc,
+    type: 3}
+  shieldPrefab: {fileID: 5031015416757562896, guid: 643f69f5e645c47fdb0c05a89b00c6fc,
+    type: 3}
   enemyType: 2
   isAlive: 1
+  hasShield: 0

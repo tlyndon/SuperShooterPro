@@ -17,8 +17,7 @@ public class Laser : MonoBehaviour
     {
         if (isEnemy2Laser == true && readyToDisappear == false)
         {
-            Debug.Log("---------------------------- ready to remove laser2 ---------------------");
-            Destroy(this.gameObject, 5f);
+            Destroy(this.gameObject, 2f);
             readyToDisappear = true;
         }
 
@@ -79,6 +78,7 @@ public class Laser : MonoBehaviour
     //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // only handles collissions of enemyLasers
         if (other.tag == "Player" && (isEnemyLaser == true || isEnemy2Laser == true))
         {
             Player player = other.transform.GetComponent<Player>();

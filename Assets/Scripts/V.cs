@@ -4,6 +4,9 @@ using UnityEngine;
 
 public static class V
 {
+
+    //missile doesn't kill enemy2
+    
     public static bool musicOn = false;
     public static bool soundOn = false;
     public static int seconds = 0;

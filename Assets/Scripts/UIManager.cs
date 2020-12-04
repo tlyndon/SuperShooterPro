@@ -114,7 +114,7 @@ public class UIManager : MonoBehaviour
                 Debug.Log("Initialize Wave Text");
                 waveText.gameObject.SetActive(true);
                 waveText.text = "WAVE " + V.wave;
-                float calc = (V.wave * 1.25f) + 7;
+                float calc = (V.wave * 3f) + 8;
                 V.enemiesToSpawn = (int) calc;
                 Debug.Log("After Display: enemiesToSpawn:" + V.enemiesToSpawn);
             }

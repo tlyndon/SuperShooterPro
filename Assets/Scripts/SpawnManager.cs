@@ -50,9 +50,12 @@ public class SpawnManager : MonoBehaviour
                 ctr = ctr + 1;
                 V.enemiesToSpawn = V.enemiesToSpawn - 1;
 
-                nextEnemyType = nextEnemyType + 1;
-                if (nextEnemyType > 2)
-                { nextEnemyType = 0; }
+                if ((nextEnemyType == 0 && ctr > howMany * 0.65) || (nextEnemyType == 1 && ctr > howMany * .1))
+                {
+                    nextEnemyType = nextEnemyType + 1;
+                    if (nextEnemyType > 2)
+                    { nextEnemyType = 0; }
+                }
             }
             V.setMode(21);
         }
@@ -64,7 +67,7 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void SpawnOneEnemy(int typ, int ctr)
     {
-        Vector3 posToSpawn = new Vector3(Random.Range(0, 8) - 4, 7 + (ctr * 3), 0);  //typ=0 & 2
+        Vector3 posToSpawn = new Vector3(Random.Range(0, 8) - 4, 8 + (ctr * 3), 0);  //typ=0 & 2
         if (typ == 1)
         {
             posToSpawn = new Vector3(-4, 8 + (ctr * 2), 0);  //typ=1
@@ -83,6 +86,13 @@ public class SpawnManager : MonoBehaviour
 
         Enemy enemy = newEnemy.GetComponent<Enemy>();
         enemy.enemyType = typ;
+
+        int r = 11 - V.wave;
+        if (r<2) { r = 2; }
+        if (Random.Range(0, r) == 1)
+        {
+            enemy.hasShield = true;
+        }
     }
     //--------------------------------------------------------------
     void ConsiderSpawningPowerUp()

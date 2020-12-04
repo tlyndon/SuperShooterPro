@@ -267,5 +267,11 @@ MonoBehaviour:
     type: 3}
   explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422,
     type: 3}
+  newShield: {fileID: 5031015416757562896, guid: 643f69f5e645c47fdb0c05a89b00c6fc,
+    type: 3}
+  shieldPrefab: {fileID: 5031015416757562896, guid: 643f69f5e645c47fdb0c05a89b00c6fc,
+    type: 3}
+  eshieldSpriteRenderer: {fileID: 0}
   enemyType: 0
   isAlive: 1
+  hasShield: 0
