@@ -36,14 +36,12 @@ public class SpawnManager : MonoBehaviour
         if (V.mode == 20)
         {
             nextTimePowerUpCanSpawn = 0;
-            // if no enemy objects, then spawn an enemy immediately without waiting
-            //GameObject[] gameObjects;
-            //gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
-            //if (gameObjects.Length == 0)
 
             int nextEnemyType = 0;
             int ctr = 0;
+            V.enemiesToSpawn = (int) V.wave * 3 + 8;
             int howMany = V.enemiesToSpawn;
+
             while (ctr < howMany)
             {
                 SpawnOneEnemy(nextEnemyType, ctr);

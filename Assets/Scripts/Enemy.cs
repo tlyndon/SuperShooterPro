@@ -22,8 +22,8 @@ public class Enemy : MonoBehaviour
     private int fireWhenCounterEquals;
     private string enemyDir;
     private float enemyXgoal;
-    private float speedX;
-    private float speedY;
+    private float speedX = 4f;
+    private float speedY = 4f;
     private float deltaX;
     private float enemyMovementRangeX = 12.0f;
     private Vector3 lastEnemyXDirection;
@@ -64,7 +64,8 @@ public class Enemy : MonoBehaviour
                 if (enemyType != 2)
                 {
                     anim = GetComponent<Animator>();
-                    if (anim == null) { Debug.LogError("Animator Component is NULL"); }
+                    if (anim == null)
+                    { V.zprint("trace", "enemy.cs Update() anim=null"); }
                 }
 
                 if (hasShield == true)
@@ -115,7 +116,6 @@ public class Enemy : MonoBehaviour
 
             for (int i = 0; i < lasers2.Length; i++)
             { lasers2[i].AssignEnemy2Laser(); }
-            Debug.Log("---------------------------------------- Enemy2 Laser --------------------");
         }
     }
     //--------------------------------------------------------------
@@ -141,8 +141,27 @@ public class Enemy : MonoBehaviour
         }
         else if (enemyType == 0 || enemyType == 2)  //down
         {
-            lastEnemyYDirection = Vector3.down * speedY * Time.deltaTime;
+            lastEnemyYDirection = Vector3.down * speedY * Time.deltaTime;  //regular down
             transform.Translate(lastEnemyYDirection);
+
+            GameObject obj = GameObject.FindGameObjectWithTag("Player");
+            if (obj != null && enemyType == 2)
+            {
+                Player player = obj.transform.GetComponent<Player>();
+
+                float distance = Vector3.Distance(transform.position, player.transform.position);
+                if (distance < 7)
+                {
+
+                    lastEnemyXDirection = Vector3.left * 1.15f * Time.deltaTime;
+                    deltaX = transform.position.x - player.transform.position.x;
+                    if (deltaX < 0)
+                    {
+                        lastEnemyXDirection = Vector3.right * 1.15f * Time.deltaTime;
+                    }
+                    transform.Translate(lastEnemyXDirection);
+                }
+            }
         }
         else if (enemyType == 1)  //leftandright
         {
@@ -208,7 +227,8 @@ public class Enemy : MonoBehaviour
             hasShield = false;
             Destroy(newShield.gameObject, 0f);
         }
-        Debug.Log("Enemy Collided with " + collider + "!");
+        V.zprint("trace", "ThisEnemyDiesFromCollisionWith()");
+        V.zprint("enemy", "Enemy Collided with " + collider + "!");
     }
     //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)

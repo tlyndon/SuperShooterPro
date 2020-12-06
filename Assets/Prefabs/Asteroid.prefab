@@ -133,9 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d05659a76a7b45cfab4101c079acd56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 19
-  _explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422,
+  speed: 4
+  explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422,
     type: 3}
-  myAudioManager: {fileID: 0}
-  audioSource: {fileID: 0}
-  explosionSound: {fileID: 0}

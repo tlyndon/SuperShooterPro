@@ -24,11 +24,11 @@ public class Powerup : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
-        { Debug.LogError("The audioSource component in Powerup.cs = null"); }
+        { V.zprint("error", "The audioSource component in Powerup.cs = null"); }
 
         powerUpRenderer = this.GetComponent<SpriteRenderer>();
         if (powerUpRenderer == null)
-        { Debug.Log("The powerUpRenderer component in Powerup.cs = null"); }
+        { V.zprint("error", "The powerUpRenderer component in Powerup.cs = null"); }
     }
     //--------------------------------------------------------------
     void Update()
@@ -54,18 +54,23 @@ public class Powerup : MonoBehaviour
             }
             else if (other.tag == "Player")
             {
-                Debug.Log("Picked Up Powerup " + other.tag);
-                if (powerupID == 5)
-                {
-                    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-                }
+                V.zprint("powerup", "Picked Up Powerup " + other.tag);
+                //only use if want to be able to blow-up the Butterfly Bomb
+                //if (powerupID == 5)
+                //{
+                //    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                //}
                 
                 Destroy(this.gameObject, 2f);
                 powerUpRenderer.color = Color.clear;
-                Debug.Log("powerupID:" + powerupID);
+
+                V.zprint("powerup", "powerupID:" + powerupID);
+
                 Player player = other.transform.GetComponent<Player>();
                 if (player == null)
-                { Debug.LogError("player = null in Powerup.cs"); }
+                {
+                    V.zprint("error","player = null in Powerup.cs");
+                }
 
                 else           
                 {   
@@ -77,27 +82,27 @@ public class Powerup : MonoBehaviour
                     switch (powerupID)
                     {
                         case 0:
-                            Debug.Log("Got Triple Shot PowerUp!");
+                            V.zprint("powerup", "Got Triple Shot PowerUp!");
                             player.TripleShotActive();
                             break;
                         case 1:
-                            Debug.Log("Got Speed PowerUp!");
+                            V.zprint("powerup", "Got Speed PowerUp!");
                             player.SpeedBoostActive();
                             break;
                         case 2:
-                            Debug.Log("Got Sheilds PowerUp!");
+                            V.zprint("powerup", "Got Sheilds PowerUp!");
                             player.ShieldsActive();
                             break;
                         case 3:
-                            Debug.Log("Got Ammo PowerUp!");
+                            V.zprint("powerup", "Got Ammo PowerUp!");
                             player.SetAmmoToDefaultValue();
                             break;
                         case 4:
-                            Debug.Log("Got Health PowerUp!");
+                            V.zprint("powerup", "Got Health PowerUp!");
                             player.RestoreHealth();
                             break;
                         case 5:
-                            Debug.Log("Got Butterflybones PowerUp!");
+                            V.zprint("powerup", "Got Butterflybones PowerUp!");
                             player.Damage();
                             break;
                     }

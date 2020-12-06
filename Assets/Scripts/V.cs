@@ -1,12 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public static class V
+// help from https://answers.unity.com/questions/323195/how-can-i-have-a-static-class-i-can-access-from-an.html
+public class V : MonoBehaviour
 {
+    void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
 
+    //bugs to fix
     //missile doesn't kill enemy2
-    
+
     public static bool musicOn = false;
     public static bool soundOn = false;
     public static int seconds = 0;
@@ -25,11 +30,42 @@ public static class V
     //Mode 21: After 7 enemies are spawned, I then wait for the player to destroy them and then:
     //Mode 10: Display "WAVE #2"
     //Mode 100: GameOver
-
+    //--------------------------------------------------------------
     public static void setMode(int newMode)
     {
-        Debug.Log("Set New Mode from " + V.mode + " to " + newMode);
+        zprint("mode", "V.mode = " + newMode + " (was: " + V.mode + ")");
         V.mode = newMode;
         V.modeCounter = 0;
+    }
+    //--------------------------------------------------------------
+    public static string repeatString(string str, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            str = str + " ";
+        }
+        return str;
+    }
+    //--------------------------------------------------------------
+    // V.zprint("trace", "newScaleX()");
+    public static void zprint(string searchFor, string txt)
+    {
+        //string[] arry = { "mode", "error", "enemy" };
+        string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage" };
+        int f = System.Array.IndexOf(arry, searchFor);
+        if (f > -1)
+        {
+            string str = arry[f];
+            int spaces = 10 - str.Length;
+            string newstring = str + repeatString(" ", spaces);
+            if (str != "error")
+            {
+                Debug.Log("------------------------------------------->" + newstring + "|" + txt);
+            }
+            else
+            {
+                Debug.LogError("------------------------------------------->" + newstring + "|" + txt);
+            }
+        }
     }
 }

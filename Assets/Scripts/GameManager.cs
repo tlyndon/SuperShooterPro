@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 
         if (V.isGameOver == true && Input.GetKeyDown(KeyCode.R))
         {
+            V.zprint("keys", "R KEY PRESSED");
             SceneManager.LoadScene(1);  //0 = "Main Menu", 1="Game"
 
             //are these necessary if the scene is reloaded ?
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("ESCAPE KEY PRESSED");
+            V.zprint("keys", "ESCAPE KEY PRESSED");
             Application.Quit();
         }
     }

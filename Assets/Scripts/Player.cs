@@ -78,25 +78,25 @@ public class Player : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
-        { Debug.LogError("audioSource in Player.cs = null."); }
+        { V.zprint("error", "audioSource in Player.cs = null."); }
 
         health = 3;
         transform.position = new Vector3(0, playerStartingYposBelowScreen, 0);
 
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (uiManager == null)
-        { Debug.LogError("UI Manager is null."); }
+        { V.zprint("error", "UI Manager is null."); }
 
         ammoCount = ammoCountDefault;
         uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
 
         spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         if (spawnManager == null)
-        { Debug.LogError("The Spawn manager is null."); }
+        { V.zprint("error", "The Spawn manager is null."); }
 
         shieldSpriteRenderer = shieldVisualizer.GetComponent<SpriteRenderer>();
         if (shieldSpriteRenderer == null)
-        { Debug.Log("The Shield Sprite Renderer component in Player.cs = null"); }
+        { V.zprint("error", "The Shield Sprite Renderer component in Player.cs = null"); }
 
         shieldStrength = shieldStrengthDefault;
         shieldVisualizer.SetActive(false);
@@ -108,6 +108,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftShift))
         {
+            V.zprint("keys", "LEFT SHIFT KEY PRESSED");
             isLeftShiftKeySpeedBoostActive = true;
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
@@ -124,16 +125,29 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > canFire)
         {
+            V.zprint("keys", "SPACE KEY PRESSED");
             if (ammoCount > 0)
             {
+                string weapon = "laser";
                 if (V.seconds > timeLastMissileShot + 3)
                 {
-                    timeLastMissileShot = V.seconds;
-                    FireMissiles();
-                    ammoCount = ammoCount - 1;
-                    uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
+                    GameObject[] gameObjects;
+                    gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
+                    int count = gameObjects.Length;
+                    gameObjects = GameObject.FindGameObjectsWithTag("Enemy2");
+                    count = count + gameObjects.Length;
+                    if (count > 0)
+                    {
+                        weapon = "missile";
+                        timeLastMissileShot = V.seconds;
+                        FireMissiles();
+                        ammoCount = ammoCount - 1;
+                        uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
+                    }
+                    else
+                    { timeLastMissileShot = V.seconds - 2; }
                 }
-                else
+                if (weapon == "laser")
                 {
                     FireLaser();
                     ammoCount = ammoCount - 1;
@@ -228,10 +242,11 @@ public class Player : MonoBehaviour
     //--------------------------------------------------------------
     public void Damage()
     {
+        V.zprint("damage", "Player.Damage()");
         NewCameraShake1();
         if (isShieldsActive == true)
         {
-            Debug.Log("Shields Protected me!");
+            V.zprint("damage", "Player.Damage() Shields Protected me!");
             shieldStrength = shieldStrength - 1;
 
             if (shieldStrength < 0)
@@ -271,7 +286,7 @@ public class Player : MonoBehaviour
             {
                 //yes, we are out of more lives, so it's time to die
                 Destroy(this.gameObject);
-                Debug.Log("Game Over");
+                V.zprint("damage", "Player.Damage() lies = 0 > Game Over");
                 uiManager.GameOverSequence();
 
             }
@@ -348,7 +363,6 @@ public class Player : MonoBehaviour
     //--------------------------------------------------------------
     public void SetAmmoToDefaultValue()
     {
-        Debug.Log("Reset ammoCount to default");
         ammoCount = ammoCountDefault;
         uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
     }
@@ -377,7 +391,7 @@ public class Player : MonoBehaviour
         //Debug.Log("myCamera=" + Time.deltaTime);
         if (myCamera == null)
         {
-            Debug.LogError("Player: myCamera = Null");
+            V.zprint("error", "Player: myCamera = Null");
             yield return new WaitForSeconds(0.1f);
         }
         else

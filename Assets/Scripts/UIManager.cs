@@ -68,15 +68,22 @@ public class UIManager : MonoBehaviour
     //--------------------------------------------------------------
     public void NextWaveWhenEnemiesGone()
     {
-        if (V.mode == 21)
+        if (V.mode == 21 && V.modeCounter > 0)
         {
+            V.zprint("trace", "NextWaveWhenEnemiesGone()");
+
             V.modeCounter = V.modeCounter + 1;  //mode 21
 
             GameObject[] gameObjects;
             gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
-            if (gameObjects.Length == 0)
+            int count = gameObjects.Length;
+            gameObjects = GameObject.FindGameObjectsWithTag("Enemy2");
+            count = count + gameObjects.Length;
+
+            V.zprint("nextwave", "enemy count:" + count);
+            if (count == 0)
             {
-                Debug.Log("Initialize Next Wave");
+                V.zprint("trace", "NextWaveWhenEnemiesGone with enemyCount = 0");
                 V.wave = V.wave + 1;
                 StartWave();
             }
@@ -85,20 +92,21 @@ public class UIManager : MonoBehaviour
     //--------------------------------------------------------------
     public void StartWave()
     {
+        V.zprint("trace", "StartWave()");
         V.enemiesToSpawn = 0;
         V.setMode(10);
     }
     //--------------------------------------------------------------
     public void GetReady()
     {
-        Debug.Log("Initialize Get Ready!");
+        V.zprint("trace", "GetReady()");
         V.flashingText = "Get Ready!";
         V.setMode(0);
     }
     //--------------------------------------------------------------
     public void GameOverSequence()
     {
-        Debug.Log("Initialize Game Over Sequence");
+        V.zprint("trace", "GameOverSequence()");
         restartText.gameObject.SetActive(true);
         V.flashingText = "Game Over!";
         V.setMode(100);
@@ -111,12 +119,10 @@ public class UIManager : MonoBehaviour
         {
             if (V.modeCounter == 0)
             {
-                Debug.Log("Initialize Wave Text");
+                V.zprint("trace", "updateWaveText()");
+
                 waveText.gameObject.SetActive(true);
                 waveText.text = "WAVE " + V.wave;
-                float calc = (V.wave * 3f) + 8;
-                V.enemiesToSpawn = (int) calc;
-                Debug.Log("After Display: enemiesToSpawn:" + V.enemiesToSpawn);
             }
             else if (V.modeCounter == 120)
             {
@@ -133,7 +139,8 @@ public class UIManager : MonoBehaviour
         {
             if (V.modeCounter == 0)
             {
-                Debug.Log("Initialize Flashing Text:" + V.flashingText);
+                V.zprint("trace", "updateFlashingText = "+ V.flashingText);
+                
                 flashingText.gameObject.SetActive(true);
             }
             if (V.modeCounter == 0 || V.modeCounter == 60 || V.modeCounter == 120)
@@ -146,13 +153,13 @@ public class UIManager : MonoBehaviour
             }
             V.modeCounter = V.modeCounter + 1;  //mode 0 or 100
 
-            if (V.isGameOver == true && V.modeCounter==120)
+            if (V.isGameOver == true && V.modeCounter == 120)
             {
                 V.modeCounter = 0;
             }
             if (V.modeCounter == 151 && V.isGameOver == false)
             {
-                //text finished flashing & not game over, so next wave
+                V.zprint("trace", "updateFlashingText = " + V.flashingText + ", text finished flashing & not game over, so next wave");
                 StartWave();
             }
 
