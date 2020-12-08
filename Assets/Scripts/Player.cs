@@ -73,6 +73,7 @@ public class Player : MonoBehaviour
     private float lowestYpos = -3.8f;
     private float playerStartingYposBelowScreen = -10f;
     public bool cameraShake = false;
+    public bool playerMoving = false;
     //--------------------------------------------------------------
     void Start()
     {
@@ -106,7 +107,7 @@ public class Player : MonoBehaviour
     //--------------------------------------------------------------
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
             V.zprint("keys", "LEFT SHIFT KEY PRESSED");
             isLeftShiftKeySpeedBoostActive = true;
@@ -309,12 +310,13 @@ public class Player : MonoBehaviour
     //--------------------------------------------------------------
     void CalculateMovement()
     {
+        bool moving = false;
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
         if (verticalInput != 0 || horizontalInput != 0)
         {
-
+            moving = true;
             if (uiManager.thrustersPct > 0.02f)
             {
                 uiManager.UseThrusters();
@@ -345,6 +347,7 @@ public class Player : MonoBehaviour
                 { transform.position = new Vector3(11f, transform.position.y, 0); }
             }
         }
+        playerMoving = moving;
     }
     //--------------------------------------------------------------
     public void ShieldsActive()

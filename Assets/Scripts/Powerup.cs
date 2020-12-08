@@ -7,7 +7,7 @@ public class Powerup : MonoBehaviour
     private AudioSource audioSource;
 
     [SerializeField]
-    private int powerupID;    //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health
+    private int powerupID;    //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health, 5=butterfly
 
     [SerializeField]
     private AudioClip powerUpClip;
@@ -19,9 +19,15 @@ public class Powerup : MonoBehaviour
 
     private float speed = 3.0f;
     private bool isAlive = true;
+    private bool autoPickup = false;
+    private GameObject player;
     //--------------------------------------------------------------
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+        { V.zprint("powerup", "player is null"); }
+
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         { V.zprint("error", "The audioSource component in Powerup.cs = null"); }
@@ -34,6 +40,23 @@ public class Powerup : MonoBehaviour
     void Update()
     {
         if (isAlive)
+        {
+            calculatePowerupMovement();
+        }
+    }
+    //--------------------------------------------------------------
+    void calculatePowerupMovement()
+    {
+        //if the powerup close to player, pressing C will cause it to go to player and be picked up automatically
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+        if (autoPickup==true || (distance<5f && powerupID<5 && Input.GetKey(KeyCode.C)))
+        {
+            autoPickup = true;
+            // move powerup toward player (target)
+            float step = speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
+        }
+        else
         {
             transform.Translate(Vector3.down * speed * Time.deltaTime);
             if (transform.position.y < -4.5f)
@@ -60,7 +83,7 @@ public class Powerup : MonoBehaviour
                 //{
                 //    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
                 //}
-                
+
                 Destroy(this.gameObject, 2f);
                 powerUpRenderer.color = Color.clear;
 
@@ -69,11 +92,11 @@ public class Powerup : MonoBehaviour
                 Player player = other.transform.GetComponent<Player>();
                 if (player == null)
                 {
-                    V.zprint("error","player = null in Powerup.cs");
+                    V.zprint("error", "player = null in Powerup.cs");
                 }
 
-                else           
-                {   
+                else
+                {
                     if (V.soundOn == true)
                     { audioSource.PlayOneShot(powerUpClip, 0.7F); }
 
