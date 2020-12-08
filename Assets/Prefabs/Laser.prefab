@@ -143,5 +143,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14ef9c1bda956422ab12858691028b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerLaserspeed: 8
-  _enemyLaserSpeed: 6
+  playerLaserspeed: 8
+  enemyLaserSpeed: 6
+  enemy2LaserSpeed: 2
+  enemyLaserUpspeed: 2
+  isEnemyLaser: 0
+  isEnemyUpLaser: 0
+  isEnemy2Laser: 0

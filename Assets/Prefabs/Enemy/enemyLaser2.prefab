@@ -146,3 +146,7 @@ MonoBehaviour:
   playerLaserspeed: 8
   enemyLaserSpeed: 6
   enemy2LaserSpeed: 2
+  enemyLaserUpspeed: 2
+  isEnemyLaser: 0
+  isEnemyUpLaser: 0
+  isEnemy2Laser: 0

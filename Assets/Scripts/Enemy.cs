@@ -94,11 +94,10 @@ public class Enemy : MonoBehaviour
     //--------------------------------------------------------------
     void SpawnEnemyFire()
     {
-        //generate enemy fire
         if (isAlive == true && enemyType != 2 && Time.time > canFire && V.modeCounter > fireWhenCounterEquals)
         {
+            //regular enemy laser fire down
             fireWhenCounterEquals = V.modeCounter + Random.Range(300, 660);
-
             fireRate = Random.Range(3f, 7f);
             canFire = Time.time + fireRate;
             GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
@@ -109,6 +108,7 @@ public class Enemy : MonoBehaviour
         }
         else if (isAlive == true && enemyType == 2 && V.modeCounter > fireWhenCounterEquals)
         {
+            //mega blaster
             fireWhenCounterEquals = V.modeCounter + 180;
             Vector3 newPos = new Vector3(transform.position.x, transform.position.y - 5, 0);
             GameObject enemyLaser = Instantiate(laserPrefab2, newPos, Quaternion.identity);
@@ -116,6 +116,32 @@ public class Enemy : MonoBehaviour
 
             for (int i = 0; i < lasers2.Length; i++)
             { lasers2[i].AssignEnemy2Laser(); }
+        }
+        else if (isAlive == true & V.modeCounter > fireWhenCounterEquals)
+        {
+            //find if powerup is below us, and if so, fire laser at it.
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down * 10);
+            if (hit.collider != null)
+            {
+                //Draw Line between this object and the object collided with, of the color red, and display that line for 0.01 seconds
+                Debug.DrawLine(transform.position, hit.collider.transform.position, Color.red, 0.01f);
+
+                V.zprint("raycast", "Object Detected " + hit.collider.name); //name of object holding the collider we hit
+                V.zprint("raycast", "Distance from Origin to Object = " + hit.distance);  //distance between the RayCast and the Collider of the object we hit
+
+                if (hit.collider.tag == "powerup")
+                {
+                    fireWhenCounterEquals = V.modeCounter + Random.Range(300, 660);
+                    fireRate = Random.Range(3f, 7f);
+                    canFire = Time.time + fireRate;
+
+                    GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
+                    Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+
+                    for (int i = 0; i < lasers.Length; i++)
+                    { lasers[i].AssignEnemyLaser(); }
+                }
+            }
         }
     }
     //--------------------------------------------------------------
@@ -197,7 +223,7 @@ public class Enemy : MonoBehaviour
         }
 
         // check if reached bottom of screen and bring back to the top
-        if (transform.position.y < -6.5f)
+        if (transform.position.y < -4f)
         {
             //just before an enemy dies, it shoots backwards
             GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
@@ -240,13 +266,37 @@ public class Enemy : MonoBehaviour
         V.zprint("enemy", "Enemy Collided with " + collider + "!");
     }
     //--------------------------------------------------------------
+    private void damageOrDestroyThisEnemy(Collider2D other)
+    {
+        if (hasShield == true)
+        {
+            hasShield = false;
+            Destroy(newShield.gameObject, 0f);
+            Destroy(other.gameObject, 0f);
+        }
+        else
+        {
+            ThisEnemyDiesFromCollisionWith(other.tag);
+            Destroy(other.gameObject);
+        }
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         GameObject obj = GameObject.FindGameObjectWithTag("Player");
-        if (obj != null && isAlive == true)
+        if (obj != null && isAlive == true)  //both player and enemy are alive
         {
-            Player player = obj.transform.GetComponent<Player>();
-            if (other.tag == "Player")
+            Player player = obj.transform.GetComponent<Player>();  //put here once, needed for "Player" or "Missile"
+            if (other.tag == "Laser")
+            {
+                //we need to make sure this is a player laser
+                Laser laser = other.GetComponent<Laser>();
+                if (laser.isEnemyLaser == false && laser.isEnemyUpLaser == false && laser.isEnemy2Laser == false)
+                {
+                    damageOrDestroyThisEnemy(other);
+                }
+            }
+
+            else if (other.tag == "Player")
             {
                 ThisEnemyDiesFromCollisionWith("Player");
                 if (V.mode == 21)
@@ -254,20 +304,10 @@ public class Enemy : MonoBehaviour
                     player.Damage();
                 }
             }
-            else if (other.tag == "Laser" || other.tag == "Missile")
+            else if (other.tag == "Missile")
             {
-                if (hasShield == true)
-                {
-                    hasShield = false;
-                    Destroy(newShield.gameObject, 0f);
-                    Destroy(other.gameObject, 0f);
-                }
-                else
-                {
-                    ThisEnemyDiesFromCollisionWith(other.tag);
-                    Destroy(other.gameObject);
-                    player.AddToScore(10);
-                }
+                damageOrDestroyThisEnemy(other);
+                player.AddToScore(10);
             }
         }
     }

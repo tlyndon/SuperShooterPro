@@ -46,7 +46,7 @@ public class HomingMissile : MonoBehaviour
     //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (isAlive)
+        if (isAlive == true)
         {
             if (other.tag == "Enemy" || other.tag == "Enemy2")
             {
@@ -56,7 +56,7 @@ public class HomingMissile : MonoBehaviour
                 GameObject shield = enemy.newShield;
                 if (shield != null)
                 {
-                    Destroy(shield.gameObject, 0.02f);
+                    Destroy(shield.gameObject, 0.2f);
                 }
 
                 enemy.isAlive = false;

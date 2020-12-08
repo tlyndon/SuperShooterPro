@@ -11,12 +11,16 @@ public class Laser : MonoBehaviour
     [SerializeField]
     public float enemy2LaserSpeed = 2.0f;
     [SerializeField]
-    public float enemyLaserUpspeed = 1.0f;
-    private bool isEnemyLaser = false;
-    private bool isEnemyUpLaser = false;
-    private bool isEnemy2Laser = false;
+    public float enemyLaserUpspeed = 2.5f;
+    public bool isEnemyLaser = false;
+    public bool isEnemyUpLaser = false;
+    public bool isEnemy2Laser = false;  //mega laser
     private bool readyToDisappear = false;
     //--------------------------------------------------------------
+    private void Start()
+    {
+       enemyLaserUpspeed = 2.5f;
+    }
     void Update()
     {
         if (isEnemy2Laser == true && readyToDisappear == false)
@@ -25,7 +29,7 @@ public class Laser : MonoBehaviour
             readyToDisappear = true;
         }
 
-        if ((isEnemyLaser == false && isEnemy2Laser == false) || isEnemyUpLaser==true)
+        if ((isEnemyLaser == false && isEnemy2Laser == false) || isEnemyUpLaser == true)
         {
             MoveUp();
         }
@@ -65,6 +69,9 @@ public class Laser : MonoBehaviour
         else if (isEnemy2Laser == true)
         {
             transform.Translate(Vector3.down * enemy2LaserSpeed * Time.deltaTime);
+
+            //needs to keep the x position of the mega laser with the actual enemy that spawned it
+            //transform.position = new Vector3(transform.parent.gameObject.transform.position.x, transform.position.y, 0);
         }
 
         if (transform.position.y < -8f)
@@ -94,23 +101,25 @@ public class Laser : MonoBehaviour
     //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // only handles collissions of enemyLasers
-        if (other.tag == "Player" && (isEnemyLaser == true || isEnemy2Laser == true || isEnemyUpLaser == true))
+        // only handles collissions of enemyLasers with Player
+        if (other.tag == "Player")
         {
-            Player player = other.transform.GetComponent<Player>();
-            if (player != null)
+            Player player = other.transform.GetComponent<Player>();  //no need to check if null because other.tag=="Player"
+            if (isEnemyLaser == true || isEnemy2Laser == true || (isEnemyUpLaser == true && player.transform.position.y > -2f))
             {
-                player.Damage();
-
-                if (isEnemy2Laser == true)  //killer laser
                 {
-                    if (player.health == 1 || player.health == 2)
+                    player.Damage();
+
+                    if (isEnemy2Laser == true)  //Mega Laser should kill Player
                     {
-                        player.Damage();
-                    }
-                    if (player.health == 1 || player.health == 2)
-                    {
-                        player.Damage();
+                        if (player.health == 1 || player.health == 2)
+                        {
+                            player.Damage();
+                        }
+                        if (player.health == 1)
+                        {
+                            player.Damage();
+                        }
                     }
                     Destroy(this.gameObject);
                 }
