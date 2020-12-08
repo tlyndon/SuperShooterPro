@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 // help from https://answers.unity.com/questions/323195/how-can-i-have-a-static-class-i-can-access-from-an.html
+
 public class V : MonoBehaviour
 {
     void Awake()
@@ -57,7 +58,7 @@ public class V : MonoBehaviour
         {
             string str = arry[f];
             int spaces = 10 - str.Length;
-            string newstring = str + repeatString(" ", spaces);
+            string newstring = str + V.repeatString(" ", spaces);
             if (str != "error")
             {
                 Debug.Log("------------------------------------------->" + newstring + "|" + txt);

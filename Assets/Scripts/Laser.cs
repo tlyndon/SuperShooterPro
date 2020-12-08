@@ -8,8 +8,12 @@ public class Laser : MonoBehaviour
     private float playerLaserspeed = 8.0f;
     [SerializeField]
     public float enemyLaserSpeed = 6.0f;
+    [SerializeField]
     public float enemy2LaserSpeed = 2.0f;
+    [SerializeField]
+    public float enemyLaserUpspeed = 1.0f;
     private bool isEnemyLaser = false;
+    private bool isEnemyUpLaser = false;
     private bool isEnemy2Laser = false;
     private bool readyToDisappear = false;
     //--------------------------------------------------------------
@@ -21,7 +25,7 @@ public class Laser : MonoBehaviour
             readyToDisappear = true;
         }
 
-        if (isEnemyLaser == false && isEnemy2Laser == false)
+        if ((isEnemyLaser == false && isEnemy2Laser == false) || isEnemyUpLaser==true)
         {
             MoveUp();
         }
@@ -33,7 +37,14 @@ public class Laser : MonoBehaviour
     //--------------------------------------------------------------
     void MoveUp()
     {
-        transform.Translate(Vector3.up * playerLaserspeed * Time.deltaTime);
+        if (isEnemyUpLaser == true)
+        {
+            transform.Translate(Vector3.up * enemyLaserUpspeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector3.up * playerLaserspeed * Time.deltaTime);
+        }
 
         if (transform.position.y > 8f)
         {
@@ -71,6 +82,11 @@ public class Laser : MonoBehaviour
         isEnemyLaser = true;
     }
     //--------------------------------------------------------------
+    public void AssignEnemyUpLaser()
+    {
+        isEnemyUpLaser = true;
+    }
+    //--------------------------------------------------------------
     public void AssignEnemy2Laser()
     {
         isEnemy2Laser = true;
@@ -79,7 +95,7 @@ public class Laser : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // only handles collissions of enemyLasers
-        if (other.tag == "Player" && (isEnemyLaser == true || isEnemy2Laser == true))
+        if (other.tag == "Player" && (isEnemyLaser == true || isEnemy2Laser == true || isEnemyUpLaser == true))
         {
             Player player = other.transform.GetComponent<Player>();
             if (player != null)

@@ -123,6 +123,8 @@ public class Enemy : MonoBehaviour
     {
         if (isAlive == false)
         {
+            // This code keeps the direction of the enemy moving when they die,
+            // because the explosion is connected to their position
             lastEnemyYDirection = Vector3.down * speedY * 0.5f * Time.deltaTime;
             transform.Translate(lastEnemyYDirection);
 
@@ -149,6 +151,7 @@ public class Enemy : MonoBehaviour
             {
                 Player player = obj.transform.GetComponent<Player>();
 
+                // if the enemy is getting close to the player, then have it try and ram the player
                 float distance = Vector3.Distance(transform.position, player.transform.position);
                 if (distance < 7)
                 {
@@ -194,15 +197,21 @@ public class Enemy : MonoBehaviour
         }
 
         // check if reached bottom of screen and bring back to the top
-        if (transform.position.y < -7f)
+        if (transform.position.y < -6.5f)
         {
-            //float newX = transform.position.x;
-            //transform.position = new Vector3(newX, 7, 0);
+            //just before an enemy dies, it shoots backwards
+            GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
+            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+            for (int i = 0; i < lasers.Length; i++)
+            { lasers[i].AssignEnemyUpLaser(); }
+
+            //if the enemy has a shield, we must destroy it, too
             if (hasShield == true)
             {
                 hasShield = false;
                 Destroy(newShield.gameObject, 0f);
             }
+
             Destroy(this.gameObject);
         }
     }
