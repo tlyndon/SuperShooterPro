@@ -7,7 +7,8 @@ public class Powerup : MonoBehaviour
     private AudioSource audioSource;
 
     [SerializeField]
-    private int powerupID;    //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health, 5=butterfly
+    private int powerupID;
+    //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health, 5=butterfly, 6=mine
 
     [SerializeField]
     private AudioClip powerUpClip;
@@ -78,11 +79,6 @@ public class Powerup : MonoBehaviour
             else if (other.tag == "Player")
             {
                 V.zprint("powerup", "Picked Up Powerup " + other.tag);
-                //only use if want to be able to blow-up the Butterfly Bomb
-                //if (powerupID == 5)
-                //{
-                //    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-                //}
 
                 Destroy(this.gameObject, 2f);
                 powerUpRenderer.color = Color.clear;
@@ -127,6 +123,10 @@ public class Powerup : MonoBehaviour
                         case 5:
                             V.zprint("powerup", "Got Butterflybones PowerUp!");
                             player.Damage();
+                            break;
+                        case 6:
+                            V.zprint("powerup", "Got Mine PowerUp!");
+                            V.mineCount = V.mineCount + 1;
                             break;
                     }
                 }

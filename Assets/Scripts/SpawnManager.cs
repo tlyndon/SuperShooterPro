@@ -125,6 +125,11 @@ public class SpawnManager : MonoBehaviour
                 nextTimePowerUpCanSpawn = V.modeCounter + 240;
             }
 
+            if (powerUp < 3 && Random.Range(0, 1) < 2)
+            {
+                powerUp = 6;  //mine
+            }
+
             if (powerUp < 3 && Random.Range(0, 10) < 2)
             {
                 powerUp = 5;  //butterflybones

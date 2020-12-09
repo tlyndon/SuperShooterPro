@@ -13,6 +13,7 @@ TagManager:
   - EnemyLaser2
   - Missile
   - Enemy2
+  - Mine
   layers:
   - Default
   - TransparentFX

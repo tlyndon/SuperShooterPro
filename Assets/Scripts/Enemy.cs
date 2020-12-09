@@ -32,10 +32,16 @@ public class Enemy : MonoBehaviour
     private float canFire = -1;
     public bool isAlive = true;
     public bool hasShield = false;
+    private bool ramingPlayerNow = false;
+    private bool avoidingPlayerLaserNow = false;
+    private bool shootingLaserNow = false;
+    private Vector3 avoidToVector3;
+    private float avoidToX = 0f;
+    private float avoidToY = 0f;
     //--------------------------------------------------------------
     void Start()
     {
-
+        isAlive = true;
     }
     //--------------------------------------------------------------
     void Update()
@@ -43,6 +49,7 @@ public class Enemy : MonoBehaviour
         // ready to initialize enemy?
         if (enemyType < 999)
         {
+            //initialize this enemy based upon type
             if (enemyDir == null)
             {
                 if (enemyType == 0 || enemyType == 2)
@@ -77,9 +84,9 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                CalculateEnemyMovement();
                 SpawnEnemyFire();
                 MoveShieldWithEnemy();
+                CalculateEnemyMovement();
             }
         }
     }
@@ -94,6 +101,7 @@ public class Enemy : MonoBehaviour
     //--------------------------------------------------------------
     void SpawnEnemyFire()
     {
+        shootingLaserNow = false;
         if (isAlive == true && enemyType != 2 && Time.time > canFire && V.modeCounter > fireWhenCounterEquals)
         {
             //regular enemy laser fire down
@@ -125,12 +133,12 @@ public class Enemy : MonoBehaviour
             {
                 //Draw Line between this object and the object collided with, of the color red, and display that line for 0.01 seconds
                 Debug.DrawLine(transform.position, hit.collider.transform.position, Color.red, 0.01f);
-
                 V.zprint("raycast", "Object Detected " + hit.collider.name); //name of object holding the collider we hit
                 V.zprint("raycast", "Distance from Origin to Object = " + hit.distance);  //distance between the RayCast and the Collider of the object we hit
 
                 if (hit.collider.tag == "powerup")
                 {
+                    shootingLaserNow = true;
                     fireWhenCounterEquals = V.modeCounter + Random.Range(300, 660);
                     fireRate = Random.Range(3f, 7f);
                     canFire = Time.time + fireRate;
@@ -147,6 +155,8 @@ public class Enemy : MonoBehaviour
     //--------------------------------------------------------------
     void CalculateEnemyMovement()
     {
+        ramingPlayerNow = false;
+        avoidingPlayerLaserNow = false;
         if (isAlive == false)
         {
             // This code keeps the direction of the enemy moving when they die,
@@ -181,7 +191,7 @@ public class Enemy : MonoBehaviour
                 float distance = Vector3.Distance(transform.position, player.transform.position);
                 if (distance < 7)
                 {
-
+                    ramingPlayerNow = true;
                     lastEnemyXDirection = Vector3.left * 1.15f * Time.deltaTime;
                     deltaX = transform.position.x - player.transform.position.x;
                     if (deltaX < 0)
@@ -240,6 +250,51 @@ public class Enemy : MonoBehaviour
 
             Destroy(this.gameObject);
         }
+        else if (enemyType == 0 && isAlive == true)  // && ramingPlayerNow == false && shootingLaserNow == false)
+        {
+            //if (avoidingPlayerLaserNow == false)
+            //{
+            //    RaycastHit2D boxResult;
+            //    boxResult = Physics2D.BoxCast(transform.position, new Vector2(2, 10), 0f, new Vector2(0, -10), 0);
+            //    if (boxResult.collider != null)
+            //    {
+            //        //Draw Line between this object and the object collided with, of the color red, and display that line for 0.01 seconds
+            //        Debug.DrawLine(transform.position, boxResult.collider.transform.position, Color.red, 0.01f);
+            //        V.zprint("avoid", "Object Detected " + boxResult.collider.name); //name of object holding the collider we hit
+            //        V.zprint("avoid", "Distance from Origin to Object = " + boxResult.distance);  //distance between the RayCast and the Collider of the object we hit
+
+            //        if (boxResult.collider.tag == "Laser")
+            //        {
+            //            avoidingPlayerLaserNow = true;
+            //            avoidToY = transform.position.y - 3;
+            //            avoidToX = transform.position.x + 3;
+            //            if (boxResult.collider.transform.position.x > transform.position.x)
+            //            {
+            //                avoidToX = transform.position.x - 3;
+            //            }
+            //            avoidToVector3 = new Vector3(avoidToX, avoidToY, 0);
+            //            V.zprint("avoid", "Initilizing Avoid logic");
+            //        }
+            //    }
+            //}
+
+            if (avoidingPlayerLaserNow == true)
+            {
+
+                if (transform.position.x == avoidToX && transform.position.y == avoidToY)
+                {
+                    V.zprint("avoid", "Avoid complete");
+                    avoidingPlayerLaserNow = false;
+                }
+                else
+                {
+                    V.zprint("avoid", "Moving to Avoid Now");
+                    Vector3 direction = avoidToVector3;
+                    int sp = 5;
+                    transform.Translate(direction * sp * Time.deltaTime);
+                }
+            }
+        }
     }
     //--------------------------------------------------------------
     private void ThisEnemyDiesFromCollisionWith(string collider)
@@ -280,6 +335,7 @@ public class Enemy : MonoBehaviour
             Destroy(other.gameObject);
         }
     }
+    //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
         GameObject obj = GameObject.FindGameObjectWithTag("Player");

@@ -33,6 +33,9 @@ public class Player : MonoBehaviour
     private float fireRateOfMissiles = 0.15f;
 
     [SerializeField]
+    private GameObject minePrefab;
+
+    [SerializeField]
     private GameObject explosionPrefab;
 
     [SerializeField]
@@ -141,7 +144,7 @@ public class Player : MonoBehaviour
                     {
                         weapon = "missile";
                         timeLastMissileShot = V.seconds;
-                        FireMissiles();
+                        FireMissilesAndMines();
                         ammoCount = ammoCount - 1;
                         uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
                     }
@@ -204,17 +207,61 @@ public class Player : MonoBehaviour
         { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
     }
     //--------------------------------------------------------------
-    void FireMissiles()
+    void FireMissilesAndMines()
     {
         canFireMissiles = Time.time + fireRateOfMissiles;
         if (areMissilesActive == true)
         {
-            Instantiate(missilesPrefab, transform.position + new Vector3(0, 2f, 0), Quaternion.identity);
-        }
+            if (V.mineCount == 0)
+            {
+                Instantiate(missilesPrefab, transform.position + new Vector3(0, 2f, 0), Quaternion.identity);
+            }
+            else
+            {
+                float bestDistance = 0;
+                GameObject chosenEnemy = null;
+                GameObject[] gameObjects;
+                gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
+                for (int i = 0; i < gameObjects.Length; i++)
+                {
+                    if (gameObjects[i].transform.position.y - 2 > transform.position.y)
+                    {
+                        float distance = Vector3.Distance(transform.position, gameObjects[i].transform.position);
+                        if (distance > bestDistance)
+                        {
+                            bestDistance = i;
+                            chosenEnemy = gameObjects[i];
+                        }
+                    }
+                }
+                GameObject[] gameObjects2;
+                gameObjects2 = GameObject.FindGameObjectsWithTag("Enemy2");
+                for (int i = 0; i < gameObjects2.Length; i++)
+                {
+                    if (gameObjects[i].transform.position.y - 3 > transform.position.y)
+                    {
+                        float distance = Vector3.Distance(transform.position, gameObjects[i].transform.position);
+                        if (distance > bestDistance)
+                        {
+                            bestDistance = i;
+                            chosenEnemy = gameObjects2[i];
+                        }
+                    }
+                }
+                if (chosenEnemy != null)
+                {
+                    V.mineCount = V.mineCount - 1;
 
+                    Instantiate(minePrefab, transform.position + new Vector3(0, 2f, 0), Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(missilesPrefab, transform.position + new Vector3(0, 2f, 0), Quaternion.identity);
+                }
+            }
+        }
         if (V.soundOn == true)
         { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
-
     }
     //--------------------------------------------------------------
     public void TripleShotActive()
