@@ -26,8 +26,8 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void Update()
     {
-        ConsiderSpawningEnemy();
-        ConsiderSpawningPowerUp();
+        //ConsiderSpawningEnemy();
+        //ConsiderSpawningPowerUp();
     }
 
     //--------------------------------------------------------------
@@ -59,7 +59,7 @@ public class SpawnManager : MonoBehaviour
         }
         if (V.mode == 21)
         {
-            V.modeCounter = V.modeCounter + 1;  //21
+            V.modeCounter = V.modeCounter + 1;
         }
     }
     //--------------------------------------------------------------
@@ -125,7 +125,7 @@ public class SpawnManager : MonoBehaviour
                 nextTimePowerUpCanSpawn = V.modeCounter + 240;
             }
 
-            if (powerUp < 3 && Random.Range(0, 1) < 2)
+            if (powerUp < 3 && Random.Range(0, 10) < 2)
             {
                 powerUp = 6;  //mine
             }

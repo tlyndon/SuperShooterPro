@@ -130,10 +130,10 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > canFire)
         {
             V.zprint("keys", "SPACE KEY PRESSED");
-            if (ammoCount > 0)
+            if (ammoCount > 0)  //-1000 for testing
             {
                 string weapon = "laser";
-                if (V.seconds > timeLastMissileShot + 3)
+                if (V.seconds > timeLastMissileShot + 3)  //1000 for testing
                 {
                     GameObject[] gameObjects;
                     gameObjects = GameObject.FindGameObjectsWithTag("Enemy");

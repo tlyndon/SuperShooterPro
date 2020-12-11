@@ -52,8 +52,8 @@ public class V : MonoBehaviour
     // V.zprint("trace", "newScaleX()");
     public static void zprint(string searchFor, string txt)
     {
-        string[] arry = { "avoid" };
-        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid"};
+        string[] arry = { "boss","mode" };
+        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","boss"};
         int f = System.Array.IndexOf(arry, searchFor);
         if (f > -1)
         {

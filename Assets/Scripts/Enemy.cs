@@ -35,9 +35,26 @@ public class Enemy : MonoBehaviour
     private bool ramingPlayerNow = false;
     private bool avoidingPlayerLaserNow = false;
     private bool shootingLaserNow = false;
-    private Vector3 avoidToVector3;
+    private Vector3 avoidToDirection;
     private float avoidToX = 0f;
     private float avoidToY = 0f;
+    private int avoidFrameCounter = 0;
+    private int avoidSpeed = 8;
+
+    [SerializeField]
+    private float _circleCastRadius = 2f;
+    [SerializeField]
+    private Vector3 _castOffset = new Vector3(0, -2, 0);
+    [SerializeField]
+    private Vector3 _boxcastOffset = new Vector3(0, -2, 0);
+    [SerializeField]
+    private Vector3 _boxCastSize = new Vector3(2.4f, 4, 0);
+    //--------------------------------------------------------------
+    private void onDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position + _castOffset, _circleCastRadius);
+        Gizmos.DrawWireSphere(transform.position + _castOffset, _circleCastRadius);
+    }
     //--------------------------------------------------------------
     void Start()
     {
@@ -55,7 +72,7 @@ public class Enemy : MonoBehaviour
                 if (enemyType == 0 || enemyType == 2)
                 {
                     enemyDir = "down";
-                    speedY = 4.0f;
+                    speedY = 0.5f;
                     if (enemyType == 2)
                     {
                         speedY = 2.0f;
@@ -84,7 +101,7 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                SpawnEnemyFire();
+                //SpawnEnemyFire();
                 MoveShieldWithEnemy();
                 CalculateEnemyMovement();
             }
@@ -155,8 +172,6 @@ public class Enemy : MonoBehaviour
     //--------------------------------------------------------------
     void CalculateEnemyMovement()
     {
-        ramingPlayerNow = false;
-        avoidingPlayerLaserNow = false;
         if (isAlive == false)
         {
             // This code keeps the direction of the enemy moving when they die,
@@ -177,6 +192,21 @@ public class Enemy : MonoBehaviour
             }
             transform.Translate(lastEnemyXDirection);
         }
+        else if (avoidingPlayerLaserNow == true)
+        {
+            avoidFrameCounter = avoidFrameCounter - 1;
+            V.zprint("avoid", "avoidFrameCounter:" + avoidFrameCounter);
+            if (avoidFrameCounter == 0)
+            {
+                V.zprint("avoid", "Avoid complete");
+                avoidingPlayerLaserNow = false;
+            }
+            else
+            {
+                V.zprint("avoid", "Moving to Avoid Now");
+                transform.Translate(avoidToDirection * avoidSpeed * Time.deltaTime);
+            }
+        }
         else if (enemyType == 0 || enemyType == 2)  //down
         {
             lastEnemyYDirection = Vector3.down * speedY * Time.deltaTime;  //regular down
@@ -184,23 +214,28 @@ public class Enemy : MonoBehaviour
 
             GameObject obj = GameObject.FindGameObjectWithTag("Player");
             if (obj != null && enemyType == 2)
-            {
-                Player player = obj.transform.GetComponent<Player>();
-
-                // if the enemy is getting close to the player, then have it try and ram the player
-                float distance = Vector3.Distance(transform.position, player.transform.position);
-                if (distance < 7)
+                if (ramingPlayerNow == true)
                 {
-                    ramingPlayerNow = true;
-                    lastEnemyXDirection = Vector3.left * 1.15f * Time.deltaTime;
-                    deltaX = transform.position.x - player.transform.position.x;
-                    if (deltaX < 0)
-                    {
-                        lastEnemyXDirection = Vector3.right * 1.15f * Time.deltaTime;
-                    }
                     transform.Translate(lastEnemyXDirection);
                 }
-            }
+                else
+                {
+                    Player player = obj.transform.GetComponent<Player>();
+
+                    // if the enemy is getting close to the player, then have it try and ram the player
+                    float distance = Vector3.Distance(transform.position, player.transform.position);
+                    if (distance < 7)
+                    {
+                        ramingPlayerNow = true;
+                        lastEnemyXDirection = Vector3.left * 1.15f * Time.deltaTime;
+                        deltaX = transform.position.x - player.transform.position.x;
+                        if (deltaX < 0)
+                        {
+                            lastEnemyXDirection = Vector3.right * 1.15f * Time.deltaTime;
+                        }
+                        transform.Translate(lastEnemyXDirection);
+                    }
+                }
         }
         else if (enemyType == 1)  //leftandright
         {
@@ -250,48 +285,36 @@ public class Enemy : MonoBehaviour
 
             Destroy(this.gameObject);
         }
-        else if (enemyType == 0 && isAlive == true)  // && ramingPlayerNow == false && shootingLaserNow == false)
+        else if ((enemyType == 0 || enemyType == 2) && isAlive == true)  // && ramingPlayerNow == false && shootingLaserNow == false)
         {
-            //if (avoidingPlayerLaserNow == false)
-            //{
-            //    RaycastHit2D boxResult;
-            //    boxResult = Physics2D.BoxCast(transform.position, new Vector2(2, 10), 0f, new Vector2(0, -10), 0);
-            //    if (boxResult.collider != null)
-            //    {
-            //        //Draw Line between this object and the object collided with, of the color red, and display that line for 0.01 seconds
-            //        Debug.DrawLine(transform.position, boxResult.collider.transform.position, Color.red, 0.01f);
-            //        V.zprint("avoid", "Object Detected " + boxResult.collider.name); //name of object holding the collider we hit
-            //        V.zprint("avoid", "Distance from Origin to Object = " + boxResult.distance);  //distance between the RayCast and the Collider of the object we hit
 
-            //        if (boxResult.collider.tag == "Laser")
-            //        {
-            //            avoidingPlayerLaserNow = true;
-            //            avoidToY = transform.position.y - 3;
-            //            avoidToX = transform.position.x + 3;
-            //            if (boxResult.collider.transform.position.x > transform.position.x)
-            //            {
-            //                avoidToX = transform.position.x - 3;
-            //            }
-            //            avoidToVector3 = new Vector3(avoidToX, avoidToY, 0);
-            //            V.zprint("avoid", "Initilizing Avoid logic");
-            //        }
-            //    }
-            //}
-
-            if (avoidingPlayerLaserNow == true)
+            if (avoidingPlayerLaserNow == false)
             {
+                RaycastHit2D boxResult = Physics2D.BoxCast(transform.position + _boxcastOffset, _boxCastSize, 0f, Vector2.zero);
+                if (boxResult.collider != null)
+                {
+                    //Draw Line between this object and the object collided with, of the color red, and display that line for 0.01 seconds
+                    //V.zprint("avoid", "Distance from Origin to Object = " + boxResult.distance);  //distance between the RayCast and the Collider of the object we hit
 
-                if (transform.position.x == avoidToX && transform.position.y == avoidToY)
-                {
-                    V.zprint("avoid", "Avoid complete");
-                    avoidingPlayerLaserNow = false;
-                }
-                else
-                {
-                    V.zprint("avoid", "Moving to Avoid Now");
-                    Vector3 direction = avoidToVector3;
-                    int sp = 5;
-                    transform.Translate(direction * sp * Time.deltaTime);
+                    if (boxResult.collider.tag == "Laser")  //will need to make sure these are player lasers only
+                    {
+                        Debug.DrawLine(transform.position, boxResult.collider.transform.position, Color.red, 0.01f);
+                        V.zprint("avoid", "Collider Name = " + boxResult.collider.name); //name of object holding the collider we hit
+                        V.zprint("avoid", "Collider Tag = " + boxResult.collider.tag); //name of object holding the collider we hit
+
+                        avoidingPlayerLaserNow = true;
+
+                        Vector3 offset = new Vector3(2, 2, 0);
+                        if (boxResult.collider.transform.position.x > transform.position.x)
+                        {
+                            offset = new Vector3(-2, 2, 0);
+                        }
+
+                        Vector3 targetPosition = transform.position + offset;  // offset = new Vector3(-3, 3, 0);
+                        avoidToDirection = (targetPosition - transform.position).normalized;
+                        avoidFrameCounter = 10;
+                        V.zprint("avoid", "Initilizing Avoid logic");
+                    }
                 }
             }
         }

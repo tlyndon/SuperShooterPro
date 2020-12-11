@@ -271,7 +271,11 @@ MonoBehaviour:
     type: 3}
   shieldPrefab: {fileID: 5031015416757562896, guid: 643f69f5e645c47fdb0c05a89b00c6fc,
     type: 3}
-  eshieldSpriteRenderer: {fileID: 0}
   enemyType: 0
+  speedY: 0.1
   isAlive: 1
   hasShield: 0
+  _circleCastRadius: 2
+  _castOffset: {x: 0, y: -2, z: 0}
+  _boxcastOffset: {x: 0, y: -2, z: 0}
+  _boxCastSize: {x: 2.4, y: 4, z: 0}
