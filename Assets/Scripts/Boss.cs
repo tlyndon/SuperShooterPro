@@ -15,10 +15,13 @@ public class Boss : MonoBehaviour
     private float stopLeft = -7.36f;
     [SerializeField]
     private float stopRight = 7.36f;
+    [SerializeField]
+    private Transform energyBar;
     void Start()
     {
         transform.position = new Vector3(0, 9.2f, 0);
         bossMode = 0;   //0=move down, 1=move left, 2=move right
+        energyBar = GameObject.FindGameObjectWithTag("bossEnergy").transform;
     }
 
     void Update()
@@ -27,7 +30,32 @@ public class Boss : MonoBehaviour
         {
             V.modeCounter = V.modeCounter + 1;
 
-            transform.Rotate(0, 0, 3);
+            calculateBossMovement();
+            displayBossEnergyBar();
+        }
+    }
+    void displayBossEnergyBar()
+    {
+        float scaleX = energyBar.localScale.x;
+
+        if (scaleX >= 0)
+        {
+            energyBar.localScale -= new Vector3(0.25f, 0, 0);
+        }
+        else
+        {
+            energyBar.localScale += new Vector3(0.25f, 0, 0);
+            scaleX = 0;
+        }
+
+        float xOffset = -((300 - scaleX) * 0.5f)*0.01f;
+        Vector3 offset = new Vector3(xOffset, 2.77f, 0);
+        energyBar.position = transform.position + offset;
+        
+    }
+    void calculateBossMovement()
+    {
+        transform.Rotate(0, 0, 3);
 
             if (bossMode == 0)
             {
@@ -100,6 +128,5 @@ public class Boss : MonoBehaviour
                     bossMode = 1;
                 }
             }
-        }
     }
 }

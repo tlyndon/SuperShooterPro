@@ -124,7 +124,7 @@ public class UIManager : MonoBehaviour
                 waveText.gameObject.SetActive(true);
                 waveText.text = "WAVE " + V.wave;
             }
-            else if (V.modeCounter == 120)
+            else if (V.modeCounter == 45)
             {
                 waveText.text = "";
                 V.setMode(20);

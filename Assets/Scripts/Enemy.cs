@@ -310,7 +310,7 @@ public class Enemy : MonoBehaviour
                             offset = new Vector3(-2, 2, 0);
                         }
 
-                        Vector3 targetPosition = transform.position + offset;  // offset = new Vector3(-3, 3, 0);
+                        Vector3 targetPosition = transform.position + offset;
                         avoidToDirection = (targetPosition - transform.position).normalized;
                         avoidFrameCounter = 10;
                         V.zprint("avoid", "Initilizing Avoid logic");
