@@ -91,8 +91,8 @@ public class Player : MonoBehaviour
         if (uiManager == null)
         { V.zprint("error", "UI Manager is null."); }
 
-        ammoCount = ammoCountDefault;
-        uiManager.UpdateAmmo(ammoCount, ammoCountDefault);
+        ammoCountDefault = 15;
+        SetAmmoToDefaultValue();
 
         spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         if (spawnManager == null)

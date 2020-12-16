@@ -14,8 +14,8 @@ TagManager:
   - Missile
   - Enemy2
   - Mine
-  - boss
   - bossEnergy
+  - Boss
   layers:
   - Default
   - TransparentFX

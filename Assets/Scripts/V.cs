@@ -49,11 +49,11 @@ public class V : MonoBehaviour
         return str;
     }
     //--------------------------------------------------------------
-    // V.zprint("trace", "newScaleX()");
+    // V.zprint("trace", "scaleX");
     public static void zprint(string searchFor, string txt)
     {
-        string[] arry = { "boss","mode" };
-        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","boss"};
+        string[] arry = { "bossEnergy", "mode", "bossDamage" };
+        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy"};
         int f = System.Array.IndexOf(arry, searchFor);
         if (f > -1)
         {

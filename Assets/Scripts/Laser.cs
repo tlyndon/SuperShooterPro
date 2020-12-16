@@ -19,7 +19,7 @@ public class Laser : MonoBehaviour
     //--------------------------------------------------------------
     private void Start()
     {
-       enemyLaserUpspeed = 2.5f;
+        enemyLaserUpspeed = 2.5f;
     }
     void Update()
     {
@@ -123,6 +123,17 @@ public class Laser : MonoBehaviour
                     }
                     Destroy(this.gameObject);
                 }
+            }
+        }
+        else if (other.tag == "Boss")
+        {
+            V.zprint("bossCollide", "boss collision");
+            if (isEnemyLaser == false && isEnemy2Laser == false && isEnemyUpLaser == false)
+            {
+                V.zprint("bossCollide", "boss Damage next");
+                Boss boss = other.transform.GetComponent<Boss>();
+                boss.Damage();
+                Destroy(this.gameObject);
             }
         }
     }

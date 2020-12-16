@@ -27,7 +27,7 @@ public class SpawnManager : MonoBehaviour
     void Update()
     {
         //ConsiderSpawningEnemy();
-        //ConsiderSpawningPowerUp();
+        ConsiderSpawningPowerUp();
     }
 
     //--------------------------------------------------------------
@@ -95,7 +95,7 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void ConsiderSpawningPowerUp()
     {
-        if (V.mode == 21 && V.modeCounter > nextTimePowerUpCanSpawn)
+        if (V.mode == 20 && V.modeCounter > nextTimePowerUpCanSpawn)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
             int powerUp = Random.Range(0, 3);  //0, 1 or 2 speed, tripleShot or sheild
