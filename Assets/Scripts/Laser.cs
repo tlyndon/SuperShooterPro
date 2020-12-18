@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
+    private GameObject bossObject;
+    private GameObject playerObject;
     [SerializeField]
     private float playerLaserspeed = 8.0f;
     [SerializeField]
@@ -12,15 +14,25 @@ public class Laser : MonoBehaviour
     public float enemy2LaserSpeed = 2.0f;
     [SerializeField]
     public float enemyLaserUpspeed = 2.5f;
+    [SerializeField]
+    public float bossLaserSpeed = 0.1f;
     public bool isEnemyLaser = false;
     public bool isEnemyUpLaser = false;
     public bool isEnemy2Laser = false;  //mega laser
+    public bool isBossLaser = false;
+    public int modeCounterAtInstantiate;
     private bool readyToDisappear = false;
+    private Vector3 bossLaserDirection;
     //--------------------------------------------------------------
     private void Start()
     {
-        enemyLaserUpspeed = 2.5f;
+        enemyLaserUpspeed = 2f;
+        playerLaserspeed = 8f;
+        enemyLaserSpeed = 6f;
+        enemy2LaserSpeed = 2f;
+        bossLaserSpeed = 0.5f;
     }
+    //--------------------------------------------------------------
     void Update()
     {
         if (isEnemy2Laser == true && readyToDisappear == false)
@@ -28,14 +40,30 @@ public class Laser : MonoBehaviour
             Destroy(this.gameObject, 2f);
             readyToDisappear = true;
         }
-
-        if ((isEnemyLaser == false && isEnemy2Laser == false) || isEnemyUpLaser == true)
+        else if (isBossLaser == true)
+        {
+            if (bossObject != null)
+            { MoveBossLaser(); }
+        }
+        else if ((isEnemyLaser == false && isEnemy2Laser == false) || isEnemyUpLaser == true)
         {
             MoveUp();
         }
         else
         {
             MoveDown();
+        }
+    }
+    //--------------------------------------------------------------
+    void MoveBossLaser()
+    {
+        if (V.modeCounter > modeCounterAtInstantiate + 180)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            transform.position += bossLaserDirection * bossLaserSpeed * Time.deltaTime;
         }
     }
     //--------------------------------------------------------------
@@ -69,9 +97,6 @@ public class Laser : MonoBehaviour
         else if (isEnemy2Laser == true)
         {
             transform.Translate(Vector3.down * enemy2LaserSpeed * Time.deltaTime);
-
-            //needs to keep the x position of the mega laser with the actual enemy that spawned it
-            //transform.position = new Vector3(transform.parent.gameObject.transform.position.x, transform.position.y, 0);
         }
 
         if (transform.position.y < -8f)
@@ -99,13 +124,41 @@ public class Laser : MonoBehaviour
         isEnemy2Laser = true;
     }
     //--------------------------------------------------------------
+    public void AssignBossLaser()
+    {
+        isBossLaser = true;
+        
+        playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject == null)
+        { V.zprint("bossLaser", "NO PLAYER OBJECT in Laser.cs"); }
+        else
+            bossObject = GameObject.FindGameObjectWithTag("Boss");
+        if (bossObject == null)
+        { V.zprint("bossLaser", "NO BOSS OBJECT in Laser.cs"); }
+        else
+        {   // since player and boss objects found, initialize boss laser shot
+            modeCounterAtInstantiate = V.modeCounter;
+
+            // calculate the direction from where the laser starts at the boss and move toward the player
+            bossLaserDirection = playerObject.transform.position - transform.position;
+
+            // calculate the proper angle to display the laser so that it points toward the player
+            float angle = 180f - Vector3.Angle(playerObject.transform.position - transform.position, Vector3.down);
+            if (playerObject.transform.position.x>transform.position.x) { angle = 180f - angle; }
+
+            // zero out the rotation, but use angle to set the proper facing of the player
+            Vector3 eulerRotation = transform.rotation.eulerAngles;
+            transform.rotation = Quaternion.Euler(eulerRotation.x, eulerRotation.y, angle);
+        }
+    }
+    //--------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
         // only handles collissions of enemyLasers with Player
         if (other.tag == "Player")
         {
             Player player = other.transform.GetComponent<Player>();  //no need to check if null because other.tag=="Player"
-            if (isEnemyLaser == true || isEnemy2Laser == true || (isEnemyUpLaser == true && player.transform.position.y > -2f))
+            if (isEnemyLaser == true || isEnemy2Laser == true || isBossLaser == true || (isEnemyUpLaser == true && player.transform.position.y > -2f))
             {
                 {
                     player.Damage();
@@ -125,7 +178,7 @@ public class Laser : MonoBehaviour
                 }
             }
         }
-        else if (other.tag == "Boss")
+        else if (other.tag == "Boss" && isBossLaser == false)
         {
             V.zprint("bossCollide", "boss collision");
             if (isEnemyLaser == false && isEnemy2Laser == false && isEnemyUpLaser == false)

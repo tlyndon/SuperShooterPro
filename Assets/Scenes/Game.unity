@@ -2173,12 +2173,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d979f84602e04c58936366d13bea06f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  laserPrefab: {fileID: 3288506835993823482, guid: 30f48bddb2ae040378e8eecb78a74fcc,
+    type: 3}
   stopY: 2.4
   stopLeft: -7.36
   stopRight: 7.36
   energyBar: {fileID: 458247933}
   explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422,
     type: 3}
+  energyBarSpriteRenderer: {fileID: 458247934}
 --- !u!50 &1714648858
 Rigidbody2D:
   serializedVersion: 4

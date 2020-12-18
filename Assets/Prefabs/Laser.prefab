@@ -147,6 +147,9 @@ MonoBehaviour:
   enemyLaserSpeed: 6
   enemy2LaserSpeed: 2
   enemyLaserUpspeed: 2
+  bossLaserSpeed: 0.5
   isEnemyLaser: 0
   isEnemyUpLaser: 0
   isEnemy2Laser: 0
+  isBossLaser: 0
+  modeCounterAtInstantiate: 0

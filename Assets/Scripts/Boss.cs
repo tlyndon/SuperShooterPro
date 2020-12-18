@@ -7,6 +7,9 @@ public class Boss : MonoBehaviour
     private float speed = 2f;
     private int bossMode = 0;
     private int nextModeCounter = 0;
+    private int nextModeCounterForBossLaser = 0;
+    [SerializeField]
+    private GameObject laserPrefab;
     private float maxSpeedX = 5f;
     [SerializeField]
     private float stopY = 2.4f;
@@ -17,6 +20,7 @@ public class Boss : MonoBehaviour
     [SerializeField]
     private Transform energyBar;
     private float scaleX = 300f;
+    private float lastLaserAtThisRotation = 0f;
     [SerializeField]
     private GameObject explosionPrefab;
     [SerializeField]
@@ -37,12 +41,13 @@ public class Boss : MonoBehaviour
 
             calculateBossMovement();
             displayAndPositionBossEnergyBar();
+            spawnBossLaserFire();
         }
     }
     //--------------------------------------------------------------
     void displayAndPositionBossEnergyBar()
     {
-        if (scaleX >= 0 && scaleX <=300)
+        if (scaleX >= 0 && scaleX <= 300)
         {
             V.zprint("bossEnergy", "scaleX:" + scaleX);
             V.zprint("bossEnergy", "energyBar.localScale.x:" + energyBar.localScale.x);
@@ -50,13 +55,13 @@ public class Boss : MonoBehaviour
             V.zprint("bossEnergy", "delta:" + delta);
             energyBar.localScale -= new Vector3(delta, 0, 0);
         }
-        else if (scaleX<0)
+        else if (scaleX < 0)
         {
             V.zprint("bossEnergy", "scaleX:" + scaleX);
             energyBar.localScale += new Vector3(-scaleX, 0, 0);
             V.zprint("bossEnergy", "energyBar.localScale.x:" + energyBar.localScale.x);
             V.zprint("bossEnergy", "Zero scaleX");
-            scaleX = 0;            
+            scaleX = 0;
         }
 
         float xOffset = -((300 - scaleX) * 0.5f) * 0.01f;
@@ -146,7 +151,7 @@ public class Boss : MonoBehaviour
     public void Damage()
     {
         scaleX = scaleX - 10f;
-        V.zprint("bossDamage", "subtracted 10 from scaleX, which is now:"+ scaleX);
+        V.zprint("bossDamage", "subtracted 10 from scaleX, which is now:" + scaleX);
         // set color of boss energyBar
         if (scaleX > 200)
         {
@@ -177,6 +182,30 @@ public class Boss : MonoBehaviour
         else
         {
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        }
+    }
+    //--------------------------------------------------------------
+    private void spawnBossLaserFire()
+    {
+        int freq = 25;
+        if (V.modeCounter>0 && (V.modeCounter-1 == nextModeCounterForBossLaser + freq || V.modeCounter == nextModeCounterForBossLaser + (freq*2) || V.modeCounter == nextModeCounterForBossLaser + +(freq * 3) || V.modeCounter > nextModeCounterForBossLaser +(freq * 6)))
+        {
+            if (V.modeCounter > nextModeCounterForBossLaser + (freq * 6))
+            {
+                nextModeCounterForBossLaser = V.modeCounter;
+            }
+
+            if (lastLaserAtThisRotation != transform.rotation.z)
+            {
+                lastLaserAtThisRotation = transform.rotation.z;
+
+                GameObject bossLaser = Instantiate(laserPrefab, transform.position, transform.rotation);
+                Laser[] lasers = bossLaser.GetComponentsInChildren<Laser>();
+                for (int i = 0; i < lasers.Length; i++)
+                {
+                    lasers[i].AssignBossLaser();
+                }
+            }
         }
     }
 }
