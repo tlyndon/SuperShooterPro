@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
     private string enemyDir;
     private float enemyXgoal;
     private float speedX = 4f;
-    private float speedY = 4f;
+    public float speedY = 4f;
     private float deltaX;
     private float enemyMovementRangeX = 12.0f;
     private Vector3 lastEnemyXDirection;
@@ -72,7 +72,7 @@ public class Enemy : MonoBehaviour
                 if (enemyType == 0 || enemyType == 2)
                 {
                     enemyDir = "down";
-                    speedY = 0.5f;
+                    speedY = 1.5f;
                     if (enemyType == 2)
                     {
                         speedY = 2.0f;
@@ -101,7 +101,7 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                //SpawnEnemyFire();
+                SpawnEnemyFire();
                 MoveShieldWithEnemy();
                 CalculateEnemyMovement();
             }
@@ -119,7 +119,7 @@ public class Enemy : MonoBehaviour
     void SpawnEnemyFire()
     {
         shootingLaserNow = false;
-        if (isAlive == true && enemyType != 2 && Time.time > canFire && V.modeCounter > fireWhenCounterEquals)
+        if (isAlive == true && enemyType != 2 && Time.time > canFire && V.modeCounter > fireWhenCounterEquals && V.levelAndWave >= V.levelEnemyLaserJoins)
         {
             //regular enemy laser fire down
             fireWhenCounterEquals = V.modeCounter + Random.Range(300, 660);
@@ -270,19 +270,20 @@ public class Enemy : MonoBehaviour
         // check if reached bottom of screen and bring back to the top
         if (transform.position.y < -4f)
         {
-            //just before an enemy dies, it shoots backwards
-            GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
-            Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
-            for (int i = 0; i < lasers.Length; i++)
-            { lasers[i].AssignEnemyUpLaser(); }
-
-            //if the enemy has a shield, we must destroy it, too
-            if (hasShield == true)
+            if (V.levelAndWave >= V.levelEnemyLaserJoins)
             {
-                hasShield = false;
-                Destroy(newShield.gameObject, 0f);
+                //just before an enemy dies, it shoots backwards
+                GameObject enemyLaser = Instantiate(laserPrefab, transform.position, Quaternion.identity);
+                Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+                for (int i = 0; i < lasers.Length; i++)
+                { lasers[i].AssignEnemyUpLaser(); }
+                //if the enemy has a shield, we must destroy it, too
+                if (hasShield == true)
+                {
+                    hasShield = false;
+                    Destroy(newShield.gameObject, 0f);
+                }
             }
-
             Destroy(this.gameObject);
         }
         else if ((enemyType == 0 || enemyType == 2) && isAlive == true)  // && ramingPlayerNow == false && shootingLaserNow == false)
@@ -296,7 +297,7 @@ public class Enemy : MonoBehaviour
                     //Draw Line between this object and the object collided with, of the color red, and display that line for 0.01 seconds
                     //V.zprint("avoid", "Distance from Origin to Object = " + boxResult.distance);  //distance between the RayCast and the Collider of the object we hit
 
-                    if (boxResult.collider.tag == "Laser")  //will need to make sure these are player lasers only
+                    if (boxResult.collider.tag == "Laser" && V.levelAndWave>= V.levelEnemyAvoidsLasers)  //will need to make sure these are player lasers only
                     {
                         Debug.DrawLine(transform.position, boxResult.collider.transform.position, Color.red, 0.01f);
                         V.zprint("avoid", "Collider Name = " + boxResult.collider.name); //name of object holding the collider we hit

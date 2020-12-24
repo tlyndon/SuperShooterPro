@@ -35,8 +35,9 @@ public class Boss : MonoBehaviour
     //--------------------------------------------------------------
     void Update()
     {
-        if (V.mode == 20)
-        {
+        //if ((V.wave==3 || V.wave==6 || V.wave==9 || V.wave==12 || V.wave==15 || V.wave==18 || V.wave==21) && V.mode == 20)
+            if ((V.wave == 9 || V.wave == 15 || V.wave == 21) && V.mode == 20)
+           {
             V.modeCounter = V.modeCounter + 1;
 
             calculateBossMovement();
@@ -66,7 +67,7 @@ public class Boss : MonoBehaviour
 
         float xOffset = -((300 - scaleX) * 0.5f) * 0.01f;
         //float xOffset = -(300 - scaleX) * 0.05f;
-        Vector3 offset = new Vector3(xOffset, 2.77f, 0);
+        Vector3 offset = new Vector3(xOffset, -1.35f, 0);  //2.77f
         energyBar.position = transform.position + offset;
 
     }
@@ -178,6 +179,9 @@ public class Boss : MonoBehaviour
             }
             Destroy(this.gameObject, 0.2f);
             Destroy(energyBar.gameObject, 0.2f);
+
+            //destroyAllBossLasers
+
         }
         else
         {

@@ -16,7 +16,7 @@ public class SpawnManager : MonoBehaviour
     private int updateCounter = 0;
     private UIManager uiManager;
     private GameManager gameManager;
-    private float nextTimePowerUpCanSpawn = 0.0f;
+    private float nextTimePowerUpCanSpawn = 640f;
     private int lastPowerUp = 99;
     //--------------------------------------------------------------
     void Start()
@@ -26,10 +26,18 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void Update()
     {
-        //ConsiderSpawningEnemy();
+        //if (V.wave == 3 || V.wave == 6 || V.wave == 9 || V.wave == 12 || V.wave == 15 || V.wave == 18 || V.wave == 21)
+        if (V.wave == 9 || V.wave == 15 || V.wave == 21)
+        {
+            //boss level
+        }
+        else
+        {
+            ConsiderSpawningEnemy();
+        }
+
         ConsiderSpawningPowerUp();
     }
-
     //--------------------------------------------------------------
     void ConsiderSpawningEnemy()
     {
@@ -37,22 +45,29 @@ public class SpawnManager : MonoBehaviour
         {
             nextTimePowerUpCanSpawn = 0;
 
+            // spawn all enemies for each wave at the start of the wave
+
             int nextEnemyType = 0;
             int ctr = 0;
-            V.enemiesToSpawn = (int) V.wave * 3 + 8;
+            V.enemiesToSpawn = (int)(V.levelAndWave * 1.5f) + 2;
             int howMany = V.enemiesToSpawn;
 
             while (ctr < howMany)
             {
                 SpawnOneEnemy(nextEnemyType, ctr);
+
                 ctr = ctr + 1;
                 V.enemiesToSpawn = V.enemiesToSpawn - 1;
 
-                if ((nextEnemyType == 0 && ctr > howMany * 0.65) || (nextEnemyType == 1 && ctr > howMany * .1))
+                if ((nextEnemyType == 0 && ctr > howMany * (1 - (0.02 * V.levelAndWave)) || (nextEnemyType == 1 && ctr > howMany * (1 - (0.0033 * V.levelAndWave)) +1)))
                 {
-                    nextEnemyType = nextEnemyType + 1;
-                    if (nextEnemyType > 2)
-                    { nextEnemyType = 0; }
+                    if ((V.levelAndWave >= V.levelEnemy1joins && nextEnemyType < 1) || (V.levelAndWave >= V.levelEnemy2joins && nextEnemyType < 2))
+                    {
+                        nextEnemyType = nextEnemyType + 1;
+
+                        if (nextEnemyType > 2)
+                        { nextEnemyType = 0; }
+                    }
                 }
             }
             V.setMode(21);
@@ -65,7 +80,7 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void SpawnOneEnemy(int typ, int ctr)
     {
-        Vector3 posToSpawn = new Vector3(Random.Range(0, 8) - 4, 8 + (ctr * 3), 0);  //typ=0 & 2
+        Vector3 posToSpawn = new Vector3(Random.Range(0, 12) - 6, 8 + (ctr * 3), 0);  //typ=0 & 2
         if (typ == 1)
         {
             posToSpawn = new Vector3(-4, 8 + (ctr * 2), 0);  //typ=1
@@ -85,23 +100,62 @@ public class SpawnManager : MonoBehaviour
         Enemy enemy = newEnemy.GetComponent<Enemy>();
         enemy.enemyType = typ;
 
-        int r = 11 - V.wave;
-        if (r<2) { r = 2; }
-        if (Random.Range(0, r) == 1)
+        if (typ == 1)
         {
-            enemy.hasShield = true;
+            if (V.levelAndWave < 2)
+            { enemy.speedY = 4.0f; }
+            else if (V.levelAndWave == 2)
+            { enemy.speedY = 4.5f; }
+            else if (V.levelAndWave == 3)
+            { enemy.speedY = 5.0f; }
+            else if (V.levelAndWave == 4)
+            { enemy.speedY = 5.5f; }
+            else if (V.levelAndWave == 5)
+            { enemy.speedY = 6.0f; }
+            else
+            { enemy.speedY = 6.5f; }
+        }
+
+        if (V.levelAndWave >= V.levelEnemyGetShields)
+        {
+            int r = 11 - V.wave;
+            if (r < 2) { r = 2; }
+            if (Random.Range(0, r) == 1)
+            { enemy.hasShield = true; }
         }
     }
     //--------------------------------------------------------------
     void ConsiderSpawningPowerUp()
     {
-        if (V.mode == 20 && V.modeCounter > nextTimePowerUpCanSpawn)
+        // 1 = tripleshot
+        // 0 = speed
+        // 2 = sheilds
+        // 4 = health
+        // 5 = skull & crossbones
+        // 6 = mine
+        if (V.mode >= 20 && V.modeCounter > nextTimePowerUpCanSpawn)
         {
-            Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            int powerUp = Random.Range(0, 3);  //0, 1 or 2 speed, tripleShot or sheild
 
             GameObject obj = GameObject.FindGameObjectWithTag("Player");
             Player player = obj.transform.GetComponent<Player>();
+
+            Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
+
+            int[] pups = { 0 };
+
+            if (V.levelAndWave >= V.levelGet3ShotLaser)
+            { pups[pups.Length - 1] = 1; }
+            if (V.levelAndWave >= V.levelGetShields && (player.isShieldsActive == false || player.shieldStrength < player.shieldStrengthDefault))
+            { pups[pups.Length - 1] = 2; }
+
+            V.zprint("spawnPowerup", "pups.Length:" + pups.Length);
+
+            int r = Random.Range(0, pups.Length);
+            V.zprint("spawnPowerup", "r:" + r);
+
+            int powerUp = pups[r];
+            V.zprint("spawnPowerup", "powerUp:" + powerUp);
+
             if (player.health < 3)
             {
                 powerUp = 4;            //show health powerup
@@ -111,33 +165,40 @@ public class SpawnManager : MonoBehaviour
                     powerUp = 3;        //show ammo powerup
                 }
             }
-            else if (player.ammoCount < player.ammoCountDefault * 0.50)
+            else if (player.ammoCount < player.ammoCountDefault * .25f)
             {
                 powerUp = 3;            //ammo powerup
             }
 
             if ((powerUp == 3 || powerUp == 4) && powerUp != lastPowerUp)
             {
-                nextTimePowerUpCanSpawn = V.modeCounter + 60;
+                nextTimePowerUpCanSpawn = V.modeCounter + 120;
             }
             else
             {
-                nextTimePowerUpCanSpawn = V.modeCounter + 240;
+                int tim = 640;
+                if (V.levelAndWave > 9)
+                { tim = 1280; }
+                nextTimePowerUpCanSpawn = V.modeCounter + tim;
             }
 
-            if (powerUp < 3 && Random.Range(0, 10) < 2)
+            if (V.levelAndWave >= V.levelGetMinesToShoot && powerUp < 3 && Random.Range(0, 10) < 2)
             {
                 powerUp = 6;  //mine
             }
 
-            if (powerUp < 3 && Random.Range(0, 10) < 2)
+            if (V.levelAndWave >= V.levelSkullAndCrossBones && powerUp < 3 && Random.Range(0, 10) < 2)
             {
-                powerUp = 5;  //butterflybones
+                powerUp = 5;  //skull & crossbones
             }
 
             Instantiate(powerupObjects[powerUp], posToSpawn, Quaternion.identity);
             lastPowerUp = powerUp;
         }
+        //else if (V.modeCounter % 60 == 0)
+        //{
+        //    V.zprint("spawnPowerup", "V.mode:" + V.mode + ", V.modeCounter:" + V.modeCounter + ", nextTimePowerUpCanSpawn:" + nextTimePowerUpCanSpawn);
+        //}
     }
     //--------------------------------------------------------------
 }

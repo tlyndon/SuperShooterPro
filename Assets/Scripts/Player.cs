@@ -132,8 +132,8 @@ public class Player : MonoBehaviour
             V.zprint("keys", "SPACE KEY PRESSED");
             if (ammoCount > 0)  //-1000 for testing
             {
-                string weapon = "laser";
-                if (V.seconds > timeLastMissileShot + 3)  //1000 for testing
+                string weapon = "laser";  //default
+                if (V.levelAndWave>=V.levelGetMissle && V.seconds > timeLastMissileShot + 3)  //1000 for testing
                 {
                     GameObject[] gameObjects;
                     gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
                         }
                     }
                 }
-                if (chosenEnemy != null)
+                if (V.levelAndWave>=V.levelGetMinesToShoot && chosenEnemy != null)
                 {
                     V.mineCount = V.mineCount - 1;
 

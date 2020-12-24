@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour
     public float thrustersPct = 1.0f;
     public Text flashingText;
     public Text waveText;
+    public Text waveTextUI;
     public Text restartText;
     //--------------------------------------------------------------
     void Start()
@@ -84,8 +85,18 @@ public class UIManager : MonoBehaviour
             if (count == 0)
             {
                 V.zprint("trace", "NextWaveWhenEnemiesGone with enemyCount = 0");
+                V.levelAndWave = V.levelAndWave + 1;
+
                 V.wave = V.wave + 1;
-                StartWave();
+                if (V.wave == 4)
+                {
+                    V.wave = 1;
+                    V.level = V.level + 1;
+                }
+
+                V.zprint("UIManager", "level:"+V.level+", wave:" + V.wave + ", V.levelAndWave:" + V.levelAndWave);
+                
+                GetReady();
             }
         }
     }
@@ -99,8 +110,30 @@ public class UIManager : MonoBehaviour
     //--------------------------------------------------------------
     public void GetReady()
     {
-        V.zprint("trace", "GetReady()");
+        //after finishing a level
         V.flashingText = "Get Ready!";
+        if (V.levelAndWave == V.levelEnemy1joins)
+        { V.flashingText = "New Enemy Movement!"; }
+        else if (V.levelAndWave == V.levelEnemy2joins)
+        { V.flashingText = "New Enemy Type!"; }
+        else if (V.levelAndWave == V.levelEnemyLaserJoins)
+        { V.flashingText = "Enemies Shoot!"; }
+        else if (V.levelAndWave == V.levelEnemyAvoidsLasers)
+        { V.flashingText = "Enemies See Lasers!"; }
+        else if (V.levelAndWave == V.levelGetMissle)
+        { V.flashingText = "New Missle!"; }
+        else if (V.levelAndWave == V.levelGet3ShotLaser)
+        { V.flashingText = "New 3 Shot Laser!"; }
+        else if (V.levelAndWave == V.levelGetShields)
+        { V.flashingText = "New Shields"; }
+        else if (V.levelAndWave == V.levelEnemyGetShields)
+        { V.flashingText = "Enemies Get Shields"; }
+        else if (V.levelAndWave == V.levelGetMinesToShoot)
+        { V.flashingText = "Get Shootable Mines"; }
+        else if (V.levelAndWave == V.levelSkullAndCrossBones)
+        { V.flashingText = "Get Shootable Mines"; }
+
+
         V.setMode(0);
     }
     //--------------------------------------------------------------
@@ -122,9 +155,12 @@ public class UIManager : MonoBehaviour
                 V.zprint("trace", "updateWaveText()");
 
                 waveText.gameObject.SetActive(true);
-                waveText.text = "WAVE " + V.wave;
+                waveText.text = "WAVE " + (V.levelAndWave);
+
+                waveTextUI.gameObject.SetActive(true);
+                waveTextUI.text = "WAVE: " + (V.levelAndWave);
             }
-            else if (V.modeCounter == 45)
+            else if (V.modeCounter == 90)  //45
             {
                 waveText.text = "";
                 V.setMode(20);
@@ -139,8 +175,7 @@ public class UIManager : MonoBehaviour
         {
             if (V.modeCounter == 0)
             {
-                V.zprint("trace", "updateFlashingText = "+ V.flashingText);
-                
+                V.zprint("flashingText", "updateFlashingText = " + V.flashingText);
                 flashingText.gameObject.SetActive(true);
             }
             if (V.modeCounter == 0 || V.modeCounter == 60 || V.modeCounter == 120)
@@ -151,7 +186,9 @@ public class UIManager : MonoBehaviour
             {
                 flashingText.text = "";
             }
+
             V.modeCounter = V.modeCounter + 1;  //mode 0 or 100
+            //V.zprint("flashingText", "V.modeCounter:"+V.modeCounter);
 
             if (V.isGameOver == true && V.modeCounter == 120)
             {
@@ -159,7 +196,7 @@ public class UIManager : MonoBehaviour
             }
             if (V.modeCounter == 151 && V.isGameOver == false)
             {
-                V.zprint("trace", "updateFlashingText = " + V.flashingText + ", text finished flashing & not game over, so next wave");
+                V.zprint("flashingText", "updateFlashingText = " + V.flashingText + ", text finished flashing & not game over, so next wave");
                 StartWave();
             }
 

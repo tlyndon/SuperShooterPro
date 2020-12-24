@@ -16,6 +16,7 @@ TagManager:
   - Mine
   - bossEnergy
   - Boss
+  - WaveText
   layers:
   - Default
   - TransparentFX

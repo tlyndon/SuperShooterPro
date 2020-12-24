@@ -15,7 +15,7 @@ public class Powerup : MonoBehaviour
 
     [SerializeField]
     private GameObject explosionPrefab;
-
+    
     private SpriteRenderer powerUpRenderer;
 
     private float speed = 3.0f;

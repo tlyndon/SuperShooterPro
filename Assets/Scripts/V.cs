@@ -10,8 +10,19 @@ public class V : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    //bugs to fix
-    //missile doesn't kill enemy2
+    //sound and music
+    //change skull & crossbones
+
+    public static int levelEnemy1joins = 3;
+    public static int levelGet3ShotLaser = 4;
+    public static int levelGetMissle = 5;
+    public static int levelGetShields = 6;
+    public static int levelEnemy2joins = 7;
+    public static int levelGetMinesToShoot = 8;
+    public static int levelEnemyGetShields = 9;
+    public static int levelEnemyLaserJoins = 10;
+    public static int levelEnemyAvoidsLasers = 11;
+    public static int levelSkullAndCrossBones = 12;
 
     public static bool musicOn = false;
     public static bool soundOn = false;
@@ -19,6 +30,8 @@ public class V : MonoBehaviour
     public static int frameCounter = 0;
     public static bool isGameOver = false;
     public static int wave = 1;
+    public static int level = 1;
+    public static int levelAndWave = 1;
     public static int enemiesToSpawn = 0;
     public static int mineCount = 0;
     public static string flashingText = "";
@@ -52,8 +65,8 @@ public class V : MonoBehaviour
     // V.zprint("trace", "scaleX");
     public static void zprint(string searchFor, string txt)
     {
-        string[] arry = { "bossLaser", "mode"};
-        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy"};
+        string[] arry = { "UIManager", "mode"};
+        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy", "spawnPowerup","flashingText","UIManager"};
         int f = System.Array.IndexOf(arry, searchFor);
         if (f > -1)
         {
