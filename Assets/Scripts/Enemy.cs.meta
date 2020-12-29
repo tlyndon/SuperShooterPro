@@ -4,10 +4,15 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - audioSource: {instanceID: 0}
-  - _laserPrefab: {fileID: 2979544023188821017, guid: 40163c3a9f24f4df18ceda6898cac2fc, type: 3}
+  - laserPrefab: {instanceID: 0}
+  - enemyLaserPrefab: {fileID: 2979544023188821017, guid: 40163c3a9f24f4df18ceda6898cac2fc,
+      type: 3}
+  - laserPrefab2: {instanceID: 0}
+  - explosionPrefab: {instanceID: 0}
+  - newShieldObject: {instanceID: 0}
+  - shieldPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
-  userData:
-  assetBundleName:
-  assetBundleVariant:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -25,24 +25,33 @@ public class Boss : MonoBehaviour
     private GameObject explosionPrefab;
     [SerializeField]
     private SpriteRenderer energyBarSpriteRenderer;
+    [SerializeField]
+    private UIManager uiManager;
     //--------------------------------------------------------------
     void Start()
     {
-        transform.position = new Vector3(0, 9.2f, 0);
+        //transform.position = new Vector3(0, 9.2f, 0);
+        transform.position = new Vector3(0, 15.2f, 0);
         bossMode = 0;   //0=move down, 1=move left, 2=move right
         energyBar = GameObject.FindGameObjectWithTag("bossEnergy").transform;
+        uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (uiManager == null)
+        { V.zprint("error", "UI Manager is null."); }
     }
     //--------------------------------------------------------------
     void Update()
     {
-        //if ((V.wave==3 || V.wave==6 || V.wave==9 || V.wave==12 || V.wave==15 || V.wave==18 || V.wave==21) && V.mode == 20)
-            if ((V.wave == 9 || V.wave == 15 || V.wave == 21) && V.mode == 20)
-           {
+        if (V.levelAndWave == V.bossLevel)
+        {
             V.modeCounter = V.modeCounter + 1;
 
             calculateBossMovement();
             displayAndPositionBossEnergyBar();
-            spawnBossLaserFire();
+
+            if (V.mode == 20)
+            {
+                spawnBossLaserFire();
+            }
         }
     }
     //--------------------------------------------------------------
@@ -181,7 +190,24 @@ public class Boss : MonoBehaviour
             Destroy(energyBar.gameObject, 0.2f);
 
             //destroyAllBossLasers
+            GameObject[] bossLasers = GameObject.FindGameObjectsWithTag("Laser");
 
+            foreach (GameObject bossLaser in bossLasers)
+            {
+                Instantiate(explosionPrefab, bossLaser.transform.position, Quaternion.identity);
+                Destroy(bossLaser, 02f);
+            }
+
+            if (V.isGameOver == false)
+            {
+                GameObject obj = GameObject.FindGameObjectWithTag("Player");
+                if (obj != null )  //both player and enemy are alive
+                {
+                    Player player = obj.transform.GetComponent<Player>();
+                    player.AddToScore(10000);
+                }
+                uiManager.GameOverSequence("You Win!");
+            }
         }
         else
         {

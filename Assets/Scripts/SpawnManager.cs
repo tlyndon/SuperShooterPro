@@ -27,7 +27,7 @@ public class SpawnManager : MonoBehaviour
     void Update()
     {
         //if (V.wave == 3 || V.wave == 6 || V.wave == 9 || V.wave == 12 || V.wave == 15 || V.wave == 18 || V.wave == 21)
-        if (V.wave == 9 || V.wave == 15 || V.wave == 21)
+        if (V.levelAndWave == V.bossLevel)
         {
             //boss level
         }
@@ -118,10 +118,14 @@ public class SpawnManager : MonoBehaviour
 
         if (V.levelAndWave >= V.levelEnemyGetShields)
         {
-            int r = 11 - V.wave;
-            if (r < 2) { r = 2; }
+            //int r = 11 - V.wave;
+            //if (r < 2) { r = 2; }
+
+            int r = 4;
             if (Random.Range(0, r) == 1)
-            { enemy.hasShield = true; }
+            {
+                enemy.hasShield = true;
+            }
         }
     }
     //--------------------------------------------------------------

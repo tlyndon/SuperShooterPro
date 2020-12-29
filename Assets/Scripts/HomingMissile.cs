@@ -53,10 +53,15 @@ public class HomingMissile : MonoBehaviour
                 Instantiate(explosionPrefab, other.transform.position, Quaternion.identity);
 
                 Enemy enemy = other.GetComponent<Enemy>();
-                GameObject shield = enemy.newShield;
-                if (shield != null)
+                if (enemy != null)
                 {
-                    Destroy(shield.gameObject, 0.2f);
+                    if (enemy.hasShield == true)
+                    {
+                        if (enemy.newShieldObject != null)
+                        {
+                            Destroy(enemy.newShieldObject, 0.2f);
+                        }
+                    }
                 }
 
                 enemy.isAlive = false;

@@ -335,7 +335,7 @@ public class Player : MonoBehaviour
                 //yes, we are out of more lives, so it's time to die
                 Destroy(this.gameObject);
                 V.zprint("damage", "Player.Damage() lies = 0 > Game Over");
-                uiManager.GameOverSequence();
+                uiManager.GameOverSequence("Game Over!");
 
             }
             else
@@ -344,7 +344,7 @@ public class Player : MonoBehaviour
                 uiManager.UpdateLives(lives);
 
                 //put player below the screen, so he'll come back
-                transform.position = new Vector3(0, playerStartingYposBelowScreen, 0);
+                transform.position = new Vector3(transform.position.x, playerStartingYposBelowScreen, 0);
                 uiManager.GetReady();
 
                 //still have another life, so...
@@ -449,20 +449,21 @@ public class Player : MonoBehaviour
             //Vector3 origCameraPosition = myCamera.transform.position;
             //Debug.Log("About to Shake Camera:");
 
-            float rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
-            float rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * 0.2f);
+            float factor = 0.4f;
+            float rdmX = Random.Range(-1f, 1f); rdmX = rdmX * factor;
+            float rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * factor);
             Vector3 newCamPosition = new Vector3(rdmX, rdmY, -10f);
             myCamera.transform.position = newCamPosition;
             yield return new WaitForSeconds(0.15f);
 
-            rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
-            rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * 0.2f);
+            rdmX = Random.Range(-1f, 1f); rdmX = rdmX * factor;
+            rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * factor);
             newCamPosition = new Vector3(rdmX, rdmY, -10f);
             myCamera.transform.position = newCamPosition;
             yield return new WaitForSeconds(0.15f);
 
-            rdmX = Random.Range(-1f, 1f); rdmX = rdmX * 0.2f;
-            rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * 0.2f);
+            rdmX = Random.Range(-1f, 1f); rdmX = rdmX * factor;
+            rdmY = Random.Range(-1f, 1f); rdmY = 1 + (rdmY * factor);
             newCamPosition = new Vector3(rdmX, rdmY, -10f);
             myCamera.transform.position = newCamPosition;
             yield return new WaitForSeconds(0.15f);

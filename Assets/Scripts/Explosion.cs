@@ -11,8 +11,8 @@ public class Explosion : MonoBehaviour
     {
         if (V.soundOn == true)
         {
-            GetComponent<AudioSource>().PlayOneShot(explosionSound, 0.7F);
+            GetComponent<AudioSource>().PlayOneShot(explosionSound, 0.7f);
         }
-        Destroy(this.gameObject, 3f);
+        Destroy(this.gameObject, 3.0f);
     }
 }

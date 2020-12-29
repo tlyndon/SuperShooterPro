@@ -155,8 +155,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 20}
-  m_SizeDelta: {x: 467, y: 56.374573}
+  m_AnchoredPosition: {x: 0, y: -63.1}
+  m_SizeDelta: {x: 617.3447, y: 228.97644}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &38877749
 MonoBehaviour:
@@ -190,7 +190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Text
+  m_Text: 
 --- !u!222 &38877750
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -270,7 +270,7 @@ AudioSource:
   rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
-  BypassReverbZones: 0
+  BypassReverbZones: 1
   rolloffCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -1142,10 +1142,12 @@ MonoBehaviour:
     m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 1
+    m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Text
+  m_Text: 'This is a bunch of flashing text that should wrap around
+
+'
 --- !u!222 &1318309218
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1170,8 +1172,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -1.1, y: 18.537985}
+  m_SizeDelta: {x: 480.32562, y: 184.11719}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1327869192
 GameObject:
@@ -2157,7 +2159,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1714648854}
   m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
-  m_LocalPosition: {x: 0.19, y: 1.35, z: 0}
+  m_LocalPosition: {x: 0.19, y: 3, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 1398045236}
@@ -2184,6 +2186,7 @@ MonoBehaviour:
   explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422,
     type: 3}
   energyBarSpriteRenderer: {fileID: 458247934}
+  uiManager: {fileID: 1600274451}
 --- !u!50 &1714648858
 Rigidbody2D:
   serializedVersion: 4
@@ -2791,7 +2794,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2108180964
 RectTransform:
   m_ObjectHideFlags: 0

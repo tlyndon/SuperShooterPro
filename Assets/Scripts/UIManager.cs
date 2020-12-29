@@ -113,35 +113,35 @@ public class UIManager : MonoBehaviour
         //after finishing a level
         V.flashingText = "Get Ready!";
         if (V.levelAndWave == V.levelEnemy1joins)
-        { V.flashingText = "New Enemy Movement!"; }
+        { V.flashingText = "Get Ready!"; }
         else if (V.levelAndWave == V.levelEnemy2joins)
-        { V.flashingText = "New Enemy Type!"; }
+        { V.flashingText = "A new enemy type will move from side to side!"; }
         else if (V.levelAndWave == V.levelEnemyLaserJoins)
-        { V.flashingText = "Enemies Shoot!"; }
+        { V.flashingText = "Some enemies will shoot at you!"; }
         else if (V.levelAndWave == V.levelEnemyAvoidsLasers)
-        { V.flashingText = "Enemies See Lasers!"; }
+        { V.flashingText = "Enemies can see your lasers and move out of the way!"; }
         else if (V.levelAndWave == V.levelGetMissle)
-        { V.flashingText = "New Missle!"; }
+        { V.flashingText = "Every 5 shots you will shoot a new heat-sinking missle!"; }
         else if (V.levelAndWave == V.levelGet3ShotLaser)
-        { V.flashingText = "New 3 Shot Laser!"; }
+        { V.flashingText = "You can now pickup a new 3-Shot Laser powerup!"; }
         else if (V.levelAndWave == V.levelGetShields)
-        { V.flashingText = "New Shields"; }
+        { V.flashingText = "You can now pickup a Shield powerup to protect your ship!"; }
         else if (V.levelAndWave == V.levelEnemyGetShields)
-        { V.flashingText = "Enemies Get Shields"; }
+        { V.flashingText = "Some enemies will have shields"; }
         else if (V.levelAndWave == V.levelGetMinesToShoot)
-        { V.flashingText = "Get Shootable Mines"; }
+        { V.flashingText = "You can now pickup a Mine powerup to shoot homing mines at enemies!"; }
         else if (V.levelAndWave == V.levelSkullAndCrossBones)
-        { V.flashingText = "Get Shootable Mines"; }
+        { V.flashingText = "Avoid skull & bone powerups that will damage your ship"; }
 
 
         V.setMode(0);
     }
     //--------------------------------------------------------------
-    public void GameOverSequence()
+    public void GameOverSequence(string txt)
     {
         V.zprint("trace", "GameOverSequence()");
         restartText.gameObject.SetActive(true);
-        V.flashingText = "Game Over!";
+        V.flashingText = txt;  // "Game Over!";
         V.setMode(100);
         V.isGameOver = true;
     }
@@ -178,11 +178,11 @@ public class UIManager : MonoBehaviour
                 V.zprint("flashingText", "updateFlashingText = " + V.flashingText);
                 flashingText.gameObject.SetActive(true);
             }
-            if (V.modeCounter == 0 || V.modeCounter == 60 || V.modeCounter == 120)
+            if (V.modeCounter == 0 || V.modeCounter == 60 || V.modeCounter == 120 || V.modeCounter == 180 || V.modeCounter == 240 || V.modeCounter == 300)
             {
                 flashingText.text = V.flashingText;
             }
-            else if (V.modeCounter == 30 || V.modeCounter == 90 || V.modeCounter == 150)
+            else if (V.modeCounter == 30 || V.modeCounter == 90 || V.modeCounter == 150 || V.modeCounter == 210 || V.modeCounter == 270 || V.modeCounter == 330)
             {
                 flashingText.text = "";
             }
@@ -194,7 +194,7 @@ public class UIManager : MonoBehaviour
             {
                 V.modeCounter = 0;
             }
-            if (V.modeCounter == 151 && V.isGameOver == false)
+            if (V.modeCounter == 331 && V.isGameOver == false)
             {
                 V.zprint("flashingText", "updateFlashingText = " + V.flashingText + ", text finished flashing & not game over, so next wave");
                 StartWave();
@@ -224,7 +224,7 @@ public class UIManager : MonoBehaviour
         if (thrustersPct > 0)
         {
             float originalValue = thrustersPct;
-            thrustersPct = thrustersPct - 0.001f;
+            thrustersPct = thrustersPct - 0.00034f;
 
             if (originalValue < 0.5f && thrustersPct >= 0.5f)
             {

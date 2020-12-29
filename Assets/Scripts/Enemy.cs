@@ -11,15 +11,17 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject laserPrefab;
     [SerializeField]
+    private GameObject enemyLaserPrefab;
+    [SerializeField]
     private GameObject laserPrefab2;
     [SerializeField]
     private GameObject explosionPrefab;
-    public GameObject newShield;
+    public GameObject newShieldObject;
     [SerializeField]
     private GameObject shieldPrefab;
 
     public int enemyType = 999;
-    private int fireWhenCounterEquals;
+    private int fireWhenCounterEquals = 0;
     private string enemyDir;
     private float enemyXgoal;
     private float speedX = 4f;
@@ -94,10 +96,25 @@ public class Enemy : MonoBehaviour
 
                 if (hasShield == true)
                 {
-                    newShield = Instantiate(shieldPrefab, transform.position, Quaternion.identity);
+                    { V.zprint("enemyShield", "enemy.cs"); }
+                    newShieldObject = Instantiate(shieldPrefab, transform.position, Quaternion.identity);
+                    if (newShieldObject == null)
+                    { V.zprint("error", "The newShieldObject in Enemy.cs = null"); }
+                    else
+                    {
+                        newShieldObject.GetComponent<SpriteRenderer>().color = Color.red;
+                        newShieldObject.SetActive(true);
+                    }
                 }
 
-                fireWhenCounterEquals = Random.Range(300, 450);
+                if (V.levelAndWave >= V.levelEnemyLaserJoins)
+                {
+                    int r = 5;
+                    if (Random.Range(0, r) == 1)
+                    {
+                        fireWhenCounterEquals = Random.Range(300, 450);
+                    }
+                }
             }
             else
             {
@@ -112,14 +129,14 @@ public class Enemy : MonoBehaviour
     {
         if (hasShield == true)
         {
-            newShield.transform.position = this.transform.position;
+            newShieldObject.transform.position = this.transform.position;
         }
     }
     //--------------------------------------------------------------
     void SpawnEnemyFire()
     {
         shootingLaserNow = false;
-        if (isAlive == true && enemyType != 2 && Time.time > canFire && V.modeCounter > fireWhenCounterEquals && V.levelAndWave >= V.levelEnemyLaserJoins)
+        if (isAlive == true && enemyType != 2 && Time.time > canFire && fireWhenCounterEquals !=0 && V.modeCounter > fireWhenCounterEquals && V.levelAndWave >= V.levelEnemyLaserJoins)
         {
             //regular enemy laser fire down
             fireWhenCounterEquals = V.modeCounter + Random.Range(300, 660);
@@ -281,7 +298,7 @@ public class Enemy : MonoBehaviour
                 if (hasShield == true)
                 {
                     hasShield = false;
-                    Destroy(newShield.gameObject, 0f);
+                    Destroy(newShieldObject, 0f);
                 }
             }
             Destroy(this.gameObject);
@@ -303,18 +320,23 @@ public class Enemy : MonoBehaviour
                         V.zprint("avoid", "Collider Name = " + boxResult.collider.name); //name of object holding the collider we hit
                         V.zprint("avoid", "Collider Tag = " + boxResult.collider.tag); //name of object holding the collider we hit
 
-                        avoidingPlayerLaserNow = true;
-
-                        Vector3 offset = new Vector3(2, 2, 0);
-                        if (boxResult.collider.transform.position.x > transform.position.x)
+                        //seems to work LOL - this is to avoid the enemy avoiding its own lasers, which won't hurt it anyway
+                        GameObject laserObject = boxResult.collider.gameObject;
+                        if (laserObject.GetComponent<Laser>().isEnemyUpLaser == false)
                         {
-                            offset = new Vector3(-2, 2, 0);
-                        }
+                            avoidingPlayerLaserNow = true;
 
-                        Vector3 targetPosition = transform.position + offset;
-                        avoidToDirection = (targetPosition - transform.position).normalized;
-                        avoidFrameCounter = 10;
-                        V.zprint("avoid", "Initilizing Avoid logic");
+                            Vector3 offset = new Vector3(2, 2, 0);
+                            if (boxResult.collider.transform.position.x > transform.position.x)
+                            {
+                                offset = new Vector3(-2, 2, 0);
+                            }
+
+                            Vector3 targetPosition = transform.position + offset;
+                            avoidToDirection = (targetPosition - transform.position).normalized;
+                            avoidFrameCounter = 10;
+                            V.zprint("avoid", "Initializing Avoid logic");
+                        }
                     }
                 }
             }
@@ -339,7 +361,7 @@ public class Enemy : MonoBehaviour
         if (hasShield == true)
         {
             hasShield = false;
-            Destroy(newShield.gameObject, 0f);
+            Destroy(newShieldObject.gameObject, 0f);
         }
         V.zprint("trace", "ThisEnemyDiesFromCollisionWith()");
         V.zprint("enemy", "Enemy Collided with " + collider + "!");
@@ -350,7 +372,7 @@ public class Enemy : MonoBehaviour
         if (hasShield == true)
         {
             hasShield = false;
-            Destroy(newShield.gameObject, 0f);
+            Destroy(newShieldObject.gameObject, 0f);
             Destroy(other.gameObject, 0f);
         }
         else

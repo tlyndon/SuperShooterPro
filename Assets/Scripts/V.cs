@@ -23,15 +23,16 @@ public class V : MonoBehaviour
     public static int levelEnemyLaserJoins = 10;
     public static int levelEnemyAvoidsLasers = 11;
     public static int levelSkullAndCrossBones = 12;
+    public static int bossLevel = 15;
 
-    public static bool musicOn = false;
-    public static bool soundOn = false;
+    public static bool musicOn = true;
+    public static bool soundOn = true;
     public static int seconds = 0;
     public static int frameCounter = 0;
     public static bool isGameOver = false;
-    public static int wave = 1;
-    public static int level = 1;
-    public static int levelAndWave = 1;
+    public static int wave = 1; //3;
+    public static int level = 1; //5;
+    public static int levelAndWave = 1; //15;
     public static int enemiesToSpawn = 0;
     public static int mineCount = 0;
     public static string flashingText = "";
@@ -65,8 +66,8 @@ public class V : MonoBehaviour
     // V.zprint("trace", "scaleX");
     public static void zprint(string searchFor, string txt)
     {
-        string[] arry = { "UIManager", "mode"};
-        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy", "spawnPowerup","flashingText","UIManager"};
+        string[] arry = { "avoid", "mode"};
+        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy", "spawnPowerup","flashingText","UIManager","enemyShield"};
         int f = System.Array.IndexOf(arry, searchFor);
         if (f > -1)
         {

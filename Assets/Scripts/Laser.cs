@@ -9,7 +9,7 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float playerLaserspeed = 8.0f;
     [SerializeField]
-    public float enemyLaserSpeed = 4.0f;
+    public float enemyLaserSpeed = 2.25f;
     [SerializeField]
     public float enemy2LaserSpeed = 2.0f;
     [SerializeField]
