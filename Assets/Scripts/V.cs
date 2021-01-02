@@ -31,9 +31,8 @@ public class V : MonoBehaviour
     public static int frameCounter = 0;
     public static bool isGameOver = false;
     public static int wave = 1; //3;
-    public static int level = 1; //5;
-    public static int levelAndWave = 1; //15;
-    public static int enemiesToSpawn = 0;
+    public static int level = 3; //5;
+    public static int levelAndWave = 7; //15;
     public static int mineCount = 0;
     public static string flashingText = "";
     public static int lastPowerUpSpawned;
@@ -66,8 +65,8 @@ public class V : MonoBehaviour
     // V.zprint("trace", "scaleX");
     public static void zprint(string searchFor, string txt)
     {
-        string[] arry = { "avoid", "mode"};
-        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy", "spawnPowerup","flashingText","UIManager","enemyShield"};
+        string[] arry = { "error","mode"};
+        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy", "spawnPowerup","flashingText","UIManager","enemyShield","audioManager"};
         int f = System.Array.IndexOf(arry, searchFor);
         if (f > -1)
         {

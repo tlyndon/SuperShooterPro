@@ -4,14 +4,9 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-    private AudioSource audioSource;
-
     [SerializeField]
     private int powerupID;
     //ID for Powerups, 0=Triple Shot, 1=Speed, 2=Sheields, 3=Ammo, 4=health, 5=butterfly, 6=mine
-
-    [SerializeField]
-    private AudioClip powerUpClip;
 
     [SerializeField]
     private GameObject explosionPrefab;
@@ -28,10 +23,6 @@ public class Powerup : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         { V.zprint("powerup", "player is null"); }
-
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        { V.zprint("error", "The audioSource component in Powerup.cs = null"); }
 
         powerUpRenderer = this.GetComponent<SpriteRenderer>();
         if (powerUpRenderer == null)
@@ -93,9 +84,7 @@ public class Powerup : MonoBehaviour
 
                 else
                 {
-                    if (V.soundOn == true)
-                    { audioSource.PlayOneShot(powerUpClip, 0.7F); }
-
+                    AudioManager.Instance.PlaySound("powerup", 1f);
                     isAlive = false;
 
                     switch (powerupID)

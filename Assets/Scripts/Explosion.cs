@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class Explosion : MonoBehaviour
 {
-    [SerializeField]
-    private AudioClip explosionSound;
     //--------------------------------------------------------------
     void Start()
     {
-        if (V.soundOn == true)
-        {
-            GetComponent<AudioSource>().PlayOneShot(explosionSound, 0.7f);
-        }
+        AudioManager.Instance.PlaySound("explosion", 1f);
+        
         Destroy(this.gameObject, 3.0f);
     }
 }

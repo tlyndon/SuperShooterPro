@@ -104,8 +104,8 @@ public class UIManager : MonoBehaviour
     public void StartWave()
     {
         V.zprint("trace", "StartWave()");
-        V.enemiesToSpawn = 0;
         V.setMode(10);
+        AudioManager.Instance.PlayMusic("backgroundMusic", 0.7f);
     }
     //--------------------------------------------------------------
     public void GetReady()
@@ -115,7 +115,7 @@ public class UIManager : MonoBehaviour
         if (V.levelAndWave == V.levelEnemy1joins)
         { V.flashingText = "Get Ready!"; }
         else if (V.levelAndWave == V.levelEnemy2joins)
-        { V.flashingText = "A new enemy type will move from side to side!"; }
+        { V.flashingText = "New enemy types will be added!"; }
         else if (V.levelAndWave == V.levelEnemyLaserJoins)
         { V.flashingText = "Some enemies will shoot at you!"; }
         else if (V.levelAndWave == V.levelEnemyAvoidsLasers)
@@ -182,7 +182,7 @@ public class UIManager : MonoBehaviour
             {
                 flashingText.text = V.flashingText;
             }
-            else if (V.modeCounter == 30 || V.modeCounter == 90 || V.modeCounter == 150 || V.modeCounter == 210 || V.modeCounter == 270 || V.modeCounter == 330)
+            else if (V.modeCounter == 45 || V.modeCounter == 105 || V.modeCounter == 165 || V.modeCounter == 225 || V.modeCounter == 285 || V.modeCounter == 345)
             {
                 flashingText.text = "";
             }
@@ -194,7 +194,7 @@ public class UIManager : MonoBehaviour
             {
                 V.modeCounter = 0;
             }
-            if (V.modeCounter == 331 && V.isGameOver == false)
+            if (V.modeCounter == 346 && V.isGameOver == false)
             {
                 V.zprint("flashingText", "updateFlashingText = " + V.flashingText + ", text finished flashing & not game over, so next wave");
                 StartWave();

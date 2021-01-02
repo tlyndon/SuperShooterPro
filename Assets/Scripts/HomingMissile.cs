@@ -65,7 +65,7 @@ public class HomingMissile : MonoBehaviour
                 }
 
                 enemy.isAlive = false;
-                Destroy(other.gameObject, 0.02f);                                       //modify so that we can add the direction of missile to the explosion
+                Destroy(other.gameObject, 0.02f);  //modify so that we can add the direction of missile to the explosion
                 Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
                 GameObject obj = GameObject.FindGameObjectWithTag("Player");

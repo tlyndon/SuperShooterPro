@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private AudioSource audioSource;
-
-    [SerializeField]
-    private AudioClip snd_lasershot;                      //snd_xxxx throughout code should indicate sound
-    [SerializeField]
-    private AudioClip snd_buzz;
-
     private bool isSpeedBoostActive = false;
     private float speed = 3.5f;
     private float speedMultiplier = 1.75f;
@@ -80,10 +73,6 @@ public class Player : MonoBehaviour
     //--------------------------------------------------------------
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        { V.zprint("error", "audioSource in Player.cs = null."); }
-
         health = 3;
         transform.position = new Vector3(0, playerStartingYposBelowScreen, 0);
 
@@ -160,8 +149,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                if (V.soundOn == true)
-                { audioSource.PlayOneShot(snd_buzz, 0.7F); }
+                AudioManager.Instance.PlaySound("buzz", 1f);
             }
         }
     }
@@ -173,7 +161,7 @@ public class Player : MonoBehaviour
         {
             float deltaY = comeUpToPositionY - transform.position.y;
             if (deltaY < .01)
-            { transform.position = new Vector3(0, comeUpToPositionY, 0); }
+            { transform.position = new Vector3(transform.position.x, comeUpToPositionY, 0); }
             else
             {
                 if (deltaY < 0.20f) { deltaY = 0.20f; }
@@ -203,8 +191,7 @@ public class Player : MonoBehaviour
             Instantiate(laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
 
-        if (V.soundOn == true)
-        { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
+        AudioManager.Instance.PlaySound("laser", 1f);
     }
     //--------------------------------------------------------------
     void FireMissilesAndMines()
@@ -260,8 +247,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        if (V.soundOn == true)
-        { audioSource.PlayOneShot(snd_lasershot, 0.7F); }
+        AudioManager.Instance.PlaySound("laser", 1f); //lasershot
     }
     //--------------------------------------------------------------
     public void TripleShotActive()

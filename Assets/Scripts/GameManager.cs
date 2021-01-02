@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        
+        //AudioManager.Instance.PlayMusic("backgroundMusic", 0.7f);
     }
 
     void Update()

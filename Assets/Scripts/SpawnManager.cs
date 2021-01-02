@@ -47,29 +47,27 @@ public class SpawnManager : MonoBehaviour
 
             // spawn all enemies for each wave at the start of the wave
 
-            int nextEnemyType = 0;
             int ctr = 0;
-            V.enemiesToSpawn = (int)(V.levelAndWave * 1.5f) + 2;
-            int howMany = V.enemiesToSpawn;
+            int howMany = (int)(V.levelAndWave * 1.5f) + 2;
 
             while (ctr < howMany)
             {
-                SpawnOneEnemy(nextEnemyType, ctr);
-
+                int spawnEnemyType = 0;
+                
                 ctr = ctr + 1;
-                V.enemiesToSpawn = V.enemiesToSpawn - 1;
+                howMany = howMany - 1;
 
-                if ((nextEnemyType == 0 && ctr > howMany * (1 - (0.02 * V.levelAndWave)) || (nextEnemyType == 1 && ctr > howMany * (1 - (0.0033 * V.levelAndWave)) +1)))
+                if (V.levelAndWave >= V.levelEnemy1joins && Random.Range(0, 5f) >= 4)
                 {
-                    if ((V.levelAndWave >= V.levelEnemy1joins && nextEnemyType < 1) || (V.levelAndWave >= V.levelEnemy2joins && nextEnemyType < 2))
+                    spawnEnemyType = 1;
+                    if (V.levelAndWave >= V.levelEnemy2joins && Random.Range(0, 5f) >= 4)
                     {
-                        nextEnemyType = nextEnemyType + 1;
-
-                        if (nextEnemyType > 2)
-                        { nextEnemyType = 0; }
+                        spawnEnemyType = 2;
                     }
                 }
+                SpawnOneEnemy(spawnEnemyType, ctr);
             }
+
             V.setMode(21);
         }
         if (V.mode == 21)
@@ -83,7 +81,8 @@ public class SpawnManager : MonoBehaviour
         Vector3 posToSpawn = new Vector3(Random.Range(0, 12) - 6, 8 + (ctr * 3), 0);  //typ=0 & 2
         if (typ == 1)
         {
-            posToSpawn = new Vector3(-4, 8 + (ctr * 2), 0);  //typ=1
+            float rnd = Random.Range(-8, 8f);
+            posToSpawn = new Vector3(-4, 8 + rnd, 0);
         }
         GameObject obj;
         if (typ != 2)
