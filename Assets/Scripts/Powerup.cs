@@ -41,7 +41,7 @@ public class Powerup : MonoBehaviour
     {
         //if the powerup close to player, pressing C will cause it to go to player and be picked up automatically
         float distance = Vector3.Distance(transform.position, player.transform.position);
-        if (autoPickup==true || (distance<5f && powerupID<5 && Input.GetKey(KeyCode.C)))
+        if (autoPickup==true || (distance<5f && powerupID<5 && Input.GetKey(KeyCode.P)))
         {
             autoPickup = true;
             // move powerup toward player (target)
@@ -84,7 +84,7 @@ public class Powerup : MonoBehaviour
 
                 else
                 {
-                    AudioManager.Instance.PlaySound("powerup", 1f);
+                    GameObject.Find("manageAudio").GetComponent<ManageEazySoundManager>().playPowerupSound();
                     isAlive = false;
 
                     switch (powerupID)

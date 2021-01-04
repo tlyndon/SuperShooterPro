@@ -2,17 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Hellmade.Sound;
 
 public class GameManager : MonoBehaviour
 {
     //to access scripts and variables from other scripts,
     //help provided by https://www.youtube.com/watch?v=XeOzp6KJ1j8
     //more help provided by https://www.youtube.com/watch?v=I57PPyA_Dgg
-
-    void Start()
-    {
-        //AudioManager.Instance.PlayMusic("backgroundMusic", 0.7f);
-    }
 
     void Update()
     {

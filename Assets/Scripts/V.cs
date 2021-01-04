@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 // help from https://answers.unity.com/questions/323195/how-can-i-have-a-static-class-i-can-access-from-an.html
 
 public class V : MonoBehaviour
@@ -9,9 +10,6 @@ public class V : MonoBehaviour
     {
         DontDestroyOnLoad(this);
     }
-
-    //sound and music
-    //change skull & crossbones
 
     public static int levelEnemy1joins = 3;
     public static int levelGet3ShotLaser = 4;
@@ -31,8 +29,8 @@ public class V : MonoBehaviour
     public static int frameCounter = 0;
     public static bool isGameOver = false;
     public static int wave = 1; //3;
-    public static int level = 3; //5;
-    public static int levelAndWave = 7; //15;
+    public static int level = 1; //5;
+    public static int levelAndWave = 1; //15;
     public static int mineCount = 0;
     public static string flashingText = "";
     public static int lastPowerUpSpawned;
@@ -65,8 +63,8 @@ public class V : MonoBehaviour
     // V.zprint("trace", "scaleX");
     public static void zprint(string searchFor, string txt)
     {
-        string[] arry = { "error","mode"};
-        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy", "spawnPowerup","flashingText","UIManager","enemyShield","audioManager"};
+        string[] arry = { "spawn","error","mode" };
+        //string[] arry = { "trace", "mode", "powerup", "error", "enemy", "keys", "damage","raycast","avoid","bossMove","bossCollide","bossDamage","bossEnergy", "spawnPowerup","flashingText","UIManager","enemyShield","audioManager","sound"};
         int f = System.Array.IndexOf(arry, searchFor);
         if (f > -1)
         {

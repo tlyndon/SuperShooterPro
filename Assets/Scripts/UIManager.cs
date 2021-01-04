@@ -41,7 +41,14 @@ public class UIManager : MonoBehaviour
         SlowlyRegenerateThrusters();
         updateFlashingText();
         updateWaveText();
-        NextWaveWhenEnemiesGone();
+        if (V.mode == 21)
+        {
+            V.modeCounter = V.modeCounter + 1;  //mode 21
+            if (V.levelAndWave < V.bossLevel)
+            {
+                NextWaveWhenEnemiesGone();
+            }
+        }
     }
     //--------------------------------------------------------------
     public void newScaleX(GameObject theGameObject, float newSize)
@@ -69,35 +76,31 @@ public class UIManager : MonoBehaviour
     //--------------------------------------------------------------
     public void NextWaveWhenEnemiesGone()
     {
-        if (V.mode == 21 && V.modeCounter > 0)
+
+        V.zprint("trace", "NextWaveWhenEnemiesGone()");
+
+        GameObject[] gameObjects;
+        gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
+        int count = gameObjects.Length;
+        gameObjects = GameObject.FindGameObjectsWithTag("Enemy2");
+        count = count + gameObjects.Length;
+
+        V.zprint("nextwave", "enemy count:" + count);
+        if (count == 0)
         {
-            V.zprint("trace", "NextWaveWhenEnemiesGone()");
+            V.zprint("trace", "NextWaveWhenEnemiesGone with enemyCount = 0");
+            V.levelAndWave = V.levelAndWave + 1;
 
-            V.modeCounter = V.modeCounter + 1;  //mode 21
-
-            GameObject[] gameObjects;
-            gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
-            int count = gameObjects.Length;
-            gameObjects = GameObject.FindGameObjectsWithTag("Enemy2");
-            count = count + gameObjects.Length;
-
-            V.zprint("nextwave", "enemy count:" + count);
-            if (count == 0)
+            V.wave = V.wave + 1;
+            if (V.wave == 4)
             {
-                V.zprint("trace", "NextWaveWhenEnemiesGone with enemyCount = 0");
-                V.levelAndWave = V.levelAndWave + 1;
-
-                V.wave = V.wave + 1;
-                if (V.wave == 4)
-                {
-                    V.wave = 1;
-                    V.level = V.level + 1;
-                }
-
-                V.zprint("UIManager", "level:"+V.level+", wave:" + V.wave + ", V.levelAndWave:" + V.levelAndWave);
-                
-                GetReady();
+                V.wave = 1;
+                V.level = V.level + 1;
             }
+
+            V.zprint("UIManager", "level:" + V.level + ", wave:" + V.wave + ", V.levelAndWave:" + V.levelAndWave);
+
+            GetReady();
         }
     }
     //--------------------------------------------------------------
@@ -105,7 +108,6 @@ public class UIManager : MonoBehaviour
     {
         V.zprint("trace", "StartWave()");
         V.setMode(10);
-        AudioManager.Instance.PlayMusic("backgroundMusic", 0.7f);
     }
     //--------------------------------------------------------------
     public void GetReady()
@@ -121,7 +123,7 @@ public class UIManager : MonoBehaviour
         else if (V.levelAndWave == V.levelEnemyAvoidsLasers)
         { V.flashingText = "Enemies can see your lasers and move out of the way!"; }
         else if (V.levelAndWave == V.levelGetMissle)
-        { V.flashingText = "Every 5 shots you will shoot a new heat-sinking missle!"; }
+        { V.flashingText = "Every 5 shots you will shoot a new random focused missle!"; }
         else if (V.levelAndWave == V.levelGet3ShotLaser)
         { V.flashingText = "You can now pickup a new 3-Shot Laser powerup!"; }
         else if (V.levelAndWave == V.levelGetShields)
@@ -132,7 +134,8 @@ public class UIManager : MonoBehaviour
         { V.flashingText = "You can now pickup a Mine powerup to shoot homing mines at enemies!"; }
         else if (V.levelAndWave == V.levelSkullAndCrossBones)
         { V.flashingText = "Avoid skull & bone powerups that will damage your ship"; }
-
+        else if (V.levelAndWave == V.bossLevel)
+        { V.flashingText = "Destroy the Boss and Win!"; }
 
         V.setMode(0);
     }
@@ -155,15 +158,37 @@ public class UIManager : MonoBehaviour
                 V.zprint("trace", "updateWaveText()");
 
                 waveText.gameObject.SetActive(true);
-                waveText.text = "WAVE " + (V.levelAndWave);
-
                 waveTextUI.gameObject.SetActive(true);
-                waveTextUI.text = "WAVE: " + (V.levelAndWave);
+                if (V.levelAndWave < V.bossLevel)
+                {
+                    waveText.text = "WAVE " + (V.levelAndWave);
+                    waveTextUI.text = "WAVE: " + (V.levelAndWave);
+                }
+                else
+                {
+                    waveText.text = "FINAL WAVE";
+                    waveTextUI.text = "FINAL WAVE";
+                }
             }
-            else if (V.modeCounter == 90)  //45
+            else if (V.modeCounter == 90)
             {
                 waveText.text = "";
                 V.setMode(20);
+
+                //don't need this is health and ammo powerups keep working
+                //if (V.levelAndWave == V.bossLevel)
+                //{
+                //    Player player = GameObject.FindGameObjectWithTag("Player").transform.GetComponent<Player>();
+                //    if (player == null)
+                //    {
+                //        V.zprint("error", "player = null in Powerup.cs");
+                //    }
+                //    else
+                //    {
+                //        player.RestoreHealth();
+                //        player.SetAmmoToDefaultValue();
+                //    }
+                //}
             }
             V.modeCounter = V.modeCounter + 1;  //mode 10
         }
@@ -175,9 +200,10 @@ public class UIManager : MonoBehaviour
         {
             if (V.modeCounter == 0)
             {
-                V.zprint("flashingText", "updateFlashingText = " + V.flashingText);
+                V.zprint("flashingText", "updateFlashingText = " + V.flashingText + ", V.mode:"+V.mode+", V.modeCounter:" + V.modeCounter);
                 flashingText.gameObject.SetActive(true);
             }
+
             if (V.modeCounter == 0 || V.modeCounter == 60 || V.modeCounter == 120 || V.modeCounter == 180 || V.modeCounter == 240 || V.modeCounter == 300)
             {
                 flashingText.text = V.flashingText;
@@ -188,16 +214,20 @@ public class UIManager : MonoBehaviour
             }
 
             V.modeCounter = V.modeCounter + 1;  //mode 0 or 100
-            //V.zprint("flashingText", "V.modeCounter:"+V.modeCounter);
+            V.zprint("flashingText", "V.mode:"+V.mode+", V.modeCounter:"+V.modeCounter);
 
             if (V.isGameOver == true && V.modeCounter == 120)
             {
                 V.modeCounter = 0;
             }
+
             if (V.modeCounter == 346 && V.isGameOver == false)
             {
-                V.zprint("flashingText", "updateFlashingText = " + V.flashingText + ", text finished flashing & not game over, so next wave");
-                StartWave();
+                V.zprint("flashingText", "FLASHING TEXT OVER as updateFlashingText = " + V.flashingText + ", text finished flashing & not game over, so next wave");
+                //if (V.levelAndWave < V.bossLevel)
+                //{
+                    StartWave();
+                //}
             }
 
         }
@@ -224,7 +254,7 @@ public class UIManager : MonoBehaviour
         if (thrustersPct > 0)
         {
             float originalValue = thrustersPct;
-            thrustersPct = thrustersPct - 0.00034f;
+            thrustersPct = thrustersPct - 0.001f;
 
             if (originalValue < 0.5f && thrustersPct >= 0.5f)
             {

@@ -243,14 +243,20 @@ MonoBehaviour:
   fireRate: 10
   laserPrefab: {fileID: 2979544023188821017, guid: 40163c3a9f24f4df18ceda6898cac2fc,
     type: 3}
+  enemyLaserPrefab: {fileID: 2979544023188821017, guid: 40163c3a9f24f4df18ceda6898cac2fc,
+    type: 3}
   laserPrefab2: {fileID: 255109222819472648, guid: e386214338e7a4586b970faa1fea5beb,
     type: 3}
-  explosionPrefab: {fileID: 7511052412080298266, guid: 1846473e12f774bd4ad0e553d8f69422,
+  explosionPrefab: {fileID: 6414865954998236647, guid: 1846473e12f774bd4ad0e553d8f69422,
     type: 3}
-  newShield: {fileID: 5031015416757562896, guid: 643f69f5e645c47fdb0c05a89b00c6fc,
-    type: 3}
+  newShieldObject: {fileID: 0}
   shieldPrefab: {fileID: 5031015416757562896, guid: 643f69f5e645c47fdb0c05a89b00c6fc,
     type: 3}
   enemyType: 2
+  speedY: 4
   isAlive: 1
   hasShield: 0
+  _circleCastRadius: 2
+  _castOffset: {x: 0, y: -2, z: 0}
+  _boxcastOffset: {x: 0, y: -2, z: 0}
+  _boxCastSize: {x: 2.4, y: 4, z: 0}

@@ -17,6 +17,7 @@ TagManager:
   - bossEnergy
   - Boss
   - WaveText
+  - ManageAudio
   layers:
   - Default
   - TransparentFX

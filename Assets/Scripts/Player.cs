@@ -122,7 +122,7 @@ public class Player : MonoBehaviour
             if (ammoCount > 0)  //-1000 for testing
             {
                 string weapon = "laser";  //default
-                if (V.levelAndWave>=V.levelGetMissle && V.seconds > timeLastMissileShot + 3)  //1000 for testing
+                if (V.levelAndWave >= V.levelGetMissle && V.seconds > timeLastMissileShot + 5)  //1000 for testing
                 {
                     GameObject[] gameObjects;
                     gameObjects = GameObject.FindGameObjectsWithTag("Enemy");
@@ -149,7 +149,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                AudioManager.Instance.PlaySound("buzz", 1f);
+                GameObject.Find("manageAudio").GetComponent<ManageEazySoundManager>().playBuzzSound();
             }
         }
     }
@@ -191,7 +191,7 @@ public class Player : MonoBehaviour
             Instantiate(laserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
         }
 
-        AudioManager.Instance.PlaySound("laser", 1f);
+        GameObject.Find("manageAudio").GetComponent<ManageEazySoundManager>().playLaserSound();
     }
     //--------------------------------------------------------------
     void FireMissilesAndMines()
@@ -247,7 +247,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        AudioManager.Instance.PlaySound("laser", 1f); //lasershot
+        GameObject.Find("manageAudio").GetComponent<ManageEazySoundManager>().playLaserSound();
     }
     //--------------------------------------------------------------
     public void TripleShotActive()
@@ -331,8 +331,10 @@ public class Player : MonoBehaviour
 
                 //put player below the screen, so he'll come back
                 transform.position = new Vector3(transform.position.x, playerStartingYposBelowScreen, 0);
-                uiManager.GetReady();
-
+                if (V.levelAndWave < V.bossLevel)
+                {
+                    uiManager.GetReady();
+                }
                 //still have another life, so...
                 RestoreHealth();
                 SetAmmoToDefaultValue();

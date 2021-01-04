@@ -26,53 +26,45 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void Update()
     {
-        //if (V.wave == 3 || V.wave == 6 || V.wave == 9 || V.wave == 12 || V.wave == 15 || V.wave == 18 || V.wave == 21)
-        if (V.levelAndWave == V.bossLevel)
-        {
-            //boss level
-        }
-        else
-        {
-            ConsiderSpawningEnemy();
-        }
-
         ConsiderSpawningPowerUp();
-    }
-    //--------------------------------------------------------------
-    void ConsiderSpawningEnemy()
-    {
+
         if (V.mode == 20)
         {
-            nextTimePowerUpCanSpawn = 0;
-
-            // spawn all enemies for each wave at the start of the wave
-
-            int ctr = 0;
-            int howMany = (int)(V.levelAndWave * 1.5f) + 2;
-
-            while (ctr < howMany)
+            if (V.levelAndWave < V.bossLevel)
             {
-                int spawnEnemyType = 0;
-                
-                ctr = ctr + 1;
-                howMany = howMany - 1;
-
-                if (V.levelAndWave >= V.levelEnemy1joins && Random.Range(0, 5f) >= 4)
-                {
-                    spawnEnemyType = 1;
-                    if (V.levelAndWave >= V.levelEnemy2joins && Random.Range(0, 5f) >= 4)
-                    {
-                        spawnEnemyType = 2;
-                    }
-                }
-                SpawnOneEnemy(spawnEnemyType, ctr);
+                ConsiderSpawningEnemy();
             }
 
             V.setMode(21);
         }
-        if (V.mode == 21)
+    }
+    //--------------------------------------------------------------
+    void ConsiderSpawningEnemy()
+    {
+        nextTimePowerUpCanSpawn = 0;
+
+        // spawn all enemies for each wave at the start of the wave
+
+        int ctr = 0;
+        int howMany = (int)(V.levelAndWave * 1.5f) + 2;
+
+        while (ctr < howMany)
         {
-            V.modeCounter = V.modeCounter + 1;
+            int spawnEnemyType = 0;
+
+            ctr = ctr + 1;
+            howMany = howMany - 1;
+
+            if (V.levelAndWave >= V.levelEnemy1joins && Random.Range(0, 5f) >= 4)
+            {
+                spawnEnemyType = 1;
+                if (V.levelAndWave >= V.levelEnemy2joins && Random.Range(0, 5f) >= 4)
+                {
+                    spawnEnemyType = 2;
+                }
+            }
+            SpawnOneEnemy(spawnEnemyType, ctr);
+
         }
     }
     //--------------------------------------------------------------
@@ -138,7 +130,7 @@ public class SpawnManager : MonoBehaviour
         // 6 = mine
         if (V.mode >= 20 && V.modeCounter > nextTimePowerUpCanSpawn)
         {
-
+            V.zprint("spawn", "SPAWNING POWERUP?");
             GameObject obj = GameObject.FindGameObjectWithTag("Player");
             Player player = obj.transform.GetComponent<Player>();
 

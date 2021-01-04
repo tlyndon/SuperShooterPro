@@ -345,26 +345,28 @@ public class Enemy : MonoBehaviour
     //--------------------------------------------------------------
     private void ThisEnemyDiesFromCollisionWith(string collider)
     {
-        isAlive = false;
-        if (enemyType != 2)
-        {
-            anim.SetTrigger("OnEnemyDeath");
-            Destroy(GetComponent<Collider2D>());
-            Destroy(this.gameObject, 2.8f);  //destroy projectile
-        }
-        else
-        {
+            isAlive = false;
             Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            Destroy(GetComponent<Collider2D>());  //remove enemy collider
-            Destroy(this.gameObject, 0.5f);  //destroy projectile
-        }
-        if (hasShield == true)
-        {
-            hasShield = false;
-            Destroy(newShieldObject.gameObject, 0f);
-        }
-        V.zprint("trace", "ThisEnemyDiesFromCollisionWith()");
-        V.zprint("enemy", "Enemy Collided with " + collider + "!");
+            if (enemyType != 2)
+            {
+                anim.SetTrigger("OnEnemyDeath");
+                Destroy(GetComponent<Collider2D>());
+                Destroy(this.gameObject, 2.8f);  //destroy projectile
+            }
+            else
+            {
+                //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+                Destroy(GetComponent<Collider2D>());  //remove enemy collider
+                Destroy(this.gameObject, 2.8f);   //0.5f destroy projectile
+            }
+
+            if (hasShield == true)
+            {
+                hasShield = false;
+                Destroy(newShieldObject.gameObject, 0f);
+            }
+            V.zprint("trace", "ThisEnemyDiesFromCollisionWith()");
+            V.zprint("enemy", "Enemy Collided with " + collider + "!");
     }
     //--------------------------------------------------------------
     private void damageOrDestroyThisEnemy(Collider2D other)

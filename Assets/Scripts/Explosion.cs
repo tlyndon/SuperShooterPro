@@ -5,10 +5,13 @@ using UnityEngine;
 public class Explosion : MonoBehaviour
 {
     //--------------------------------------------------------------
+    private void Awake()
+    {
+        GameObject.Find("manageAudio").GetComponent<ManageEazySoundManager>().playExplosionSound();
+    }
+
     void Start()
     {
-        AudioManager.Instance.PlaySound("explosion", 1f);
-        
         Destroy(this.gameObject, 3.0f);
     }
 }

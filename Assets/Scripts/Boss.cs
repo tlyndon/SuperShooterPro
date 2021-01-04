@@ -30,8 +30,7 @@ public class Boss : MonoBehaviour
     //--------------------------------------------------------------
     void Start()
     {
-        //transform.position = new Vector3(0, 9.2f, 0);
-        transform.position = new Vector3(0, 15.2f, 0);
+        transform.position = new Vector3(0, 12f, 0);
         bossMode = 0;   //0=move down, 1=move left, 2=move right
         energyBar = GameObject.FindGameObjectWithTag("bossEnergy").transform;
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -43,13 +42,10 @@ public class Boss : MonoBehaviour
     {
         if (V.levelAndWave == V.bossLevel)
         {
-            V.modeCounter = V.modeCounter + 1;
-
-            calculateBossMovement();
-            displayAndPositionBossEnergyBar();
-
-            if (V.mode == 20)
+            if (V.mode == 21)
             {
+                calculateBossMovement();
+                displayAndPositionBossEnergyBar();
                 spawnBossLaserFire();
             }
         }
@@ -201,7 +197,7 @@ public class Boss : MonoBehaviour
             if (V.isGameOver == false)
             {
                 GameObject obj = GameObject.FindGameObjectWithTag("Player");
-                if (obj != null )  //both player and enemy are alive
+                if (obj != null)  //both player and enemy are alive
                 {
                     Player player = obj.transform.GetComponent<Player>();
                     player.AddToScore(10000);
@@ -218,7 +214,7 @@ public class Boss : MonoBehaviour
     private void spawnBossLaserFire()
     {
         int freq = 25;
-        if (V.modeCounter>0 && (V.modeCounter-1 == nextModeCounterForBossLaser + freq || V.modeCounter == nextModeCounterForBossLaser + (freq*2) || V.modeCounter == nextModeCounterForBossLaser + +(freq * 3) || V.modeCounter > nextModeCounterForBossLaser +(freq * 6)))
+        if (V.modeCounter > 0 && (V.modeCounter - 1 == nextModeCounterForBossLaser + freq || V.modeCounter == nextModeCounterForBossLaser + (freq * 2) || V.modeCounter == nextModeCounterForBossLaser + (freq * 3) || V.modeCounter > nextModeCounterForBossLaser + (freq * 6)))
         {
             if (V.modeCounter > nextModeCounterForBossLaser + (freq * 6))
             {
