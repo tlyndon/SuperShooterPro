@@ -202,6 +202,11 @@ public class Boss : MonoBehaviour
                     Player player = obj.transform.GetComponent<Player>();
                     player.AddToScore(10000);
                 }
+
+                V.wave = 1;
+                V.level = 1;
+                V.levelAndWave = 1;
+
                 uiManager.GameOverSequence("You Win!");
             }
         }
