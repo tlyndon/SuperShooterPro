@@ -117,23 +117,27 @@ public class UIManager : MonoBehaviour
         if (V.levelAndWave == V.levelEnemy1joins)
         { V.flashingText = "Get Ready!"; }
         else if (V.levelAndWave == V.levelEnemy2joins)
-        { V.flashingText = "New enemy types will be added!"; }
+        { V.flashingText = "New Enemy types will be added!"; }
         else if (V.levelAndWave == V.levelEnemyLaserJoins)
-        { V.flashingText = "Some enemies will shoot at you!"; }
+        { V.flashingText = "Some Enemies will shoot at you!"; }
         else if (V.levelAndWave == V.levelEnemyAvoidsLasers)
-        { V.flashingText = "Enemies can see your lasers and move out of the way!"; }
+        { V.flashingText = "Enemies can see your Lasers and move out of the way!"; }
         else if (V.levelAndWave == V.levelGetMissle)
-        { V.flashingText = "Every 5 shots you will shoot a new random focused missle!"; }
+        { V.flashingText = "Every 5 shots you will shoot a new random focused Missle!"; }
         else if (V.levelAndWave == V.levelGet3ShotLaser)
         { V.flashingText = "You can now pickup a new 3-Shot Laser powerup!"; }
         else if (V.levelAndWave == V.levelGetShields)
-        { V.flashingText = "You can now pickup a Shield powerup to protect your ship!"; }
+        { V.flashingText = "You can now pickup a Shield Powerup to protect your ship!"; }
         else if (V.levelAndWave == V.levelEnemyGetShields)
-        { V.flashingText = "Some enemies will have shields"; }
+        { V.flashingText = "Some Enemies will have a Shield"; }
         else if (V.levelAndWave == V.levelGetMinesToShoot)
         { V.flashingText = "You can now pickup a Mine powerup to shoot homing mines at enemies!"; }
         else if (V.levelAndWave == V.levelSkullAndCrossBones)
-        { V.flashingText = "Avoid skull & bone powerups that will damage your ship"; }
+        { V.flashingText = "Avoid skull & bone Powerup to avoid damage your ship"; }
+        else if (V.levelAndWave == V.ShiftKeyForMoreThrusters)
+        { V.flashingText = "Press Shift key for faster thrusters"; }
+        else if (V.levelAndWave == V.PkeyToBringPowerupsToYou)
+        { V.flashingText = "Holding down P key will bring Powerups to You"; }
         else if (V.levelAndWave == V.bossLevel)
         { V.flashingText = "Destroy the Boss and Win!"; }
 

@@ -41,6 +41,14 @@ public class Asteroid : MonoBehaviour
             if (other.tag == "Laser" || other.tag == "Missile")
             {
                 changeAsteroidToInvisibleObjectOnFire();
+
+                GameObject obj = GameObject.FindGameObjectWithTag("Player");
+                Player player = obj.transform.GetComponent<Player>();
+                if (player == null)
+                { V.zprint("powerup", "player is null"); }
+                else
+                { player.AddToScore(100); }
+
                 Destroy(other.gameObject);
             }
             else if (other.tag == "Player")

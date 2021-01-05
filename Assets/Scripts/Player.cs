@@ -49,7 +49,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private UIManager uiManager;
 
-    public int score;
     public int lives = 4;
     public int health = 3;
 
@@ -149,6 +148,7 @@ public class Player : MonoBehaviour
             }
             else
             {
+                V.nextTimePowerUpCanSpawn = 0;
                 GameObject.Find("manageAudio").GetComponent<ManageEazySoundManager>().playBuzzSound();
             }
         }
@@ -278,6 +278,9 @@ public class Player : MonoBehaviour
     {
         V.zprint("damage", "Player.Damage()");
         NewCameraShake1();
+
+        V.nextTimePowerUpCanSpawn = 0;
+
         if (isShieldsActive == true)
         {
             V.zprint("damage", "Player.Damage() Shields Protected me!");
@@ -395,8 +398,8 @@ public class Player : MonoBehaviour
     //--------------------------------------------------------------
     public void AddToScore(int points)
     {
-        score = score + points;
-        uiManager.UpdateScore(score);
+        V.score = V.score + points;
+        uiManager.UpdateScore(V.score);
     }
     //--------------------------------------------------------------
     public void SetAmmoToDefaultValue()

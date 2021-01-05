@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sharedProfile: {fileID: 11400000, guid: 6f36ea0d2a9a34ad4b2026ccc1108023, type: 2}
+  sharedProfile: {fileID: 0}
   isGlobal: 1
   blendDistance: 0
   weight: 1
@@ -687,7 +687,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Work-In-Progress by Troy Lyndon @ GameDevHQ
+  m_Text: 'GameDevHQ
+
+    Tutorial Work by
+
+    Troy Lyndon'
 --- !u!222 &1079718527
 CanvasRenderer:
   m_ObjectHideFlags: 0

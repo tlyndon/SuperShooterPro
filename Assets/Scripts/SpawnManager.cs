@@ -16,7 +16,6 @@ public class SpawnManager : MonoBehaviour
     private int updateCounter = 0;
     private UIManager uiManager;
     private GameManager gameManager;
-    private float nextTimePowerUpCanSpawn = 640f;
     private int lastPowerUp = 99;
     //--------------------------------------------------------------
     void Start()
@@ -41,7 +40,7 @@ public class SpawnManager : MonoBehaviour
     //--------------------------------------------------------------
     void ConsiderSpawningEnemy()
     {
-        nextTimePowerUpCanSpawn = 0;
+        V.nextTimePowerUpCanSpawn = 0;
 
         // spawn all enemies for each wave at the start of the wave
 
@@ -128,7 +127,7 @@ public class SpawnManager : MonoBehaviour
         // 4 = health
         // 5 = skull & crossbones
         // 6 = mine
-        if (V.mode >= 20 && V.modeCounter > nextTimePowerUpCanSpawn)
+        if (V.mode >= 20 && V.modeCounter > V.nextTimePowerUpCanSpawn)
         {
             V.zprint("spawn", "SPAWNING POWERUP?");
             GameObject obj = GameObject.FindGameObjectWithTag("Player");
@@ -167,14 +166,14 @@ public class SpawnManager : MonoBehaviour
 
             if ((powerUp == 3 || powerUp == 4) && powerUp != lastPowerUp)
             {
-                nextTimePowerUpCanSpawn = V.modeCounter + 120;
+                V.nextTimePowerUpCanSpawn = V.modeCounter + 120;
             }
             else
             {
                 int tim = 640;
                 if (V.levelAndWave > 9)
                 { tim = 1280; }
-                nextTimePowerUpCanSpawn = V.modeCounter + tim;
+                V.nextTimePowerUpCanSpawn = V.modeCounter + tim;
             }
 
             if (V.levelAndWave >= V.levelGetMinesToShoot && powerUp < 3 && Random.Range(0, 10) < 2)
@@ -192,7 +191,7 @@ public class SpawnManager : MonoBehaviour
         }
         //else if (V.modeCounter % 60 == 0)
         //{
-        //    V.zprint("spawnPowerup", "V.mode:" + V.mode + ", V.modeCounter:" + V.modeCounter + ", nextTimePowerUpCanSpawn:" + nextTimePowerUpCanSpawn);
+        //    V.zprint("spawnPowerup", "V.mode:" + V.mode + ", V.modeCounter:" + V.modeCounter + ", V.nextTimePowerUpCanSpawn:" + V.nextTimePowerUpCanSpawn);
         //}
     }
     //--------------------------------------------------------------

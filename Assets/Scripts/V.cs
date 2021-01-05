@@ -11,6 +11,7 @@ public class V : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
+    public static int score = 0;
     public static int levelEnemy1joins = 3;
     public static int levelGet3ShotLaser = 4;
     public static int levelGetMissle = 5;
@@ -21,7 +22,11 @@ public class V : MonoBehaviour
     public static int levelEnemyLaserJoins = 10;
     public static int levelEnemyAvoidsLasers = 11;
     public static int levelSkullAndCrossBones = 12;
+    public static int ShiftKeyForMoreThrusters = 13;
+    public static int PkeyToBringPowerupsToYou = 14;
     public static int bossLevel = 15;
+
+    public static float nextTimePowerUpCanSpawn = 640f;
 
     public static bool musicOn = true;
     public static bool soundOn = true;

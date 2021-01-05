@@ -136,7 +136,7 @@ public class Enemy : MonoBehaviour
     void SpawnEnemyFire()
     {
         shootingLaserNow = false;
-        if (isAlive == true && enemyType != 2 && Time.time > canFire && fireWhenCounterEquals !=0 && V.modeCounter > fireWhenCounterEquals && V.levelAndWave >= V.levelEnemyLaserJoins)
+        if (isAlive == true && enemyType != 2 && Time.time > canFire && fireWhenCounterEquals != 0 && V.modeCounter > fireWhenCounterEquals && V.levelAndWave >= V.levelEnemyLaserJoins)
         {
             //regular enemy laser fire down
             fireWhenCounterEquals = V.modeCounter + Random.Range(300, 660);
@@ -294,12 +294,13 @@ public class Enemy : MonoBehaviour
                 Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
                 for (int i = 0; i < lasers.Length; i++)
                 { lasers[i].AssignEnemyUpLaser(); }
-                //if the enemy has a shield, we must destroy it, too
-                if (hasShield == true)
-                {
-                    hasShield = false;
-                    Destroy(newShieldObject, 0f);
-                }
+
+            }
+            //if the enemy has a shield, we must destroy it, too
+            if (hasShield == true)
+            {
+                hasShield = false;
+                Destroy(newShieldObject, 0f);
             }
             Destroy(this.gameObject);
         }
@@ -314,7 +315,7 @@ public class Enemy : MonoBehaviour
                     //Draw Line between this object and the object collided with, of the color red, and display that line for 0.01 seconds
                     //V.zprint("avoid", "Distance from Origin to Object = " + boxResult.distance);  //distance between the RayCast and the Collider of the object we hit
 
-                    if (boxResult.collider.tag == "Laser" && V.levelAndWave>= V.levelEnemyAvoidsLasers)  //will need to make sure these are player lasers only
+                    if (boxResult.collider.tag == "Laser" && V.levelAndWave >= V.levelEnemyAvoidsLasers)  //will need to make sure these are player lasers only
                     {
                         Debug.DrawLine(transform.position, boxResult.collider.transform.position, Color.red, 0.01f);
                         V.zprint("avoid", "Collider Name = " + boxResult.collider.name); //name of object holding the collider we hit
@@ -345,28 +346,35 @@ public class Enemy : MonoBehaviour
     //--------------------------------------------------------------
     private void ThisEnemyDiesFromCollisionWith(string collider)
     {
-            isAlive = false;
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            if (enemyType != 2)
-            {
-                anim.SetTrigger("OnEnemyDeath");
-                Destroy(GetComponent<Collider2D>());
-                Destroy(this.gameObject, 2.8f);  //destroy projectile
-            }
-            else
-            {
-                //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-                Destroy(GetComponent<Collider2D>());  //remove enemy collider
-                Destroy(this.gameObject, 2.8f);   //0.5f destroy projectile
-            }
+        isAlive = false;
+        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        if (enemyType != 2)
+        {
+            anim.SetTrigger("OnEnemyDeath");
+            Destroy(GetComponent<Collider2D>());
+            Destroy(this.gameObject, 2.8f);  //destroy projectile
+        }
+        else
+        {
+            //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            Destroy(GetComponent<Collider2D>());  //remove enemy collider
+            Destroy(this.gameObject, 2.8f);   //0.5f destroy projectile
+        }
 
-            if (hasShield == true)
-            {
-                hasShield = false;
-                Destroy(newShieldObject.gameObject, 0f);
-            }
-            V.zprint("trace", "ThisEnemyDiesFromCollisionWith()");
-            V.zprint("enemy", "Enemy Collided with " + collider + "!");
+        if (hasShield == true)
+        {
+            hasShield = false;
+            Destroy(newShieldObject.gameObject, 0f);
+        }
+        V.zprint("trace", "ThisEnemyDiesFromCollisionWith()");
+        V.zprint("enemy", "Enemy Collided with " + collider + "!");
+
+        GameObject obj = GameObject.FindGameObjectWithTag("Player");
+        Player player = obj.transform.GetComponent<Player>();
+        if (player == null)
+        { V.zprint("powerup", "player is null"); }
+        else
+        { player.AddToScore(20); }
     }
     //--------------------------------------------------------------
     private void damageOrDestroyThisEnemy(Collider2D other)
@@ -375,7 +383,7 @@ public class Enemy : MonoBehaviour
         {
             hasShield = false;
             Destroy(newShieldObject.gameObject, 0f);
-            Destroy(other.gameObject, 0f);
+            Destroy(other.gameObject);
         }
         else
         {
